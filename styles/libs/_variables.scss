@@ -1,0 +1,83 @@
+// =============================================================================
+// Global variables settings (implements to normalize.sccs )
+// =============================================================================
+
+/*
+*   
+*   This is main file for all variables on the site
+*   Thats mean that all colors,font size,gaps etc keeping here
+*   You can change here all values to make a change of view
+*   
+*/
+
+// Set default values for each title tag and <p/>
+
+$h1_font_size: 2.667rem !default;
+$h2_font_size: 1.467rem !default;
+$h3_font_size: 1.333rem !default;
+$h4_font_size: 1.275rem !default;
+$h5_font_size: 1.225em !default;
+$h6_font_size: 0.8rem !default;
+$p_font_size: 1rem !default;
+$p_font_size_small: 0.8rem !default;
+
+// Set default values of margin gap for each title tag and <p/>
+
+$h1_margin: 0.667rem 0 !default;
+$h2_margin: 0.667rem 0 !default;
+$h3_margin: 0.8rem 0 !default;
+$h4_margin: 0.8rem 0 !default;
+$h5_margin: 0.8rem 0 !default;
+$h6_margin: 0.8rem 0 !default;
+
+// Global to element values
+
+$reg_radius: 4px;
+$content_pad: 0 20px;
+$content_top_pad: 27px;
+$transition_normal: 0.25s ease-in;
+
+// Posts gap between
+
+$posts_gap: 1.6rem;
+
+// Set default colors
+
+$background: #313131 !default;
+$overhigh_bg: #3a3a3a !default;
+$notif_bg: #2e2e2e !default;
+$notif_hov: #343434 !default;
+$elem_over_bg: rgba(87, 92, 111, 0.3) !default;
+$outbox_bg: #525252 !default;
+$outbox_hover: #454545 !default;
+$placeholder: #525252 !default;
+$error: #ff8686 !default;
+$border_action: rgba(201, 204, 207, 0.75) !default;
+$active_elem: #b1a5ff !default;
+$light_border: rgba(201, 204, 208, 0.05) !default;
+$color: #d9d9d9 !default;
+
+// button values
+
+$button_gap: 12px 12px;
+$button_big_gap: 12px 14px;
+
+// Header values
+
+$header_height: 60px;
+$search_width: 380px;
+
+// Font-awesome icon values
+
+$fafont_height: 18px;
+$fafont_width: 18px;
+$fafont_height_big: 21px;
+$fafont_width_big: 21px;
+
+// Form values
+
+$input_height: 45px;
+$input_pad: 13px 20px;
+$input_gap: 16px;
+$textarea_pad: 20px 20px;
+$area_height: 91px;

@@ -1,0 +1,50 @@
+form {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  &.search {
+    max-width: $search_width;
+
+    input {
+      margin: 0;
+    }
+  }
+
+  input,
+  textarea,
+  select {
+    background-color: $background;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: $reg_radius;
+    height: $input_height;
+    width: 100%;
+    text-align: left;
+    color: $color;
+    padding: $input_pad;
+    outline: none;
+    margin-bottom: $input_gap;
+    transition: all $transition_normal;
+
+    &.invalid {
+      border-color: $error;
+    }
+
+    &::placeholder {
+      color: $placeholder;
+    }
+  }
+
+  textarea {
+    border: 1px solid transparent;
+    height: auto;
+    min-height: $area_height;
+    resize: vertical;
+    padding: $textarea_pad;
+  }
+}

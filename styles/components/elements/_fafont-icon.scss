@@ -1,0 +1,15 @@
+.fafont-icon {
+    height:$fafont_height; 
+    width: $fafont_width;
+    color: $color;
+
+    &.big {
+        height:$fafont_height_big; 
+        width: $fafont_width_big;
+    }
+
+    &.interactive {
+        position: relative;
+        cursor: pointer;
+    }
+}

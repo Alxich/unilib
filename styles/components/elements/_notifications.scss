@@ -1,0 +1,99 @@
+.notification {
+  position: absolute;
+  right: -4px;
+  top: 30px;
+  width: 382px;
+
+  .triangle {
+    position: relative;
+    background: $notif_bg;
+    border-radius: 3px 0px 0px 0px;
+    top: 6px;
+    width: 12px;
+    height: 10px;
+    transform: rotate(45deg);
+    margin: 0 9px 0 auto;
+  }
+
+  .wrapper-content {
+    position: relative;
+    background-color: $notif_bg;
+    border-radius: 0 0 $reg_radius $reg_radius;
+    top: 0;
+    width: 100%;
+
+    .header {
+      border-bottom: 1px solid $light_border;
+      padding-bottom: 6px;
+
+      .title > h6 {
+        line-height: 1.2;
+        margin: 0;
+      }
+
+      .actions {
+        margin: 0;
+
+        .item {
+          p {
+            font-size: $p_font_size_small;
+            line-height: 1.2;
+            color: $active_elem;
+            margin: 0;
+          }
+
+          &:last-child {
+            margin-left: 15px;
+          }
+        }
+      }
+    }
+
+    .main {
+      align-items: flex-start;
+      padding-top: 5px;
+
+      .no-message {
+        font-size: $p_font_size_small;
+        margin: 0;
+      }
+
+      .item {
+        padding: 5px 0;
+        transition: all $transition_normal;
+
+        &:not(:last-child) {
+          margin-bottom: 5px;
+        }
+
+        &:hover {
+          background: $notif_hov;
+        }
+
+        .user-ico {
+          background: $color;
+          border-radius: 50%;
+          height: 36px;
+          width: 36px;
+          min-width: 36px;
+          margin-right: 8px;
+        }
+
+        .content {
+          & > div > p {
+            margin: 0;
+          }
+
+          & > div {
+            width: 100%;
+          }
+
+          .text > p {
+            font-size: $p_font_size_small;
+            font-weight: 300;
+          }
+        }
+      }
+    }
+  }
+}
