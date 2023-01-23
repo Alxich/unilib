@@ -1,15 +1,31 @@
 .fafont-icon {
-    height:$fafont_height; 
-    width: $fafont_width;
-    color: $color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: $fafont_height;
+  width: $fafont_width;
+  color: $color;
 
-    &.big {
-        height:$fafont_height_big; 
-        width: $fafont_width_big;
-    }
+  &.big {
+    height: $fafont_height_big;
+    width: $fafont_width_big;
+  }
 
-    &.interactive {
-        position: relative;
-        cursor: pointer;
+  &.arrow-down {
+    height: $fafont_height_arrow;
+    width: $fafont_width_arrow;
+  }
+
+  &.interactive {
+    position: relative;
+    cursor: pointer;
+
+    svg {
+      transition: all $transition_normal;
+
+      &:hover {
+        color: $active_elem !important;
+      }
     }
+  }
 }

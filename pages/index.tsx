@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Header } from "../components";
+import { Header, Sidebar } from "../components";
 
 export default function Home() {
   return (
@@ -11,7 +11,11 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <main className={"main"}></main>
+      <main className={"main"}>
+        <div className="container main-content flex-row flex-space">
+          <Sidebar />
+        </div>
+      </main>
       <footer className={"colophon"}></footer>
     </>
   );

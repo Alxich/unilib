@@ -1,10 +1,12 @@
-import { ReactElement } from "react";
+import React, { ReactElement } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faBell } from "@fortawesome/free-solid-svg-icons";
 
 import { Button, Notification } from "./elements";
 
 const Header = (): ReactElement => {
+  const [activeNotify, setActiveNotfiy] = React.useState(false);
+
   return (
     <header className="masthead">
       <div className="container full-height flex-space flex-row content-pad">
@@ -26,10 +28,11 @@ const Header = (): ReactElement => {
         <div className="user-action container full-height flex-row not-logged width-auto">
           <div className="fafont-icon big interactive">
             <FontAwesomeIcon
+              onClick={() => setActiveNotfiy(activeNotify ? false : true)}
               icon={faBell}
               style={{ width: "100%", height: "100%", color: "inherit" }}
             />
-            <Notification />
+            <Notification activeElem={activeNotify} />
           </div>
           <Button filled>Увійти</Button>
         </div>

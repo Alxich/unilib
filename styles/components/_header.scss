@@ -10,9 +10,11 @@
   height: $header_height;
   width: 100%;
   margin: 0 auto;
+  z-index: 2;
 
   .logo {
     cursor: pointer;
+    user-select: none;
 
     p {
       font-family: "Tourney";
@@ -28,12 +30,12 @@
       margin-left: 121px;
     }
   }
-  
+
   .user-action {
     &.not-logged {
-        .fafont-icon {
-            margin-right: 15px;
-        }
+      .fafont-icon {
+        margin-right: 15px;
+      }
     }
   }
 }

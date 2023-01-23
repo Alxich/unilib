@@ -1,8 +1,14 @@
 import Image from "next/image";
+import classNames from "classnames";
 
-const Notification = () => {
+const Notification = ({ activeElem }: { activeElem: boolean }) => {
   return (
-    <div className="notification container flex-right">
+    <div
+      className={classNames("notification container flex-right", {
+        active: activeElem,
+        hidden: activeElem !== true,
+      })}
+    >
       <div className="triangle"></div>
       <div className="wrapper-content container flex-left content-use">
         <div className="header container flex-space flex-row">

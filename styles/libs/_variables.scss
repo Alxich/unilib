@@ -34,8 +34,8 @@ $h6_margin: 0.8rem 0 !default;
 
 $reg_radius: 4px;
 $content_pad: 0 20px;
-$content_top_pad: 27px;
-$transition_normal: 0.25s ease-in;
+$content_top_pad: 16px;
+$transition_normal: 0.25s ease-in-out;
 
 // Posts gap between
 
@@ -73,6 +73,8 @@ $fafont_height: 18px;
 $fafont_width: 18px;
 $fafont_height_big: 21px;
 $fafont_width_big: 21px;
+$fafont_height_arrow: 12px;
+$fafont_width_arrow: 12px;
 
 // Form values
 
@@ -81,3 +83,24 @@ $input_pad: 13px 20px;
 $input_gap: 16px;
 $textarea_pad: 20px 20px;
 $area_height: 91px;
+
+// Sidebar values
+$sdbar_width: 240px;
+$sdbar_inner_gap: 8px 20px;
+$sdbar_elem_height: 42px;
+$sdbar_elem_image: 18px;
+$sdbar_elem_image_radius: 3px;
+$sdbar_elem_gap: 10px;
+$sdbar_elem_inner_gap: 8px;
+$sdbar_elem_inner_pd: 12px 10px;
+$sdbar_nav_gap: 24px;
+$sdbar_additional_top_gap: 138px;
+
+// Sidebar additiona
+
+$sdbar_add_text_inner_gap: 5px;
+$sdbar_add_text_gap: 10px;
+
+// small pop boxes
+$smpop_inner_gap: 8px 12px;
+$smpop_inner_elem_gap: 5px;
