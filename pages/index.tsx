@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Header, Sidebar } from "../components";
+import { Header, Reels, Sidebar } from "../components";
 
 export default function Home() {
   return (
@@ -14,6 +14,7 @@ export default function Home() {
       <main className={"main"}>
         <div className="container main-content flex-row flex-space">
           <Sidebar />
+          <Reels />
         </div>
       </main>
       <footer className={"colophon"}></footer>

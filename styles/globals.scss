@@ -1,3 +1,7 @@
 @import "./libs/normalize";
 @import "./components/elements/index";
 @import "./components/index";
+
+.main-content {
+    align-items: flex-start;
+}

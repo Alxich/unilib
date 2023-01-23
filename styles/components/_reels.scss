@@ -1,0 +1,52 @@
+#reels {
+  max-width: $reels_width;
+  padding: $reels_inner_pad;
+
+  p {
+    margin: 0;
+  }
+
+  .title {
+    width: 100%;
+    margin-bottom: $reels_title_gap;
+  }
+
+  .item {
+    cursor: pointer;
+
+    &:not(:last-child) {
+      margin-bottom: 16px;
+    }
+
+    .author-thread {
+      .icon {
+        background-color: $color;
+        border-radius: 50%;
+        height: $reels_user_logo;
+        width: $reels_user_logo;
+        min-width: $reels_user_logo;
+        margin-right: $reels_user_gap;
+      }
+
+      .info {
+        align-items: flex-start;
+
+        .thematic {
+          p {
+            font-size: $p_font_size_small;
+            font-weight: 300;
+          }
+        }
+      }
+
+      margin-bottom: $reels_user_gap;
+    }
+
+    .text-block {
+      & > * {
+        font-weight: 300;
+        line-height: 1.2;
+      }
+    }
+  }
+}
