@@ -108,6 +108,7 @@ html {
     font-size: 100%; // 1
   }
   background: $background;
+  font-size: $default_font_size;
   color: $color;
   -webkit-text-size-adjust: 100%; // 2
   -ms-text-size-adjust: 100%; // 2

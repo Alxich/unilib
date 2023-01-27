@@ -3,6 +3,7 @@
   justify-content: center;
   flex-direction: row;
   align-items: center;
+  cursor: pointer;
 
   .counter {
     & > p {
@@ -12,4 +13,8 @@
 
     margin-left: $post_action_btn_gap;
   }
+}
+
+.dislike {
+  cursor: pointer;
 }

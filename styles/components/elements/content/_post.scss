@@ -35,10 +35,12 @@
         height: $post_user_logo;
         width: $post_user_logo;
         min-width: $post_user_logo;
+        cursor: pointer;
       }
 
       .author-names {
         margin-left: $post_author_gap;
+        cursor: pointer;
 
         .name {
           p {
@@ -85,6 +87,28 @@
 
     .text-block {
       line-height: $post_text_height;
+
+      & > *:not(:last-child) {
+        margin-bottom: $post_item_gap;
+      }
+
+      p {
+        margin: 0;
+      }
+    }
+
+    .image-holder {
+      background: $overhigh_bg;
+      padding: $post_image_hold_pad;
+
+      img {
+        display: flex;
+        height: auto;
+        width: auto;
+        min-width: 50%;
+        object-fit: contain;
+        object-position: center;
+      }
     }
   }
 }
