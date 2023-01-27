@@ -16,6 +16,24 @@
     width: $fafont_width_arrow;
   }
 
+  &.comments {
+    height: $fafont_height_comm;
+    width: $fafont_width_comm;
+    margin: 0;
+  }
+
+  &.likes {
+    height: $fafont_height_like;
+    width: $fafont_width_like;
+    margin: 0;
+  }
+
+  &.dislike {
+    height: $fafont_height;
+    width: $fafont_width;
+    margin: 0;
+  }
+
   &.interactive {
     position: relative;
     cursor: pointer;

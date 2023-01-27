@@ -36,10 +36,8 @@ $reg_radius: 4px;
 $content_pad: 0 20px;
 $content_top_pad: 16px;
 $transition_normal: 0.25s ease-in-out;
-
-// Posts gap between
-
-$posts_gap: 1.6rem;
+$triangle_top: rotate(45deg) scale(1, 1);
+$triangle_down: rotate(45deg) scale(-1, -1);
 
 // Set default colors
 
@@ -61,6 +59,7 @@ $color: #d9d9d9 !default;
 
 $button_gap: 12px 12px;
 $button_big_gap: 12px 14px;
+$button_small_gap: 4px 12px;
 
 // Header values
 
@@ -75,6 +74,10 @@ $fafont_height_big: 21px;
 $fafont_width_big: 21px;
 $fafont_height_arrow: 12px;
 $fafont_width_arrow: 12px;
+$fafont_height_comm: 14px;
+$fafont_width_comm: 18px;
+$fafont_height_like: 15px;
+$fafont_width_like: 18px;
 
 // Form values
 
@@ -111,3 +114,20 @@ $reels_inner_pad: 10px 20px;
 $reels_title_gap: 26px;
 $reels_user_logo: 36px;
 $reels_user_gap: 8px;
+
+// Flow-range
+$flowrange_top_pad: 6.5px;
+$flowrange_marg_down: 14.5px;
+$flowrange_text_gap: 8px;
+
+// Post 
+
+$post_inn_pad: 20px;
+$posts_gap: 1.6rem;
+$post_gap: 12px;
+$post_item_gap: 12px;
+$post_author_gap: 8px;
+$post_user_logo: 36px;
+$post_action_btn_gap: 4px;
+$post_action_vote_gap: 12px;
+$post_text_height: 1.75;

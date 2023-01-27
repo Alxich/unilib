@@ -1,0 +1,90 @@
+.post-wrapper {
+  background-color: $elem_over_bg;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: $reg_radius;
+  width: 100%;
+  padding: $post_inn_pad;
+  margin-bottom: $posts_gap;
+
+  .container > div:not(:last-child),
+  & > div:not(:last-child, .container) {
+    margin-bottom: $post_item_gap;
+  }
+}
+
+.post {
+  .user-author {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+
+    .author {
+      display: flex;
+      justify-content: center;
+      flex-direction: row;
+      align-items: center;
+
+      .user-icon {
+        background: $color;
+        border-radius: 50%;
+        height: $post_user_logo;
+        width: $post_user_logo;
+        min-width: $post_user_logo;
+      }
+
+      .author-names {
+        margin-left: $post_author_gap;
+
+        .name {
+          p {
+            font-size: $p_font_size_small;
+            font-weight: 300;
+          }
+        }
+      }
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .interactions {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+
+    .lt-side {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row;
+      align-items: center;
+
+      & > div:not(:last-child) {
+        margin-right: $post_action_vote_gap;
+      }
+    }
+  }
+
+  .content {
+    .title {
+      margin-bottom: $post_item_gap;
+
+      h3 {
+        font-weight: 500;
+        margin: 0;
+      }
+    }
+
+    .text-block {
+      line-height: $post_text_height;
+    }
+  }
+}

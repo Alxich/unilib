@@ -1,0 +1,8 @@
+#content {
+    max-width: 660px;
+
+    @import "./elements/content/flow-range";
+    @import "./elements/content/newestflow";
+    @import "./elements/content/user-elem";
+    @import "./elements/content/post";
+}

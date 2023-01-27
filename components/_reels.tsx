@@ -1,6 +1,5 @@
 const Reels = () => {
-  const lengthOfReels = 5;
-  const returnReel = () => {
+  const ReturnReel = () => {
     return (
       <div className="item container flex-left">
         <div className="author-thread container flex-left flex-row">
@@ -29,11 +28,11 @@ const Reels = () => {
         <p>Наразі обговорюють</p>
       </div>
       <div className="container flex-left">
-        {returnReel()}
-        {returnReel()}
-        {returnReel()}
-        {returnReel()}
-        {returnReel()}
+        <ReturnReel />
+        <ReturnReel />
+        <ReturnReel />
+        <ReturnReel />
+        <ReturnReel />
       </div>
     </div>
   );

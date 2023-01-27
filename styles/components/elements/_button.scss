@@ -13,6 +13,10 @@
     padding: $button_big_gap;
   }
 
+  &.small {
+    padding: $button_small_gap;
+  }
+
   &.filled {
     background: $outbox_bg;
 

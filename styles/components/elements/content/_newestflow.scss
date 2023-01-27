@@ -1,0 +1,23 @@
+#newestflow {
+  .container {
+    margin-bottom: $post_gap;
+  }
+
+  .item {
+    display: inline-block;
+
+    p {
+      font-weight: 400;
+      margin: 0;
+    }
+
+    .title {
+      display: contents;
+    }
+
+    .comments {
+      display: inline-flex;
+      margin-left: $post_action_btn_gap;
+    }
+  }
+}
