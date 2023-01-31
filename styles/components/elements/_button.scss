@@ -17,6 +17,10 @@
     padding: $button_small_gap;
   }
 
+  &.full-width {
+    width: 100%;
+  }
+
   &.filled {
     background: $outbox_bg;
 

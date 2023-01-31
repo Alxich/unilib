@@ -42,14 +42,17 @@
 
     .list {
       background-color: $notif_bg;
+      align-items: flex-start;
       border-radius: $reg_radius;
       padding: $smpop_inner_gap;
       margin-bottom: -12px;
 
       p {
         font-size: $p_font_size_small;
+        text-align: left;
         cursor: pointer;
         user-select: none;
+        width: max-content;
         transition: all $transition_normal;
         margin: 0;
 

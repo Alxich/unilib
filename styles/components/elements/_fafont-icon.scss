@@ -9,6 +9,11 @@
   &.big {
     height: $fafont_height_big;
     width: $fafont_width_big;
+
+    &.cross {
+      height: $fafont_height_cross;
+      width: $fafont_width_cross;
+    }
   }
 
   &.arrow-down {

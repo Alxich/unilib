@@ -1,6 +1,8 @@
+import React from "react";
 import Head from "next/head";
 import Image from "next/image";
 import {
+  Banner,
   Content,
   Flowrange,
   Header,
@@ -11,8 +13,11 @@ import {
 } from "../components";
 
 import postImage from "../public/images/image-post.png";
+import { AuthorInfo, MoreAuthor } from "../components/elements/content";
 
 export default function Home() {
+  const [bannerActive, setBannerActive] = React.useState(false);
+
   return (
     <>
       <Head>
@@ -21,14 +26,16 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header />
+      <Header setBannerActive={setBannerActive} />
       <main className={"main"}>
         <div className="container main-content flex-row flex-space">
           <Sidebar />
           <Content>
-            <Flowrange />
-            <Newestflow />
-            <div className="posts-container container">
+            {/* <Flowrange />
+            <Newestflow /> */}
+            {/* <AuthorInfo />
+            <MoreAuthor /> */}
+            {/* <div className="posts-container container">
               <Post
                 group="Научпоп"
                 name="Кирило Туров"
@@ -119,11 +126,12 @@ export default function Home() {
                 (у місті не продаються). Всі препарати готував сам, вибачте за
                 якість, згодом буде краще.
               </Post>
-            </div>
+            </div> */}
           </Content>
           <Reels />
         </div>
       </main>
+      <Banner bannerActive={bannerActive} setBannerActive={setBannerActive} />
       <footer className={"colophon"}></footer>
     </>
   );

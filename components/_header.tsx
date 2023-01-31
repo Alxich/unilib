@@ -4,7 +4,11 @@ import { faPlus, faBell } from "@fortawesome/free-solid-svg-icons";
 
 import { Button, Notification } from "./elements";
 
-const Header = (): ReactElement => {
+const Header = ({
+  setBannerActive,
+}: {
+  setBannerActive: any;
+}): ReactElement => {
   const [activeNotify, setActiveNotfiy] = React.useState(false);
 
   return (
@@ -34,7 +38,9 @@ const Header = (): ReactElement => {
             />
             <Notification activeElem={activeNotify} />
           </div>
-          <Button filled>Увійти</Button>
+          <Button filled onClick={() => setBannerActive(true)}>
+            Увійти
+          </Button>
         </div>
       </div>
     </header>

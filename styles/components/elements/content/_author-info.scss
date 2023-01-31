@@ -1,0 +1,128 @@
+#author-info {
+  border-radius: $reg_radius;
+  margin-bottom: $posts_gap;
+
+  .banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    border-radius: $reg_radius $reg_radius 0 0;
+    overflow: hidden;
+
+    img {
+      object-fit: cover;
+    }
+  }
+
+  .info {
+    border-radius: 0 0 $reg_radius $reg_radius;
+    margin: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+
+    .icon {
+      position: relative;
+      background: $color;
+      width: 80px;
+      height: 80px;
+      border: 3px solid $active_elem;
+      border-radius: 50%;
+      margin-top: -40px;
+    }
+
+    .disription > *,
+    .name > * {
+      margin: 0;
+    }
+
+    .disription {
+      p {
+        font-weight: 400;
+      }
+    }
+
+    .author-counters {
+      .item {
+        display: flex;
+        justify-content: center;
+        flex-direction: row;
+        align-items: center;
+
+        .count {
+          p {
+            font-weight: 700;
+          }
+          margin-right: 3px;
+        }
+
+        .title > * {
+          font-weight: 400;
+        }
+
+        p {
+          margin: 0;
+        }
+      }
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row;
+      align-items: flex-end;
+      width: 100%;
+      padding-top: 10px;
+
+      .list-of-actions {
+        display: flex;
+        justify-content: center;
+        flex-direction: row;
+        align-items: center;
+
+        .item {
+          border-bottom: 2px solid $border_action;
+          padding: 0 10px 10px 10px;
+          transition: all $transition_normal;
+          cursor: pointer;
+
+          &.active,
+          &:hover {
+            border-bottom-color: $active_elem;
+          }
+
+          &:not(:last-child) {
+            margin-right: 15px;
+          }
+
+          p {
+            margin: 0;
+          }
+        }
+      }
+
+      .filter {
+        position: relative;
+        margin-bottom: 10px;
+
+        .triangle {
+          margin-bottom: 0;
+        }
+
+        .wrapper {
+          top: 20px;
+          right: -8px;
+          bottom: auto;
+
+          .list p {
+            font-size: $p_font_size;
+
+            &:not(:last-child) {
+              margin-bottom: 8px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

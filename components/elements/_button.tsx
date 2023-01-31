@@ -3,12 +3,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 
 interface buttonProps {
-  onClick?: Function;
+  onClick?: () => void;
   className?: string;
   outline?: boolean;
   filled?: boolean;
+  form?: boolean;
   small?: boolean;
   big?: boolean;
+  fullWidth?: boolean;
   iconIncluded?: boolean;
   iconName?: any;
   children: never[] | any;
@@ -19,15 +21,17 @@ const Button = ({
   className,
   outline,
   filled,
+  form,
   small,
   big,
+  fullWidth,
   iconIncluded,
   iconName,
   children,
 }: buttonProps): ReactElement => {
   return (
     <button
-      onClick={() => onClick}
+      onClick={onClick}
       className={classNames("button", {
         "awesome-icon": iconIncluded,
         filled: filled,
@@ -35,6 +39,8 @@ const Button = ({
         small: small,
         big: big,
         className,
+        form: form,
+        "full-width": fullWidth,
       })}
     >
       {iconIncluded && (
