@@ -12,6 +12,8 @@ interface PostTypes {
   name: string;
   time: string;
   title: string;
+  tags: string[];
+  viewsCount: number;
   likesCount: number;
   commentsCount: number;
   children: any;
@@ -22,8 +24,10 @@ const PostPage = ({
   name,
   time,
   title,
+  tags,
   likesCount,
   commentsCount,
+  viewsCount,
   children,
 }: PostTypes) => {
   return (
@@ -53,6 +57,25 @@ const PostPage = ({
         </div>
         <div className="text-block">{children}</div>
       </div>
+      <div className="add-info">
+        <div className="lt-side">
+          <div className="hashtags">
+            {tags.map((item, i) => {
+              return <p key={`${item}__${i}`}>{item}</p>;
+            })}
+          </div>
+        </div>
+        <div className="rt-side">
+          <div className="counters">
+            <div className="views">
+              <p>{viewsCount} Переглядів</p>
+            </div>
+            <div className="comments">
+              <p>{commentsCount} Коментарів</p>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="interactions">
         <div className="lt-side">
           <div className="likes">
@@ -66,24 +89,16 @@ const PostPage = ({
               <p>{likesCount}</p>
             </div>
           </div>
-          <div className="comments">
-            <div className="fafont-icon comments">
-              <FontAwesomeIcon
-                icon={faComments}
-                style={{ width: "100%", height: "100%", color: "inherit" }}
-              />
-            </div>
-            <div className="counter">
-              <p>{commentsCount}</p>
-            </div>
-          </div>
-        </div>
-        <div className="rt-side">
           <div className="fafont-icon dislike">
             <FontAwesomeIcon
               icon={faThumbsDown}
               style={{ width: "100%", height: "100%", color: "inherit" }}
             />
+          </div>
+        </div>
+        <div className="rt-side">
+          <div className="complain item interactive">
+            <p>Поскаржитися</p>
           </div>
         </div>
       </div>
