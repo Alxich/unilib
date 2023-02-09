@@ -9,13 +9,20 @@
   padding: $post_inn_pad;
   margin-bottom: $posts_gap;
 
-  .container > div:not(:last-child),
-  & > div:not(:last-child, .container) {
+  .container > div:not(:last-child, .notification *),
+  & > div:not(:last-child, .container, .notification *) {
     margin-bottom: $post_item_gap;
   }
 }
 
 .post {
+
+  &.fail-page {
+    .interactions, .name {
+      display: none;
+    }
+  }
+
   .user-author {
     display: flex;
     justify-content: space-between;

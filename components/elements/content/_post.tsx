@@ -6,12 +6,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import Button from "../_button";
+import classNames from "classnames";
 
 interface PostTypes {
   group: string;
   name: string;
   time: string;
   title: string;
+  isFailPage?: boolean;
   likesCount: number;
   commentsCount: number;
   children: any;
@@ -24,10 +26,15 @@ const Post = ({
   title,
   likesCount,
   commentsCount,
+  isFailPage,
   children,
 }: PostTypes) => {
   return (
-    <div className="post post-wrapper">
+    <div
+      className={classNames("post post-wrapper", {
+        "fail-page": isFailPage,
+      })}
+    >
       <div className="user-author">
         <div className="author">
           <div className="user-icon"></div>

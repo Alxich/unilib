@@ -114,10 +114,42 @@
 
             &:hover {
               color: $active_elem;
+
+              & > div {
+                color: inherit;
+              }
             }
 
             &:not(:last-child) {
               margin-right: 8px;
+            }
+          }
+
+          .complain {
+            position: relative;
+
+            .notification {
+              z-index: 1;
+              top: 15px;
+              right: auto;
+              left: 3px;
+
+              .triangle {
+                margin: 0 auto 0 9px;
+              }
+
+              .item {
+                margin-bottom: 5px;
+                padding: 0;
+
+                .user-ico {
+                  margin-bottom: 0;
+                }
+
+                .content {
+                  margin-left: 0;
+                }
+              }
             }
           }
 
@@ -140,6 +172,11 @@
           }
         }
       }
+
+      .comment {
+        margin-top: 20px;
+        margin-bottom: 0;
+      }
     }
 
     .comments-to-item {
@@ -148,6 +185,10 @@
 
       .item {
         margin-bottom: 0;
+
+        .main-content {
+          margin-bottom: 0;
+        }
 
         &:not(:last-child) {
           padding-bottom: 20px;
