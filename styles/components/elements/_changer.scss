@@ -32,7 +32,7 @@
     .triangle {
       position: relative;
       background: $notif_bg;
-      border-radius: 3px 0px 0px 0px;
+      border-radius: $triangle;
       top: 6px;
       width: 12px;
       height: 10px;

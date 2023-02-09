@@ -15,7 +15,7 @@
     cursor: pointer;
 
     &:not(:last-child) {
-      margin-bottom: 16px;
+      margin-bottom: $reels_items_gap;
     }
 
     .author-thread {

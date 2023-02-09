@@ -39,9 +39,9 @@
       .user-icon {
         background: $color;
         border-radius: 50%;
-        height: $post_user_logo;
-        width: $post_user_logo;
-        min-width: $post_user_logo;
+        height: $user_icon_small;
+        width: $user_icon_small;
+        min-width: $user_icon_small;
         cursor: pointer;
       }
 

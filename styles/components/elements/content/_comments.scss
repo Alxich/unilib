@@ -14,7 +14,7 @@
 
     .count {
       color: $active_elem;
-      margin-left: 8px;
+      margin-left: $post_add_info_gap;
 
       p {
         font-size: $p_font_size;
@@ -23,20 +23,20 @@
   }
 
   .comment {
-    margin-bottom: 20px;
+    margin-bottom: $post_inn_pad;
   }
 
   .item {
-    padding-top: 10px;
-    margin-bottom: 20px;
+    padding-top: $comm_item_pad;
+    margin-bottom: $post_inn_pad;
 
     & > div:not(:last-child) {
-      margin-bottom: 20px;
+      margin-bottom: $post_inn_pad;
     }
 
     .main-content {
       & > div:not(:last-child) {
-        margin-bottom: 10px;
+        margin-bottom: $comm_item_pad;
       }
 
       .user-author {
@@ -55,9 +55,9 @@
           .user-icon {
             background: $color;
             border-radius: 50%;
-            height: $post_user_logo;
-            width: $post_user_logo;
-            min-width: $post_user_logo;
+            height: $user_icon_small;
+            width: $user_icon_small;
+            min-width: $user_icon_small;
             cursor: pointer;
           }
 
@@ -86,7 +86,7 @@
           margin: 0;
 
           &:not(:last-child) {
-            margin-bottom: 10px;
+            margin-bottom: $comm_item_pad;
           }
         }
       }
@@ -121,7 +121,7 @@
             }
 
             &:not(:last-child) {
-              margin-right: 8px;
+              margin-right: $post_add_info_gap;
             }
           }
 
@@ -139,7 +139,7 @@
               }
 
               .item {
-                margin-bottom: 5px;
+                margin-bottom: $notif_item_mrg;
                 padding: 0;
 
                 .user-ico {
@@ -159,7 +159,7 @@
             align-items: center;
 
             p {
-              margin-right: 3px;
+              margin-right: $comm_add_info_gap;
             }
 
             .fafont-icon {
@@ -174,13 +174,13 @@
       }
 
       .comment {
-        margin-top: 20px;
+        margin-top: $post_inn_pad;
         margin-bottom: 0;
       }
     }
 
     .comments-to-item {
-      padding: 0 0 0 25px;
+      padding:$comm_container_pad;
       border-left: 1px solid $light_border;
 
       .item {
@@ -191,11 +191,11 @@
         }
 
         &:not(:last-child) {
-          padding-bottom: 20px;
+          padding-bottom: $post_inn_pad;
         }
 
         &:last-child {
-          padding-bottom: 10px;
+          padding-bottom: $comm_item_pad;
         }
       }
     }

@@ -20,24 +20,24 @@
     }
 
     .list {
-        padding-right: 55px;
+        padding-right: $list_inner_pad;
 
         .item {
             display: flex;
             justify-content: flex-start;
             flex-direction: row;
             align-items: center;
-            border-bottom: 2px solid $light_border;
-            height: 50px;
-            width: calc(50% - 12.5px);
+            border-bottom: $list_item_border;
+            height: $list_item_height;
+            width: calc(50% - $list_items_gap_btw);
             padding-bottom: 5px;
 
             .icon {
                 background: $color;
                 border-radius: 50%;
-                height: 36px;
-                width: 36px;
-                margin-right: 8px;
+                height: $user_icon_small;
+                width: $user_icon_small;
+                margin-right: list_add_info_gap;
             }
 
             .name {
@@ -48,7 +48,7 @@
 
             .button {
                 margin-left: auto;
-                padding: 8px;
+                padding: $list_add_info_gap;
             }
         }
     }
@@ -59,7 +59,7 @@
         flex-direction: row;
         align-items: center;
         width: 100%;
-        padding-top: 8px;
+        padding-top: $list_add_info_gap;
 
         p {
             transition: all $transition_normal;

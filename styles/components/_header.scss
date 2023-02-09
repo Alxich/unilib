@@ -17,11 +17,7 @@
     user-select: none;
 
     p {
-      font-family: "Tourney";
-      font-weight: 400;
-      font-size: 2rem;
-      line-height: 1.2;
-      margin: 0;
+      @include logo;
     }
   }
 
@@ -34,7 +30,7 @@
   .user-action {
     &.not-logged {
       .fafont-icon {
-        margin-right: 15px;
+        margin-right: $header_user_action_gap;
       }
     }
   }
