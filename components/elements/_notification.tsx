@@ -1,12 +1,22 @@
 import Image from "next/image";
 import classNames from "classnames";
 
-const Notification = ({ activeElem }: { activeElem: boolean }) => {
+interface types {
+  items: {
+    title: string;
+    text: string;
+  }[];
+  activeElem: boolean;
+  type: string;
+}
+
+const Notification = ({ items, activeElem, type }: types) => {
   return (
     <div
       className={classNames("notification container flex-right", {
         active: activeElem,
         hidden: activeElem !== true,
+        "is-complain": type === "complain",
       })}
     >
       <div className="triangle"></div>
@@ -16,48 +26,37 @@ const Notification = ({ activeElem }: { activeElem: boolean }) => {
             <h6>Усі повідомлення</h6>
           </div>
           <div className="actions container flex-center flex-row width-auto">
+            {type != "complain" && (
+              <div className="item">
+                <p>Відкрити усі</p>
+              </div>
+            )}
             <div className="item">
-              <p>Відкрити усі</p>
-            </div>
-            <div className="item">
-              <p>Очистити</p>
+              {type != "complain" ? <p>Очистити</p> : <p>Закрити</p>}
             </div>
           </div>
         </div>
         <div className="main container flex-left">
-          <div className="item container flex-left flex-row">
-            <div className="user-ico"></div>
-            <div className="content container width-auto">
-              <div className="title">
-                <p>Шлях новачка у мікробіології: Купив ...</p>
+          {items?.map((item, i) => {
+            const { title, text } = item;
+
+            return (
+              <div
+                className="item container flex-left flex-row"
+                key={`${item}__${i}`}
+              >
+                {type != "complain" && <div className="user-ico"></div>}
+                <div className="content container width-auto">
+                  <div className="title">
+                    <p>{title}</p>
+                  </div>
+                  <div className="text">
+                    <p>{text}</p>
+                  </div>
+                </div>
               </div>
-              <div className="text">
-                <p>Ви отримали новий коментар у вашому пості ...</p>
-              </div>
-            </div>
-          </div>
-          <div className="item container flex-left flex-row">
-            <div className="user-ico"></div>
-            <div className="content container width-auto">
-              <div className="title">
-                <p>Шлях новачка у мікробіології: Купив ...</p>
-              </div>
-              <div className="text">
-                <p>Ви отримали новий коментар у вашому пості ...</p>
-              </div>
-            </div>
-          </div>
-          <div className="item container flex-left flex-row">
-            <div className="user-ico"></div>
-            <div className="content container width-auto">
-              <div className="title">
-                <p>Шлях новачка у мікробіології: Купив ...</p>
-              </div>
-              <div className="text">
-                <p>Ви отримали новий коментар у вашому пості ...</p>
-              </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -8,6 +8,26 @@ import {
 import Notification from "../_notification";
 
 const Comments = () => {
+
+  const complainItems = [
+    {
+      title: "Скарга за копірайт",
+      text: "Якщо цей автор скопіював ваш коментар чи пост.",
+    },
+    {
+      title: "Скарга за контент",
+      text: "Якщо цей автор поширує невідповідний контент як NSFW і тд.",
+    },
+    {
+      title: "Скарга на лексику",
+      text: "Якщо автор використовує ненормативну лексику (Не у тему чи у вашу сторону).",
+    },
+    {
+      title: "Домагання чи будь-що що може вам нашкодити",
+      text: "Автор вам погрожує чи дає натяки на насилля над вами.",
+    },
+  ];
+
   return (
     <div id="comments" className="post-wrapper container">
       <div className="title">
@@ -141,7 +161,11 @@ const Comments = () => {
                     </div>
                     <div className="complain">
                       <p>Поскаржитися</p>
-                      <Notification activeElem={true} />
+                      <Notification
+                        activeElem={true}
+                        type={"complain"}
+                        items={complainItems}
+                      />
                     </div>
                     <div className="answer-count">
                       <p>3 Відповідь</p>

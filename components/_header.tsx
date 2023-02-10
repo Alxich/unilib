@@ -10,6 +10,20 @@ const Header = ({
   setBannerActive: any;
 }): ReactElement => {
   const [activeNotify, setActiveNotfiy] = React.useState(false);
+  const notifyItems = [
+    {
+      title: "Шлях новачка у  мікробіології: Купив мік ...",
+      text: "Ви отримали новий коментар у вашому пості ...",
+    },
+    {
+      title: "Шлях новачка у  мікробіології: Купив мік ...",
+      text: "Вам відповіли у вашому коментарі...",
+    },
+    {
+      title: "Вам відправили запрос у друзі",
+      text: "Кирилло Туров хоче вас бачити серед своїх друзів",
+    },
+  ];
 
   return (
     <header className="masthead">
@@ -36,7 +50,11 @@ const Header = ({
               icon={faBell}
               style={{ width: "100%", height: "100%", color: "inherit" }}
             />
-            <Notification activeElem={activeNotify} />
+            <Notification
+              activeElem={activeNotify}
+              type={"notification"}
+              items={notifyItems}
+            />
           </div>
           <Button filled onClick={() => setBannerActive(true)}>
             Увійти

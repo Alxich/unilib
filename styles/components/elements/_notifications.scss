@@ -93,12 +93,15 @@
         }
 
         .content {
+          line-height: 1.2;
+
           & > div > p {
             margin: 0;
           }
 
           & > div {
             width: 100%;
+            line-height: 1.45;
           }
 
           .text > p {

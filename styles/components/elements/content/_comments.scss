@@ -112,8 +112,14 @@
             transition: all $transition_normal;
             cursor: pointer;
 
+            p {
+              transition: all $transition_normal;
+            }
+
             &:hover {
-              color: $active_elem;
+              & > p {
+                color: $active_elem;
+              }
 
               & > div {
                 color: inherit;
@@ -180,7 +186,7 @@
     }
 
     .comments-to-item {
-      padding:$comm_container_pad;
+      padding: $comm_container_pad;
       border-left: 1px solid $light_border;
 
       .item {
