@@ -28,6 +28,86 @@ const Comments = () => {
     },
   ];
 
+  const commentArray = [
+    {
+      author: {
+        name: "Andrey Noice",
+        time: "9 січня 12:31",
+      },
+      likes: 9,
+      dislike: 2,
+      content: [
+        <>
+          <p>
+            Не знаю, це все начебто обіцялося як ексклюзив для тих, хто
+            підтримав краудфандингову кампанію. Спробуйте написати організаторам
+            із посилання на пост, може у них буде щось із бонусів продаватися в
+            роздріб.
+          </p>
+        </>,
+      ],
+      answers: [
+        {
+          author: {
+            name: "Andrey Noice",
+            time: "9 січня 12:31",
+          },
+          likes: 9,
+          dislike: 2,
+          content: [
+            <>
+              <p>
+                Не знаю, це все начебто обіцялося як ексклюзив для тих, хто
+                підтримав краудфандингову кампанію. Спробуйте написати
+                організаторам із посилання на пост, може у них буде щось із
+                бонусів продаватися в роздріб.
+              </p>
+            </>,
+          ],
+          answers: [],
+        },
+        {
+          author: {
+            name: "Andrey Noice",
+            time: "9 січня 12:31",
+          },
+          likes: 9,
+          dislike: 2,
+          content: [
+            <>
+              <p>
+                Не знаю, це все начебто обіцялося як ексклюзив для тих, хто
+                підтримав краудфандингову кампанію. Спробуйте написати
+                організаторам із посилання на пост, може у них буде щось із
+                бонусів продаватися в роздріб.
+              </p>
+            </>,
+          ],
+          answers: [],
+        },
+      ],
+    },
+    {
+      author: {
+        name: "Andrey Noice",
+        time: "9 січня 12:31",
+      },
+      likes: 9,
+      dislike: 2,
+      content: [
+        <>
+          <p>
+            Не знаю, це все начебто обіцялося як ексклюзив для тих, хто
+            підтримав краудфандингову кампанію. Спробуйте написати організаторам
+            із посилання на пост, може у них буде щось із бонусів продаватися в
+            роздріб.
+          </p>
+        </>,
+      ],
+      answers: [],
+    },
+  ];
+
   return (
     <div id="comments" className="post-wrapper container">
       <div className="title">
@@ -46,198 +126,25 @@ const Comments = () => {
         </button>
       </form>
       <div className="container comments-flow">
-        <div className="item">
-          <div className="main-content">
-            <div className="user-author">
-              <div className="author">
-                <div className="user-icon"></div>
-                <div className="author-names">
-                  <div className="name">
-                    <p>Andrey Noice</p>
-                  </div>
-                  <div className="time">
-                    <p>9 січня 12:31</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="content">
-              <p>
-                Не знаю, це все начебто обіцялося як ексклюзив для тих, хто
-                підтримав краудфандингову кампанію. Спробуйте написати
-                організаторам із посилання на пост, може у них буде щось із
-                бонусів продаватися в роздріб.
-              </p>
-            </div>
-            <div className="interactions">
-              <div className="lt-side">
-                <div className="answer">
-                  <p>Відповісти</p>
-                  <div className="fafont-icon arrow-down">
-                    <FontAwesomeIcon
-                      icon={faChevronDown}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        color: "inherit",
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="complain">
-                  <p>Поскаржитися</p>
-                </div>
-                <div className="answer-count">
-                  <p>3 Відповідь</p>
-                </div>
-              </div>
-              <div className="rt-side">
-                <div className="heart">
-                  <div className="fafont-icon heart">
-                    <FontAwesomeIcon
-                      icon={faHeart}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        color: "inherit",
-                      }}
-                    />
-                  </div>
-                  <div className="counter">
-                    <p>3</p>
-                  </div>
-                </div>
-                <div className="fafont-icon dislike">
-                  <FontAwesomeIcon
-                    icon={faThumbsDown}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      color: "inherit",
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="comments-to-item">
-            <div className="item">
+        {commentArray.map((item, i) => {
+          const { author, likes, content, answers } = item;
+          return (
+            <div className="item" key={`${item}__${i}`}>
               <div className="main-content">
                 <div className="user-author">
                   <div className="author">
                     <div className="user-icon"></div>
                     <div className="author-names">
                       <div className="name">
-                        <p>Andrey Noice</p>
+                        <p>{author.name}</p>
                       </div>
                       <div className="time">
-                        <p>9 січня 12:31</p>
+                        <p>{author.time}</p>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="content">
-                  <p>
-                    Не знаю, це все начебто обіцялося як ексклюзив для тих, хто
-                    підтримав краудфандингову кампанію. Спробуйте написати
-                    організаторам із посилання на пост, може у них буде щось із
-                    бонусів продаватися в роздріб.
-                  </p>
-                </div>
-                <div className="interactions">
-                  <div className="lt-side">
-                    <div className="answer">
-                      <p>Відповісти</p>
-                      <div className="fafont-icon arrow-down">
-                        <FontAwesomeIcon
-                          icon={faChevronDown}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            color: "inherit",
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="complain">
-                      <p>Поскаржитися</p>
-                      <Notification
-                        activeElem={true}
-                        type={"complain"}
-                        items={complainItems}
-                      />
-                    </div>
-                    <div className="answer-count">
-                      <p>3 Відповідь</p>
-                    </div>
-                  </div>
-                  <div className="rt-side">
-                    <div className="heart">
-                      <div className="fafont-icon heart">
-                        <FontAwesomeIcon
-                          icon={faHeart}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            color: "inherit",
-                          }}
-                        />
-                      </div>
-                      <div className="counter">
-                        <p>3</p>
-                      </div>
-                    </div>
-                    <div className="fafont-icon dislike">
-                      <FontAwesomeIcon
-                        icon={faThumbsDown}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          color: "inherit",
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <form className="comment">
-                  <textarea placeholder="Написати свій коментар ..." />
-                  <button className="fafont-icon image post-image">
-                    <FontAwesomeIcon
-                      icon={faImages}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        color: "inherit",
-                      }}
-                    />
-                  </button>
-                </form>
-              </div>
-              <div className="comments-to-item"></div>
-            </div>
-            <div className="item">
-              <div className="main-content">
-                <div className="user-author">
-                  <div className="author">
-                    <div className="user-icon"></div>
-                    <div className="author-names">
-                      <div className="name">
-                        <p>Andrey Noice</p>
-                      </div>
-                      <div className="time">
-                        <p>9 січня 12:31</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="content">
-                  <p>
-                    Не знаю, це все начебто обіцялося як ексклюзив для тих, хто
-                    підтримав краудфандингову кампанію. Спробуйте написати
-                    організаторам із посилання на пост, може у них буде щось із
-                    бонусів продаватися в роздріб.
-                  </p>
-                </div>
+                <div className="content">{content}</div>
                 <div className="interactions">
                   <div className="lt-side">
                     <div className="answer">
@@ -256,9 +163,11 @@ const Comments = () => {
                     <div className="complain">
                       <p>Поскаржитися</p>
                     </div>
-                    <div className="answer-count">
-                      <p>3 Відповідь</p>
-                    </div>
+                    {answers && (
+                      <div className="answer-count">
+                        <p>{answers.length} Відповідь</p>
+                      </div>
+                    )}
                   </div>
                   <div className="rt-side">
                     <div className="heart">
@@ -273,7 +182,7 @@ const Comments = () => {
                         />
                       </div>
                       <div className="counter">
-                        <p>3</p>
+                        <p>{likes}</p>
                       </div>
                     </div>
                     <div className="fafont-icon dislike">
@@ -289,10 +198,88 @@ const Comments = () => {
                   </div>
                 </div>
               </div>
-              <div className="comments-to-item"></div>
+              {answers.length > 0 && (
+                <div className="comments-to-item">
+                  {answers.map((item, i) => {
+                    const { author, likes, content, answers } = item;
+                    return (
+                      <div className="item" key={`${item}__${i}`}>
+                        <div className="main-content">
+                          <div className="user-author">
+                            <div className="author">
+                              <div className="user-icon"></div>
+                              <div className="author-names">
+                                <div className="name">
+                                  <p>{author.name}</p>
+                                </div>
+                                <div className="time">
+                                  <p>{author.time}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="content">{content}</div>
+                          <div className="interactions">
+                            <div className="lt-side">
+                              <div className="answer">
+                                <p>Відповісти</p>
+                                <div className="fafont-icon arrow-down">
+                                  <FontAwesomeIcon
+                                    icon={faChevronDown}
+                                    style={{
+                                      width: "100%",
+                                      height: "100%",
+                                      color: "inherit",
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                              <div className="complain">
+                                <p>Поскаржитися</p>
+                              </div>
+                              {answers && (
+                                <div className="answer-count">
+                                  <p>{answers.length} Відповідь</p>
+                                </div>
+                              )}
+                            </div>
+                            <div className="rt-side">
+                              <div className="heart">
+                                <div className="fafont-icon heart">
+                                  <FontAwesomeIcon
+                                    icon={faHeart}
+                                    style={{
+                                      width: "100%",
+                                      height: "100%",
+                                      color: "inherit",
+                                    }}
+                                  />
+                                </div>
+                                <div className="counter">
+                                  <p>{likes}</p>
+                                </div>
+                              </div>
+                              <div className="fafont-icon dislike">
+                                <FontAwesomeIcon
+                                  icon={faThumbsDown}
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    color: "inherit",
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-          </div>
-        </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -71,6 +71,10 @@
     align-items: center;
     width: 100%;
 
+    p {
+      margin: 0;
+    }
+
     .lt-side {
       display: flex;
       justify-content: space-between;
@@ -123,15 +127,33 @@
     }
 
     .hashtags {
+      p {
+        transition: all $transition_normal;
+        cursor: pointer;
+
+        &:hover {
+          color: $active_elem
+        }
+      }
+
       p:not(:last-child) {
         margin-right: $post_hash_gap;
       }
     }
+
     .counters {
+      p {
+        cursor: auto;
+      }
+
       div:not(:last-child) {
         margin-right: $post_add_info_gap;
       }
     }
+  }
+
+  .interactions {
+    padding-top: $post_interact_pad_top;
   }
 
   .content {

@@ -31,6 +31,14 @@ const AuthorInfo = () => {
               <p>стежувачів</p>
             </div>
           </div>
+          <div className="item">
+            <div className="count">
+              <p>110</p>
+            </div>
+            <div className="title">
+              <p>стежує</p>
+            </div>
+          </div>
         </div>
         <div className="actions">
           <div className="list-of-actions">

@@ -9,6 +9,7 @@
       align-items: center;
 
       h3 {
+        font-weight: 500;
         margin: 0;
       }
 
@@ -31,13 +32,14 @@
             height: $list_item_height;
             width: calc(50% - $list_items_gap_btw);
             padding-bottom: 5px;
+            margin-bottom:  $post_item_gap;
 
             .icon {
                 background: $color;
                 border-radius: 50%;
                 height: $user_icon_small;
                 width: $user_icon_small;
-                margin-right: list_add_info_gap;
+                margin-right: $list_add_info_gap;
             }
 
             .name {
@@ -63,6 +65,7 @@
 
         p {
             transition: all $transition_normal;
+            cursor: pointer;
             margin: 0;
 
             &:hover {
