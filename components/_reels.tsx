@@ -1,38 +1,74 @@
 const Reels = () => {
-  const ReturnReel = () => {
+  interface types {
+    nickname: string;
+    thematic: string;
+    content: string;
+  }
+  const reelsArray = [
+    {
+      nickname: "SonyToxicBoyDea…",
+      thematic: "Покупка Resident evi…",
+      content:
+        "Це ніяк не змінює того факту, що про це не згадано навіть. Терпіти не можу подібне маркеті ...",
+    },
+    {
+      nickname: "SonyToxicBoyDea…",
+      thematic: "Покупка Resident evi…",
+      content:
+        "Це ніяк не змінює того факту, що про це не згадано навіть. Терпіти не можу подібне маркеті ...",
+    },
+    {
+      nickname: "SonyToxicBoyDea…",
+      thematic: "Покупка Resident evi…",
+      content:
+        "Це ніяк не змінює того факту, що про це не згадано навіть. Терпіти не можу подібне маркеті ...",
+    },
+    {
+      nickname: "SonyToxicBoyDea…",
+      thematic: "Покупка Resident evi…",
+      content:
+        "Це ніяк не змінює того факту, що про це не згадано навіть. Терпіти не можу подібне маркеті ...",
+    },
+  ];
+
+  const ReturnReel = ({ nickname, thematic, content }: types) => {
     return (
       <div className="item container flex-left">
         <div className="author-thread container flex-left flex-row">
           <div className="icon"></div>
           <div className="info container flex-left">
             <div className="nickname">
-              <p>SonyToxicBoyDea…</p>
+              <p>{nickname}</p>
             </div>
             <div className="thematic">
-              <p>Покупка Resident evi…</p>
+              <p>{thematic}</p>
             </div>
           </div>
         </div>
         <div className="text-block">
-          <p>
-            Це ніяк не змінює того факту, що про це не згадано навіть. Терпіти
-            не можу подібне маркеті ...
-          </p>
+          <p>{content}</p>
         </div>
       </div>
     );
   };
+
   return (
     <div id="reels" className="container flex-left to-right full-height">
       <div className="title">
         <p>Наразі обговорюють</p>
       </div>
       <div className="container flex-left">
-        <ReturnReel />
-        <ReturnReel />
-        <ReturnReel />
-        <ReturnReel />
-        <ReturnReel />
+        {reelsArray.map((item, i) => {
+          const { nickname, thematic, content } = item;
+          return (
+            <ReturnReel
+              key={`${item}__${i}`}
+              nickname={nickname}
+              thematic={thematic}
+              content={content}
+            />
+          );
+        })}
       </div>
     </div>
   );
