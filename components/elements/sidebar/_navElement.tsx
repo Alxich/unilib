@@ -1,13 +1,15 @@
 import { ReactElement } from "react";
+import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import classNames from "classnames";
 import Image from "next/image";
+import Link from "next/link";
 
 interface buttonProps {
   icon?: any;
   title?: string;
   iconTypeImage?: boolean;
   iconTypeFaFont?: boolean;
+  link: string;
 }
 
 const NavElement = ({
@@ -15,9 +17,25 @@ const NavElement = ({
   title,
   iconTypeImage,
   iconTypeFaFont,
+  link,
 }: buttonProps): ReactElement => {
+  const router = useRouter();
+
+  const scroolToTop = (e: any, link: string) => {
+    if (router.pathname === "/" && link === "/") {
+      e.preventDefault();
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
-    <li key={`${title}__${icon}`} className="item container flex-row flex-left">
+    <Link
+      href={link != "/" ? "/" + link : link}
+      key={`${title}__${icon}`}
+      className="item container flex-row flex-left"
+      onClick={(e) => scroolToTop(e, link)}
+    >
       <div className="fafont-icon big interactive">
         {iconTypeFaFont ? (
           <FontAwesomeIcon
@@ -33,7 +51,7 @@ const NavElement = ({
       <div className="title">
         <p>{title}</p>
       </div>
-    </li>
+    </Link>
   );
 };
 

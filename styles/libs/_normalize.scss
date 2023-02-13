@@ -112,6 +112,7 @@ html {
   color: $color;
   -webkit-text-size-adjust: 100%; // 2
   -ms-text-size-adjust: 100%; // 2
+  scroll-behavior: smooth;
 }
 
 // Addresses font-family inconsistency between 'textarea' and other form elements.
@@ -160,7 +161,7 @@ a {
   // 2
 
   &:focus {
-    outline: thin dotted;
+    outline: none;
   }
 
   // 3
@@ -169,6 +170,14 @@ a {
   &:active {
     outline: 0;
   }
+
+  // 4 
+
+  text-decoration: none;
+
+  // 5
+
+  color: $color;
 }
 
 // =============================================================================

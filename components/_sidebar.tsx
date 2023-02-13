@@ -23,87 +23,103 @@ const Sidebar: FC = () => {
   const [openAllFandom, setOpenAllFandom] = React.useState(false);
   const [openAllThemes, setOpenAllThemes] = React.useState(false);
 
-  const listOfNavUser: { icon: any; title: string }[] = [
+  const listOfNavUser: { icon: any; title: string; link: string }[] = [
     {
       icon: faFire,
       title: "Популярне",
+      link: "/",
     },
     {
       icon: faClock,
       title: "Нове у треді",
+      link: "new",
     },
     {
       icon: faNewspaper,
       title: "Моя стрічка",
+      link: "myflow",
     },
   ];
 
   // List of usual nav categories
 
-  const listOfNavUsual: { icon: any; title: string }[] = [
+  const listOfNavUsual: { icon: any; title: string; link: string }[] = [
     {
       icon: rdr2,
       title: "Ігри",
+      link: "games",
     },
     {
       icon: gamedev,
       title: "Gamedev",
+      link: "gamedev",
     },
     {
       icon: components,
       title: "Залізо",
+      link: "components",
     },
     {
       icon: cinima,
       title: "Кіно та серіали",
+      link: "cinema",
     },
     {
       icon: industries,
       title: "Промисловість",
+      link: "industries",
     },
     {
       icon: life,
       title: "Життя",
+      link: "life",
     },
     {
       icon: rdr2,
       title: "Ігри",
+      link: "games",
     },
     {
       icon: gamedev,
       title: "Gamedev",
+      link: "gamedev",
     },
     {
       icon: components,
       title: "Залізо",
+      link: "components",
     },
     {
       icon: cinima,
       title: "Кіно та серіали",
+      link: "cinema",
     },
     {
       icon: industries,
       title: "Промисловість",
+      link: "industries",
     },
     {
       icon: life,
       title: "Життя",
+      link: "life",
     },
   ];
 
   return (
     <div id="sidebar" className="container full-height flex-left to-left">
-      <ul className="nav-user nav">
+      <div className="nav-user nav">
         {listOfNavUser.map((item, i) => (
           <NavElement
             key={`${item}__${i}`}
             iconTypeFaFont
             icon={item.icon}
             title={item.title}
+            link={item.link}
           />
         ))}
-      </ul>
-      <ul className="nav-usual nav">
+      </div>
+      <div className="nav-usual nav">
         {listOfNavUsual.map((item, i) =>
           openAllFandom ? (
             <NavElement
@@ -111,6 +127,7 @@ const Sidebar: FC = () => {
               iconTypeImage
               icon={item.icon}
               title={item.title}
+              link={item.link}
             />
           ) : (
             i <= fandomsLengthBefore && (
@@ -119,11 +136,12 @@ const Sidebar: FC = () => {
                 iconTypeImage
                 icon={item.icon}
                 title={item.title}
+                link={item.link}
               />
             )
           )
         )}
-        <li
+        <div
           className={classNames("open", {
             active: openAllFandom,
           })}
@@ -138,8 +156,8 @@ const Sidebar: FC = () => {
               style={{ width: "100%", height: "100%", color: "inherit" }}
             />
           </div>
-        </li>
-      </ul>
+        </div>
+      </div>
       <div className="nav nav-additional container flex-left to-left">
         <div className="change-theme item">
           <div className="title">

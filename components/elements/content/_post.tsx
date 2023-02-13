@@ -7,6 +7,7 @@ import {
 
 import Button from "../_button";
 import classNames from "classnames";
+import Link from "next/link";
 
 interface PostTypes {
   group: string;
@@ -37,17 +38,17 @@ const Post = ({
     >
       <div className="user-author">
         <div className="author">
-          <div className="user-icon"></div>
+          <Link href={"/group/1"} className="user-icon"></Link>
           <div className="author-names">
-            <div className="group">
+            <Link href={"/group/1"} className="group">
               <p>{group}</p>
-            </div>
-            <div className="name">
+            </Link>
+            <Link href={"/author/1"} className="name">
               <p>
                 {name}
                 {" " + time}
               </p>
-            </div>
+            </Link>
           </div>
         </div>
         <Button small filled>
@@ -86,7 +87,7 @@ const Post = ({
           </div>
         </div>
         <div className="rt-side">
-          <div className="fafont-icon dislike">
+          <div className="fafont-icon dislike interactive">
             <FontAwesomeIcon
               icon={faThumbsDown}
               style={{ width: "100%", height: "100%", color: "inherit" }}

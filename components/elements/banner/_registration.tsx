@@ -1,6 +1,6 @@
 import Button from "../_button";
 
-const Registration = () => {
+const Registration = ({ setRegClicked }: { setRegClicked: any }) => {
   return (
     <>
       <div className="title">
@@ -21,7 +21,7 @@ const Registration = () => {
         <div className="title">
           <h3>Маєте аккаунт? </h3>
         </div>
-        <div className="register">
+        <div className="register" onClick={() => setRegClicked(false)}>
           <p>Увійти до мого аккаунту</p>
         </div>
       </div>

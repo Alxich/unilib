@@ -4,7 +4,7 @@ import googleLogin from "../../../public/images/logins/google.svg";
 import appleLogin from "../../../public/images/logins/apple.svg";
 import emailLogin from "../../../public/images/logins/email.svg";
 
-const UsualIntro = () => {
+const UsualIntro = ({ setRegClicked }: { setRegClicked: any }) => {
   return (
     <>
       <div className="title">
@@ -34,7 +34,7 @@ const UsualIntro = () => {
         <div className="title">
           <h3>Немаєте аккаунту? </h3>
         </div>
-        <div className="register">
+        <div className="register" onClick={() => setRegClicked(true)}>
           <p>Зареєструватися</p>
         </div>
       </div>

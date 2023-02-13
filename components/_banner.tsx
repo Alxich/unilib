@@ -1,3 +1,4 @@
+import React from "react";
 import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -10,6 +11,8 @@ const Banner = ({
   bannerActive: boolean;
   setBannerActive: any;
 }) => {
+  const [regClicked, setRegClicked] = React.useState(false);
+
   return (
     <div
       id="banner"
@@ -31,7 +34,11 @@ const Banner = ({
         <div className="logo">
           <p>unilib</p>
         </div>
-        <Registration />
+        {regClicked ? (
+          <Registration setRegClicked={setRegClicked} />
+        ) : (
+          <UsualIntro setRegClicked={setRegClicked} />
+        )}
       </div>
     </div>
   );

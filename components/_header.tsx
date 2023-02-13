@@ -1,14 +1,26 @@
 import React, { ReactElement } from "react";
+import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faBell } from "@fortawesome/free-solid-svg-icons";
 
 import { Button, Notification } from "./elements";
+import Link from "next/link";
 
 const Header = ({
   setBannerActive,
 }: {
   setBannerActive: any;
 }): ReactElement => {
+  const router = useRouter();
+
+  const scroolToTop = (e: any) => {
+    if (router.pathname === "/") {
+      e.preventDefault();
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const [activeNotify, setActiveNotfiy] = React.useState(false);
 
   const notifyItems = [
@@ -29,9 +41,9 @@ const Header = ({
   return (
     <header className="masthead">
       <div className="container full-height flex-space flex-row content-pad">
-        <div className="logo">
+        <Link href={"/"} className="logo" onClick={(e) => scroolToTop(e)}>
           <p>UNILIB</p>
-        </div>
+        </Link>
         <div className="interagtions container full-height flex-row">
           <form className="search">
             <input

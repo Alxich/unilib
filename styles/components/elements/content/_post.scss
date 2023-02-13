@@ -16,9 +16,9 @@
 }
 
 .post {
-
   &.fail-page {
-    .interactions, .name {
+    .interactions,
+    .name {
       display: none;
     }
   }
@@ -82,7 +82,7 @@
       align-items: center;
 
       & > .likes,
-      .dislike {
+      .comments {
         transition: all $transition_normal;
 
         div {
@@ -132,7 +132,7 @@
         cursor: pointer;
 
         &:hover {
-          color: $active_elem
+          color: $active_elem;
         }
       }
 
