@@ -4,6 +4,7 @@ const Reels = () => {
     thematic: string;
     content: string;
   }
+
   const reelsArray = [
     {
       nickname: "SonyToxicBoyDea…",

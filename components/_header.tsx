@@ -10,6 +10,7 @@ const Header = ({
   setBannerActive: any;
 }): ReactElement => {
   const [activeNotify, setActiveNotfiy] = React.useState(false);
+
   const notifyItems = [
     {
       title: "Шлях новачка у  мікробіології: Купив мік ...",

@@ -2,12 +2,15 @@
   position: absolute;
   right: -4px;
   top: 30px;
-  width: 382px;
+  max-height: 0;
+  width: $notif_width;
   transition: all $transition_normal;
   visibility: hidden;
   opacity: 0;
+  overflow: hidden;
 
   &.active {
+    max-height: 99999px;
     visibility: visible;
     opacity: 1;
   }
