@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
+import classNames from "classnames";
 
 interface buttonProps {
   icon?: any;
@@ -33,7 +34,9 @@ const NavElement = ({
     <Link
       href={link != "/" ? "/" + link : link}
       key={`${title}__${icon}`}
-      className="item container flex-row flex-left"
+      className={classNames("item container flex-row flex-left", {
+        active: router.asPath === link ? true : router.asPath === "/" + link,
+      })}
       onClick={(e) => scroolToTop(e, link)}
     >
       <div className="fafont-icon big interactive">

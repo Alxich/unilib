@@ -5,8 +5,8 @@
   height: calc(100vh - $header_height);
   padding: $sdbar_inner_gap;
   overflow-y: auto;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
   padding-bottom: 35px;
 
   &::-webkit-scrollbar {
@@ -15,7 +15,7 @@
 
   .nav {
     width: 100%;
-    
+
     &:not(:last-child) {
       margin-bottom: $sdbar_nav_gap;
     }
@@ -51,6 +51,7 @@
         margin-bottom: $sdbar_elem_gap;
         transition: all $transition_normal;
 
+        &.active,
         &:hover {
           background-color: $overhigh_bg;
         }

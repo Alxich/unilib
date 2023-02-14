@@ -57,7 +57,9 @@ const Post = ({
       </div>
       <div className="content">
         <div className="title">
-          <h3>{title}</h3>
+          <Link href={"post/1"}>
+            <h3>{title}</h3>
+          </Link>
         </div>
         <div className="text-block">{children}</div>
       </div>
