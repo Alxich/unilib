@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const Reels = () => {
   interface types {
     nickname: string;
@@ -34,7 +36,7 @@ const Reels = () => {
 
   const ReturnReel = ({ nickname, thematic, content }: types) => {
     return (
-      <div className="item container flex-left">
+      <Link href="post/1" className="item container flex-left">
         <div className="author-thread container flex-left flex-row">
           <div className="icon"></div>
           <div className="info container flex-left">
@@ -49,7 +51,7 @@ const Reels = () => {
         <div className="text-block">
           <p>{content}</p>
         </div>
-      </div>
+      </Link>
     );
   };
 
