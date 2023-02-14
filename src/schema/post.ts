@@ -2,63 +2,69 @@ import { ObjectType, Field, ID } from "type-graphql";
 
 @ObjectType()
 export class AuthorAttributes {
-  @Field(() => ID)
-  id: string | undefined;
+  @Field(() => String)
+  id!: string;
 
   @Field(() => String)
-  name: string | undefined;
+  name!: string;
 
   @Field(() => String)
-  time: string | undefined;
+  time!: string;
 }
 
 @ObjectType()
 export class CommentsAttributes {
-  @Field(() => ID)
-  id: string | undefined;
+  @Field(() => String)
+  id!: string;
 
   @Field(() => AuthorAttributes)
-  author: AuthorAttributes | undefined;
+  author!: AuthorAttributes;
 
   @Field(() => Number)
-  likes: number | undefined;
+  likes!: number;
 
   @Field(() => Number)
-  dislike: number | undefined;
+  dislike!: number;
+
+  @Field(() => [CommentsAttributes])
+  answers!: CommentsAttributes[];
 
   @Field(() => [String])
-  content: string[] | undefined;
+  content!: string[];
 }
 
 @ObjectType()
 export class Post {
   @Field(() => String)
-  title: string | undefined;
+  id!: string;
 
   @Field(() => String)
-  group: string | undefined;
+  title!: string;
 
   @Field(() => String)
-  name: string | undefined;
+  group!: string;
 
   @Field(() => String)
-  time: string | undefined;
+  name!: string;
+
+  @Field(() => String)
+  time!: string;
 
   @Field(() => [String])
-  tags: string[] | undefined;
+  tags!: string[];
 
   @Field(() => [String])
-  content: string[] | undefined;
+  content!: string[];
 
   @Field(() => Number)
-  likesCount: number | undefined;
+  likesCount!: number;
 
   @Field(() => Number)
-  commentsCount: number | undefined;
+  commentsCount!: number;
 
   @Field(() => Number)
-  viewsCount: number | undefined;
+  viewsCount!: number;
 
   @Field(() => [CommentsAttributes])
-  comments: CommentsAttributes[] | undefined;
+  comments!: CommentsAttributes[];
 }

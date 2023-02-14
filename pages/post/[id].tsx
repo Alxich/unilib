@@ -1,42 +1,19 @@
+import React, { FC } from "react";
 import Image from "next/image";
+import { dehydrate, useQuery } from "react-query";
+
+import { queryClient, postById } from "../../src/api";
 
 import { Content, PostPage, Comments } from "../../components";
 
-import postImage from "../../public/images/image-post.png";
+import FourOhFour from "../404";
 
-const Post = () => {
-  const postContent = {
-    group: "Научпоп",
-    name: "Кирило Туров",
-    time: "12:31",
-    title: "Шлях новачка у мікробіології: купив мікроскоп",
-    likesCount: 256,
-    commentsCount: 256,
-    viewsCount: 1340,
-    tags: ["#Наука", "#2023"],
-    content: [
-      <>
-        <p>
-          Всім привіт. На свій день народження нарешті дозволив собі купити
-          мікроскоп. Простий, аматорський – Мікромед Р-1. Допомогли друзі,
-          дружина, робота. Але ось невдача, зовсім забув взяти предметні та
-          покривні шибки. Так що якість фотографій поки що середня - покривне
-          скло придбала, а ось предметні поки не дійшли (у місті не продаються).
-          Всі препарати готував сам, вибачте за якість, згодом буде краще.
-        </p>
-        <div className="image-holder container">
-          <Image src={postImage} alt="post-image-holder" />
-        </div>
-        <p>
-          Цибуля класична. 640x(правда пізніше я дізнався, що його краще
-          замочити ненадовго в йоді - тоді і клітини та ядра буде видно краще.
-          Виправлюсь пізніше).
-        </p>
-      </>,
-    ],
-  };
+const Post: FC<{ id: any }> = ({ id }) => {
+  const { data } = useQuery("post", () => postById({ id }));
+  console.log(data);
+  const postContent = data?.post;
 
-  return (
+  return postContent ? (
     <Content>
       <div className="posts-container container">
         <PostPage
@@ -51,10 +28,24 @@ const Post = () => {
         >
           {postContent.content}
         </PostPage>
-        <Comments />
+        <Comments commentArray={postContent.comments} />
       </div>
     </Content>
+  ) : (
+    <FourOhFour />
   );
 };
+
+export async function getServerSideProps({ params }: { params: any }) {
+  console.log(params.id);
+  await queryClient.prefetchQuery("post", () => postById({ id: params.id }));
+
+  return {
+    props: {
+      id: params.id || null,
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+}
 
 export default Post;

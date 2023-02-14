@@ -4,7 +4,7 @@ import { faImages } from "@fortawesome/free-solid-svg-icons";
 
 import { CommentItem } from "./comments";
 
-const Comments = () => {
+const Comments = ({ commentArray }: { commentArray: any }) => {
   const complainItems = [
     {
       title: "Скарга за копірайт",
@@ -21,86 +21,6 @@ const Comments = () => {
     {
       title: "Домагання чи будь-що що може вам нашкодити",
       text: "Автор вам погрожує чи дає натяки на насилля над вами.",
-    },
-  ];
-
-  const commentArray = [
-    {
-      author: {
-        name: "Andrey Noice",
-        time: "9 січня 12:31",
-      },
-      likes: 9,
-      dislike: 2,
-      content: [
-        <>
-          <p>
-            Не знаю, це все начебто обіцялося як ексклюзив для тих, хто
-            підтримав краудфандингову кампанію. Спробуйте написати організаторам
-            із посилання на пост, може у них буде щось із бонусів продаватися в
-            роздріб.
-          </p>
-        </>,
-      ],
-      answers: [
-        {
-          author: {
-            name: "Andrey Noice",
-            time: "9 січня 12:31",
-          },
-          likes: 9,
-          dislike: 2,
-          content: [
-            <>
-              <p>
-                Не знаю, це все начебто обіцялося як ексклюзив для тих, хто
-                підтримав краудфандингову кампанію. Спробуйте написати
-                організаторам із посилання на пост, може у них буде щось із
-                бонусів продаватися в роздріб.
-              </p>
-            </>,
-          ],
-          answers: [],
-        },
-        {
-          author: {
-            name: "Andrey Noice",
-            time: "9 січня 12:31",
-          },
-          likes: 9,
-          dislike: 2,
-          content: [
-            <>
-              <p>
-                Не знаю, це все начебто обіцялося як ексклюзив для тих, хто
-                підтримав краудфандингову кампанію. Спробуйте написати
-                організаторам із посилання на пост, може у них буде щось із
-                бонусів продаватися в роздріб.
-              </p>
-            </>,
-          ],
-          answers: [],
-        },
-      ],
-    },
-    {
-      author: {
-        name: "Andrey Noice",
-        time: "9 січня 12:31",
-      },
-      likes: 9,
-      dislike: 2,
-      content: [
-        <>
-          <p>
-            Не знаю, це все начебто обіцялося як ексклюзив для тих, хто
-            підтримав краудфандингову кампанію. Спробуйте написати організаторам
-            із посилання на пост, може у них буде щось із бонусів продаватися в
-            роздріб.
-          </p>
-        </>,
-      ],
-      answers: [],
     },
   ];
 
@@ -122,7 +42,7 @@ const Comments = () => {
         </button>
       </form>
       <div className="container comments-flow">
-        {commentArray.map((item, i) => {
+        {commentArray.map((item: any, i: Number) => {
           const { author, likes, content, answers } = item;
           return (
             <CommentItem

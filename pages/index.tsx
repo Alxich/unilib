@@ -24,6 +24,7 @@ export default function Home() {
       <div className="posts-container container">
         {data?.posts.map((item: any, i: any) => {
           const {
+            id,
             group,
             name,
             time,
@@ -32,6 +33,7 @@ export default function Home() {
             commentsCount,
             content,
           }: {
+            id: any;
             group: string;
             name: string;
             time: string;
@@ -44,6 +46,7 @@ export default function Home() {
           return (
             <Post
               key={`${item}__${i}`}
+              id={id}
               group={group}
               name={name}
               time={time}

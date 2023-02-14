@@ -1,21 +1,12 @@
 query getPosts {
   posts {
+    id
     group
     name
     time
     title
     likesCount
     commentsCount
-    # comments {
-    #   author {
-    #     name
-    #     time
-    #   }
-    #   likes
-    #   dislike
-    #   content
-    #   answers
-    # }
     viewsCount
     tags
     content

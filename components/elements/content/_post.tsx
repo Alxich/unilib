@@ -10,6 +10,7 @@ import classNames from "classnames";
 import Link from "next/link";
 
 interface PostTypes {
+  id: any;
   group: string;
   name: string;
   time: string;
@@ -21,6 +22,7 @@ interface PostTypes {
 }
 
 const Post = ({
+  id,
   group,
   name,
   time,
@@ -57,7 +59,7 @@ const Post = ({
       </div>
       <div className="content">
         <div className="title">
-          <Link href={"post/1"}>
+          <Link href={`post/${id}`}>
             <h3>{title}</h3>
           </Link>
         </div>
