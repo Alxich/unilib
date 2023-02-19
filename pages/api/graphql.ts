@@ -2,17 +2,9 @@ import "reflect-metadata";
 import { ApolloServer } from "apollo-server-micro";
 import { MicroRequest } from "apollo-server-micro/dist/types";
 import { ServerResponse, IncomingMessage } from "http";
-import {
-  buildSchema,
-  Resolver,
-  Query,
-  Arg,
-  ObjectType,
-  Field,
-  ID,
-} from "type-graphql";
+import { buildSchema } from "type-graphql";
 
-import { PostsResolver } from "../../src/schema/posts.resolver";
+import { PostsResolver } from "../../src/schema/posts/posts.resolver";
 
 const schema = await buildSchema({
   resolvers: [PostsResolver],

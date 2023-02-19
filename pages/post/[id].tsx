@@ -10,7 +10,6 @@ import FourOhFour from "../404";
 
 const Post: FC<{ id: any }> = ({ id }) => {
   const { data } = useQuery("post", () => postById({ id }));
-  console.log(data);
   const postContent = data?.post;
 
   return postContent ? (
@@ -37,7 +36,6 @@ const Post: FC<{ id: any }> = ({ id }) => {
 };
 
 export async function getServerSideProps({ params }: { params: any }) {
-  console.log(params.id);
   await queryClient.prefetchQuery("post", () => postById({ id: params.id }));
 
   return {
