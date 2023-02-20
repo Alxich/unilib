@@ -1,10 +1,26 @@
 import React from "react";
 import Head from "next/head";
+import { dehydrate, useQuery } from "react-query";
+import { queryClient, getCategories, getFandoms } from "../src/api";
 
 import { Header, Sidebar, Reels, Banner } from "../components";
 
+export async function getServerSideProps() {
+  await queryClient.prefetchQuery("categories", () => getCategories());
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+}
+
 const Content = ({ children }: { children: any }) => {
   const [bannerActive, setBannerActive] = React.useState(false);
+
+  const { data } = useQuery(["categories"], () => getCategories());
+
+  console.log(data?.categories);
 
   return (
     <>

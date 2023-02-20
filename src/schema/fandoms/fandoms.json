@@ -1,0 +1,38 @@
+[
+  {
+    "id": "0",
+    "icon": "rdr2",
+    "title": "Ігри",
+    "link": "games"
+  },
+  {
+    "id": "1",
+    "icon": "gamedev",
+    "title": "Gamedev",
+    "link": "gamedev"
+  },
+  {
+    "id": "2",
+    "icon": "components",
+    "title": "Залізо",
+    "link": "componens"
+  },
+  {
+    "id": "3",
+    "icon": "cinima",
+    "title": "Кіно та серіали",
+    "link": "cinema"
+  },
+  {
+    "id": "4",
+    "icon": "industries",
+    "title": "Промисловість",
+    "link": "industries"
+  },
+  {
+    "id": "5",
+    "icon": "life",
+    "title": "Життя",
+    "link": "life"
+  }
+]

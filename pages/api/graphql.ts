@@ -5,9 +5,11 @@ import { ServerResponse, IncomingMessage } from "http";
 import { buildSchema } from "type-graphql";
 
 import { PostsResolver } from "../../src/schema/posts/posts.resolver";
+import { CategoriesResolver } from "../../src/schema/categories/categories.resolver";
+import { FandomsResolver } from "../../src/schema/fandoms/fandoms.resolver";
 
 const schema = await buildSchema({
-  resolvers: [PostsResolver],
+  resolvers: [PostsResolver, CategoriesResolver, FandomsResolver],
 });
 
 const server = new ApolloServer({ schema });

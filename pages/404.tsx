@@ -7,6 +7,7 @@ const FourOhFour = () => {
   return (
     <Content>
       <Post
+        id={0}
         group="UNILIB"
         name="Admin"
         time="00:00"

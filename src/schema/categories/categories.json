@@ -1,0 +1,20 @@
+[
+  {
+    "id": "0",
+    "icon": "faFire",
+    "title": "Популярне",
+    "link": "/"
+  },
+  {
+    "id": "1",
+    "icon": "faClock",
+    "title": "Нове у треді",
+    "link": "new"
+  },
+  {
+    "id": "2",
+    "icon": "faNewspaper",
+    "title": "Моя стрічка",
+    "link": "myflow"
+  }
+]

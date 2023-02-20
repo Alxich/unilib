@@ -1,0 +1,53 @@
+{
+  "sidebar": {
+    "main": [
+      {
+        "icon": "faFire",
+        "title": "Популярне",
+        "link": "/"
+      },
+      {
+        " icon": "faClock",
+        "title": "Нове у треді",
+        " link": "new"
+      },
+      {
+        "icon": "faNewspaper",
+        "title": "Моя стрічка",
+        "link": "myflow"
+      }
+    ],
+    "default": [
+      {
+        "icon": "rdr2",
+        "title": "Ігри",
+        "link": "games"
+      },
+      {
+        "icon": "gamedev",
+        "title": "Gamedev",
+        "link": "gamedev"
+      },
+      {
+        "icon": "components",
+        "title": "Залізо",
+        "link": "componens"
+      },
+      {
+        "icon": "cinima",
+        "title": "Кіно та серіали",
+        "link": "cinema"
+      },
+      {
+        "icon": "industries",
+        "title": "Промисловість",
+        "link": "industries"
+      },
+      {
+        "icon": "life",
+        "title": "Життя",
+        "link": "life"
+      }
+    ]
+  }
+}

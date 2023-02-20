@@ -22,6 +22,14 @@ export type AuthorAttributes = {
   time: Scalars['String'];
 };
 
+export type Category = {
+  __typename?: 'Category';
+  icon: Scalars['String'];
+  id: Scalars['String'];
+  link: Scalars['String'];
+  title: Scalars['String'];
+};
+
 export type CommentsAttributes = {
   __typename?: 'CommentsAttributes';
   answers: Array<CommentsAttributes>;
@@ -30,6 +38,14 @@ export type CommentsAttributes = {
   dislike: Scalars['Float'];
   id: Scalars['String'];
   likes: Scalars['Float'];
+};
+
+export type Fandom = {
+  __typename?: 'Fandom';
+  icon: Scalars['String'];
+  id: Scalars['String'];
+  link: Scalars['String'];
+  title: Scalars['String'];
 };
 
 export type Post = {
@@ -49,14 +65,32 @@ export type Post = {
 
 export type Query = {
   __typename?: 'Query';
+  categories: Array<Category>;
+  fandoms: Array<Fandom>;
   post?: Maybe<Post>;
   posts: Array<Post>;
+  sidebar?: Maybe<Fandom>;
 };
 
 
 export type QueryPostArgs = {
   id: Scalars['String'];
 };
+
+
+export type QuerySidebarArgs = {
+  id: Scalars['String'];
+};
+
+export type GetCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCategoriesQuery = { __typename?: 'Query', categories: Array<{ __typename?: 'Category', id: string, title: string, icon: string, link: string }> };
+
+export type GetFandomsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetFandomsQuery = { __typename?: 'Query', fandoms: Array<{ __typename?: 'Fandom', id: string, title: string, icon: string, link: string }> };
 
 export type PostByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -71,6 +105,26 @@ export type GetPostsQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetPostsQuery = { __typename?: 'Query', posts: Array<{ __typename?: 'Post', id: string, group: string, name: string, time: string, title: string, likesCount: number, commentsCount: number, viewsCount: number, tags: Array<string>, content: Array<string> }> };
 
 
+export const GetCategoriesDocument = gql`
+    query getCategories {
+  categories {
+    id
+    title
+    icon
+    link
+  }
+}
+    `;
+export const GetFandomsDocument = gql`
+    query getFandoms {
+  fandoms {
+    id
+    title
+    icon
+    link
+  }
+}
+    `;
 export const PostByIdDocument = gql`
     query postById($id: String!) {
   post(id: $id) {
@@ -130,6 +184,12 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
+    getCategories(variables?: GetCategoriesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCategoriesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetCategoriesQuery>(GetCategoriesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getCategories', 'query');
+    },
+    getFandoms(variables?: GetFandomsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFandomsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetFandomsQuery>(GetFandomsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getFandoms', 'query');
+    },
     postById(variables: PostByIdQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<PostByIdQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<PostByIdQuery>(PostByIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'postById', 'query');
     },
