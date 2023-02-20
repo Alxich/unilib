@@ -3,9 +3,29 @@ import { Content, Post } from "../components";
 
 import image from "../public/images/404.png";
 
+import { dehydrate, useQuery } from "react-query";
+import { queryClient, getCategories, getFandoms } from "../src/api";
+
+export async function getServerSideProps() {
+  await queryClient.prefetchQuery("categories", () => getCategories());
+  await queryClient.prefetchQuery("fandoms", () => getFandoms());
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+}
+
 const FourOhFour = () => {
+  const categories = useQuery(["categories"], () => getCategories());
+  const fandoms = useQuery(["fandoms"], () => getFandoms());
+
   return (
-    <Content>
+    <Content
+      categories={categories.data?.categories}
+      fandoms={fandoms.data?.fandoms}
+    >
       <Post
         id={0}
         group="UNILIB"

@@ -1,38 +1,44 @@
 [
   {
     "id": "0",
-    "icon": "rdr2",
+    "icon": "https://picsum.photos/id/48/200",
     "title": "Ігри",
     "link": "games"
   },
   {
     "id": "1",
-    "icon": "gamedev",
+    "icon": "https://picsum.photos/id/197/200",
     "title": "Gamedev",
     "link": "gamedev"
   },
   {
     "id": "2",
-    "icon": "components",
+    "icon": "https://picsum.photos/id/219/200",
     "title": "Залізо",
     "link": "componens"
   },
   {
     "id": "3",
-    "icon": "cinima",
+    "icon": "https://picsum.photos/id/21/200",
     "title": "Кіно та серіали",
     "link": "cinema"
   },
   {
     "id": "4",
-    "icon": "industries",
+    "icon": "https://picsum.photos/id/22/200",
     "title": "Промисловість",
     "link": "industries"
   },
   {
     "id": "5",
-    "icon": "life",
+    "icon": "https://picsum.photos/id/20/200",
     "title": "Життя",
     "link": "life"
+  },
+  {
+    "id": "6",
+    "icon": "https://picsum.photos/id/90/200",
+    "title": "Навчання",
+    "link": "study"
   }
 ]

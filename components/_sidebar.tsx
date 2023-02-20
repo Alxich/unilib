@@ -1,115 +1,32 @@
 import React, { FC } from "react";
 import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFire,
-  faClock,
-  faNewspaper,
-  faChevronDown,
-} from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { NavElement } from "./elements";
 
-// Importing Images
-import rdr2 from "../public/images/navIcons/rdr2.png";
-import cinima from "../public/images/navIcons/cinima.png";
-import components from "../public/images/navIcons/components.png";
-import gamedev from "../public/images/navIcons/gamedev.png";
-import life from "../public/images/navIcons/life.png";
-import industries from "../public/images/navIcons/industries.png";
-
-const Sidebar: FC = () => {
-  // List of usual user nav
+const Sidebar = ({
+  categories,
+  fandoms,
+}: {
+  categories?: object[] | undefined;
+  fandoms?: object[] | undefined;
+}) => {
   const fandomsLengthBefore = 5;
   const [openAllFandom, setOpenAllFandom] = React.useState(false);
   const [openAllThemes, setOpenAllThemes] = React.useState(false);
 
-  const listOfNavUser: { icon: any; title: string; link: string }[] = [
-    {
-      icon: faFire,
-      title: "Популярне",
-      link: "/",
-    },
-    {
-      icon: faClock,
-      title: "Нове у треді",
-      link: "new",
-    },
-    {
-      icon: faNewspaper,
-      title: "Моя стрічка",
-      link: "myflow",
-    },
-  ];
+  // List of usual user nav
+
+  const listOfNavUser = categories;
 
   // List of usual nav categories
 
-  const listOfNavUsual: { icon: any; title: string; link: string }[] = [
-    {
-      icon: rdr2,
-      title: "Ігри",
-      link: "games",
-    },
-    {
-      icon: gamedev,
-      title: "Gamedev",
-      link: "gamedev",
-    },
-    {
-      icon: components,
-      title: "Залізо",
-      link: "components",
-    },
-    {
-      icon: cinima,
-      title: "Кіно та серіали",
-      link: "cinema",
-    },
-    {
-      icon: industries,
-      title: "Промисловість",
-      link: "industries",
-    },
-    {
-      icon: life,
-      title: "Життя",
-      link: "life",
-    },
-    {
-      icon: rdr2,
-      title: "Ігри",
-      link: "games",
-    },
-    {
-      icon: gamedev,
-      title: "Gamedev",
-      link: "gamedev",
-    },
-    {
-      icon: components,
-      title: "Залізо",
-      link: "components",
-    },
-    {
-      icon: cinima,
-      title: "Кіно та серіали",
-      link: "cinema",
-    },
-    {
-      icon: industries,
-      title: "Промисловість",
-      link: "industries",
-    },
-    {
-      icon: life,
-      title: "Життя",
-      link: "life",
-    },
-  ];
+  const listOfNavUsual = fandoms;
 
   return (
     <div id="sidebar" className="container full-height flex-left to-left">
       <div className="nav-user nav">
-        {listOfNavUser.map((item, i) => (
+        {listOfNavUser?.map((item: any, i) => (
           <NavElement
             key={`${item}__${i}`}
             iconTypeFaFont
@@ -120,7 +37,7 @@ const Sidebar: FC = () => {
         ))}
       </div>
       <div className="nav-usual nav">
-        {listOfNavUsual.map((item, i) =>
+        {listOfNavUsual?.map((item: any, i) =>
           openAllFandom ? (
             <NavElement
               key={`${item}__${i}`}
@@ -141,22 +58,24 @@ const Sidebar: FC = () => {
             )
           )
         )}
-        <div
-          className={classNames("open", {
-            active: openAllFandom,
-          })}
-          onClick={() => {
-            setOpenAllFandom(openAllFandom ? false : true);
-          }}
-        >
-          <span>Відкрити усі фендоми</span>
-          <div className="fafont-icon arrow-down">
-            <FontAwesomeIcon
-              icon={faChevronDown}
-              style={{ width: "100%", height: "100%", color: "inherit" }}
-            />
+        {listOfNavUsual && listOfNavUsual.length > 6 && (
+          <div
+            className={classNames("open", {
+              active: openAllFandom,
+            })}
+            onClick={() => {
+              setOpenAllFandom(openAllFandom ? false : true);
+            }}
+          >
+            <span>Відкрити усі фендоми</span>
+            <div className="fafont-icon arrow-down">
+              <FontAwesomeIcon
+                icon={faChevronDown}
+                style={{ width: "100%", height: "100%", color: "inherit" }}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="nav nav-additional container flex-left to-left">
         <div className="change-theme item">

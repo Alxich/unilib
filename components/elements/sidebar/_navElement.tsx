@@ -1,6 +1,11 @@
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faClock,
+  faFire,
+  faNewspaper,
+} from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import Link from "next/link";
 import classNames from "classnames";
@@ -30,6 +35,12 @@ const NavElement = ({
     }
   };
 
+  const iconsFontAwesome: any = {
+    faFire: faFire,
+    faClock: faClock,
+    faNewspaper: faNewspaper,
+  };
+
   return (
     <Link
       href={link != "/" ? "/" + link : link}
@@ -42,12 +53,18 @@ const NavElement = ({
       <div className="fafont-icon big interactive">
         {iconTypeFaFont ? (
           <FontAwesomeIcon
-            icon={icon}
+            icon={iconsFontAwesome[icon]}
             style={{ width: "100%", height: "100%", color: "inherit" }}
           />
         ) : (
           iconTypeImage && (
-            <Image className="image" src={icon} alt="navigationImage" />
+            <Image
+              className="image"
+              src={icon}
+              alt="navigationImage"
+              height={100}
+              width={100}
+            />
           )
         )}
       </div>

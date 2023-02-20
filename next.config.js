@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  images: {
+    domains: ["picsum.photos"],
+  },
   webpack: (config) => {
     if (!config.experiments) {
       config.experiment = {};
@@ -10,4 +13,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig
+module.exports = nextConfig;

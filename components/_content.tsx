@@ -1,26 +1,18 @@
 import React from "react";
 import Head from "next/head";
-import { dehydrate, useQuery } from "react-query";
-import { queryClient, getCategories, getFandoms } from "../src/api";
 
 import { Header, Sidebar, Reels, Banner } from "../components";
 
-export async function getServerSideProps() {
-  await queryClient.prefetchQuery("categories", () => getCategories());
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
-}
-
-const Content = ({ children }: { children: any }) => {
+const Content = ({
+  children,
+  categories,
+  fandoms,
+}: {
+  children: any;
+  categories?: object[] | undefined;
+  fandoms?: object[] | undefined;
+}) => {
   const [bannerActive, setBannerActive] = React.useState(false);
-
-  const { data } = useQuery(["categories"], () => getCategories());
-
-  console.log(data?.categories);
 
   return (
     <>
@@ -33,7 +25,7 @@ const Content = ({ children }: { children: any }) => {
       <Header setBannerActive={setBannerActive} />
       <main className={"main"}>
         <div className="container main-content flex-row flex-space">
-          <Sidebar />
+          <Sidebar categories={categories} fandoms={fandoms} />
           <div id="content" className="container">
             {children}
           </div>

@@ -1,11 +1,13 @@
 import Image from "next/image";
 import { dehydrate, useQuery } from "react-query";
-import { queryClient, getPosts } from "../src/api";
+import { queryClient, getPosts, getCategories, getFandoms } from "../src/api";
 
 import { Content, Flowrange, Newestflow, Post } from "../components";
 
 export async function getServerSideProps() {
   await queryClient.prefetchQuery("posts", () => getPosts());
+  await queryClient.prefetchQuery("categories", () => getCategories());
+  await queryClient.prefetchQuery("fandoms", () => getFandoms());
 
   return {
     props: {
@@ -15,14 +17,21 @@ export async function getServerSideProps() {
 }
 
 export default function Home() {
-  const { data } = useQuery(["posts"], () => getPosts());
+  const posts = useQuery(["posts"], () => getPosts());
+  const categories = useQuery(["categories"], () => getCategories());
+  const fandoms = useQuery(["fandoms"], () => getFandoms());
+
+  console.log(fandoms.data?.fandoms);
 
   return (
-    <Content>
+    <Content
+      categories={categories.data?.categories}
+      fandoms={fandoms.data?.fandoms}
+    >
       <Flowrange />
       <Newestflow />
       <div className="posts-container container">
-        {data?.posts.map((item: any, i: any) => {
+        {posts.data?.posts.map((item: any, i: any) => {
           const {
             id,
             group,
