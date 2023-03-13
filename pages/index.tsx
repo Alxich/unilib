@@ -17,21 +17,16 @@ export async function getServerSideProps() {
 }
 
 export default function Home() {
-  const posts = useQuery(["posts"], () => getPosts());
-  const categories = useQuery(["categories"], () => getCategories());
-  const fandoms = useQuery(["fandoms"], () => getFandoms());
-
-  console.log(fandoms.data?.fandoms);
+  const { data: postsArray } = useQuery(["posts"], () => getPosts());
+  const { data: categories } = useQuery(["categories"], () => getCategories());
+  const { data: fandoms } = useQuery(["fandoms"], () => getFandoms());
 
   return (
-    <Content
-      categories={categories.data?.categories}
-      fandoms={fandoms.data?.fandoms}
-    >
+    <Content categories={categories?.categories} fandoms={fandoms?.fandoms}>
       <Flowrange />
       <Newestflow />
       <div className="posts-container container">
-        {posts.data?.posts.map((item: any, i: any) => {
+        {postsArray?.posts.map((item: any, i: any) => {
           const {
             id,
             group,

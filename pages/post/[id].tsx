@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import { dehydrate, useQuery } from "react-query";
 import {
@@ -13,24 +14,29 @@ import { Content, PostPage, Comments } from "../../components";
 
 import FourOhFour from "../404";
 
-export async function getServerSideProps() {
-  await queryClient.prefetchQuery("posts", () => getPosts());
+export async function getServerSideProps(context: any) {
+  const { id: postId } = context.query;
+
+  await queryClient.prefetchQuery("post", () => postById({ id: postId }));
   await queryClient.prefetchQuery("categories", () => getCategories());
   await queryClient.prefetchQuery("fandoms", () => getFandoms());
 
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
+      id: String(postId),
     },
   };
 }
 
 const Post: FC<{ id: any }> = ({ id }) => {
-  const { data } = useQuery("post", () => postById({ id }));
+  const { data } = useQuery("post", () => postById({ id: id }));
   const postContent = data?.post;
 
   const categories = useQuery(["categories"], () => getCategories());
   const fandoms = useQuery(["fandoms"], () => getFandoms());
+
+  console.log(postContent);
 
   return postContent ? (
     <Content

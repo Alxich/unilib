@@ -68,6 +68,7 @@ export type Query = {
   categories: Array<Category>;
   fandoms: Array<Fandom>;
   post?: Maybe<Post>;
+  postByGroup?: Maybe<Array<Post>>;
   posts: Array<Post>;
   sidebar?: Maybe<Fandom>;
 };
@@ -75,6 +76,11 @@ export type Query = {
 
 export type QueryPostArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryPostByGroupArgs = {
+  group: Scalars['String'];
 };
 
 
@@ -103,6 +109,13 @@ export type GetPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetPostsQuery = { __typename?: 'Query', posts: Array<{ __typename?: 'Post', id: string, group: string, name: string, time: string, title: string, likesCount: number, commentsCount: number, viewsCount: number, tags: Array<string>, content: Array<string> }> };
+
+export type PostByGroupQueryVariables = Exact<{
+  group: Scalars['String'];
+}>;
+
+
+export type PostByGroupQuery = { __typename?: 'Query', postByGroup?: Array<{ __typename?: 'Post', group: string, name: string, time: string, title: string, likesCount: number, commentsCount: number, viewsCount: number, tags: Array<string>, content: Array<string> }> | null };
 
 
 export const GetCategoriesDocument = gql`
@@ -176,6 +189,21 @@ export const GetPostsDocument = gql`
   }
 }
     `;
+export const PostByGroupDocument = gql`
+    query postByGroup($group: String!) {
+  postByGroup(group: $group) {
+    group
+    name
+    time
+    title
+    likesCount
+    commentsCount
+    viewsCount
+    tags
+    content
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -195,6 +223,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getPosts(variables?: GetPostsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPostsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetPostsQuery>(GetPostsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPosts', 'query');
+    },
+    postByGroup(variables: PostByGroupQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<PostByGroupQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<PostByGroupQuery>(PostByGroupDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'postByGroup', 'query');
     }
   };
 }

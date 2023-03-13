@@ -1,0 +1,13 @@
+query postByGroup($group: String!) {
+  postByGroup(group: $group) {
+    group
+    name
+    time
+    title
+    likesCount
+    commentsCount
+    viewsCount
+    tags
+    content
+  }
+}

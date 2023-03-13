@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from "type-graphql";
+import { ObjectType, Field, ID, Arg, InputType } from "type-graphql";
 
 @ObjectType()
 export class AuthorAttributes {
@@ -68,3 +68,9 @@ export class Post {
   @Field(() => [CommentsAttributes])
   comments!: CommentsAttributes[];
 }
+
+// @ObjectType()
+// export class PostFromGroup implements Pick<Post, "group"> {
+//   @Field()
+//   group!: string;
+// }
