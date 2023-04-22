@@ -1,8 +1,0 @@
-query getFandoms {
-  fandoms {
-    id
-    title
-    icon
-    link
-  }
-}

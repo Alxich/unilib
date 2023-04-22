@@ -1,0 +1,28 @@
+.flow-range {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding-top: $flowrange_top_pad;
+    margin-bottom: $flowrange_marg_down;
+    cursor: pointer;
+
+    & > p {
+        font-weight: 400;
+        margin-right: $flowrange_text_gap;
+    }
+
+    .changer .wrapper  {
+        bottom: -52px;
+
+        .triangle {
+            top: 6px;
+            transform: $triangle_top;
+        }
+
+        .list {
+            align-items: flex-start
+        }
+    }
+}

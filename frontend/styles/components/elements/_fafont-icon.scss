@@ -1,0 +1,60 @@
+.fafont-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: $fafont_height;
+  width: $fafont_width;
+  color: $color;
+
+  &.big {
+    height: $fafont_height_big;
+    width: $fafont_width_big;
+
+    &.cross {
+      height: $fafont_height_cross;
+      width: $fafont_width_cross;
+    }
+  }
+
+  &.arrow-down {
+    height: $fafont_height_arrow;
+    width: $fafont_width_arrow;
+  }
+
+  &.comments {
+    height: $fafont_height_comm;
+    width: $fafont_width_comm;
+    margin: 0;
+  }
+
+  &.likes {
+    height: $fafont_height_like;
+    width: $fafont_width_like;
+    margin: 0;
+  }
+
+  &.heart {
+    height: $fafont_height;
+    width: $fafont_width;
+    margin: 0;
+  }
+
+  &.dislike {
+    height: $fafont_height;
+    width: $fafont_width;
+    margin: 0;
+  }
+
+  &.interactive {
+    position: relative;
+    cursor: pointer;
+
+    svg {
+      transition: all $transition_normal;
+
+      &:hover {
+        color: $active_elem !important;
+      }
+    }
+  }
+}

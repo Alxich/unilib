@@ -1,0 +1,20 @@
+.comments, .likes, .heart {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+
+  .counter {
+    & > p {
+      font-weight: 400;
+      margin: 0;
+    }
+
+    margin-left: $post_action_btn_gap;
+  }
+}
+
+.dislike {
+  cursor: pointer;
+}

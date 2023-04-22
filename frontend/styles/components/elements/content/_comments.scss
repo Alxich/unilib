@@ -1,0 +1,207 @@
+#comments {
+  & > .title {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+
+    h3,
+    p {
+      margin: 0;
+    }
+
+    .count {
+      color: $active_elem;
+      margin-left: $post_add_info_gap;
+
+      p {
+        font-size: $p_font_size;
+      }
+    }
+  }
+
+  .comment {
+    margin-bottom: $post_inn_pad;
+  }
+
+  .item {
+    padding-top: $comm_item_pad;
+    margin-bottom: $post_inn_pad;
+
+    & > div:not(:last-child) {
+      margin-bottom: $post_inn_pad;
+    }
+
+    .main-content {
+      & > div:not(:last-child) {
+        margin-bottom: $comm_item_pad;
+      }
+
+      .user-author {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+
+        .author {
+          display: flex;
+          justify-content: center;
+          flex-direction: row;
+          align-items: center;
+
+          .user-icon {
+            background: $color;
+            border-radius: 50%;
+            height: $user_icon_small;
+            width: $user_icon_small;
+            min-width: $user_icon_small;
+            cursor: pointer;
+          }
+
+          .author-names {
+            margin-left: $post_author_gap;
+            cursor: pointer;
+
+            .time {
+              p {
+                font-size: $p_font_size_small;
+                font-weight: 300;
+              }
+            }
+          }
+        }
+
+        p {
+          margin: 0;
+        }
+      }
+
+      .content {
+        line-height: 1.75;
+
+        p {
+          margin: 0;
+
+          &:not(:last-child) {
+            margin-bottom: $comm_item_pad;
+          }
+        }
+      }
+
+      .interactions {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        align-items: center;
+
+        p {
+          margin: 0;
+        }
+
+        .lt-side,
+        .rt-side {
+          display: flex;
+          justify-content: center;
+          flex-direction: row;
+          align-items: center;
+
+          & > div {
+            transition: all $transition_normal;
+            cursor: pointer;
+
+            p {
+              transition: all $transition_normal;
+            }
+
+            &:hover {
+              & > p {
+                color: $active_elem;
+              }
+
+              & > div {
+                color: inherit;
+              }
+            }
+
+            &:not(:last-child) {
+              margin-right: $post_add_info_gap;
+            }
+          }
+
+          .complain {
+            position: relative;
+
+            .notification {
+              z-index: 1;
+              top: 15px;
+              right: auto;
+              left: 3px;
+
+              .triangle {
+                margin: 0 auto 0 9px;
+              }
+
+              .item {
+                margin-bottom: $notif_item_mrg;
+                padding: 0;
+
+                .user-ico {
+                  margin-bottom: 0;
+                }
+
+                .content {
+                  margin-left: 0;
+                }
+              }
+            }
+          }
+
+          .answer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            p {
+              margin-right: $comm_add_info_gap;
+            }
+
+            .fafont-icon {
+              color: inherit;
+            }
+          }
+
+          .answer-count {
+            color: $active_elem;
+          }
+        }
+      }
+
+      .comment {
+        margin-top: $post_inn_pad;
+        margin-bottom: 0;
+      }
+    }
+
+    .comments-to-item {
+      padding: $comm_container_pad;
+      border-left: 1px solid $light_border;
+
+      .item {
+        margin-bottom: 0;
+
+        .main-content {
+          margin-bottom: 0;
+        }
+
+        &:not(:last-child) {
+          padding-bottom: $post_inn_pad;
+        }
+
+        &:last-child {
+          padding-bottom: $comm_item_pad;
+        }
+      }
+    }
+  }
+}

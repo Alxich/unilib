@@ -1,0 +1,41 @@
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border-radius: $reg_radius;
+  outline: none;
+  color: $color;
+  padding: $button_gap;
+  transition: all $transition_normal;
+
+  &.big {
+    padding: $button_big_gap;
+  }
+
+  &.small {
+    padding: $button_small_gap;
+  }
+
+  &.full-width {
+    width: 100%;
+  }
+
+  &.filled {
+    background: $outbox_bg;
+
+    &:hover {
+      background: $outbox_hover;
+    }
+  }
+
+  &.outline {
+    border: 2px solid $color;
+  }
+
+  &.awesome-icon {
+    & > div {
+      margin-right: 8px;
+    }
+  }
+}

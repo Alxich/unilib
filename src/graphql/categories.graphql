@@ -1,8 +1,0 @@
-query getCategories {
-  categories {
-    id
-    title
-    icon
-    link
-  }
-}
