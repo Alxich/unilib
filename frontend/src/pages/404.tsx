@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Content, Post } from "../components";
 
-import image from "../public/images/404.png";
+import image from "../../public/images/404.png";
 
 const FourOhFour = () => {
   return (

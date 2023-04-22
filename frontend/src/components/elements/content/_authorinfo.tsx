@@ -4,7 +4,7 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAlignCenter } from "@fortawesome/free-solid-svg-icons";
 
-import background from "../../../public/images/background.png";
+import background from "../../../../public/images/background.png";
 
 const AuthorInfo = () => {
   const [openFilter, setOpenFilter] = React.useState(false);

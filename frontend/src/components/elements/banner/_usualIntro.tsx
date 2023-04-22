@@ -1,17 +1,25 @@
 import Image from "next/image";
+import { useEffect } from "react";
+import { signIn, useSession } from "next-auth/react";
 
-import googleLogin from "../../../public/images/logins/google.svg";
-import appleLogin from "../../../public/images/logins/apple.svg";
-import emailLogin from "../../../public/images/logins/email.svg";
+import googleLogin from "../../../../public/images/logins/google.svg";
+import appleLogin from "../../../../public/images/logins/apple.svg";
+import emailLogin from "../../../../public/images/logins/email.svg";
 
 const UsualIntro = ({ setRegClicked }: { setRegClicked: any }) => {
+  const { data, status } = useSession();
+
+  useEffect(() => {
+    console.log("Here is your session", { data, status });
+  }, [status]);
+
   return (
     <>
       <div className="title">
         <h2>Вхід до Аккаунту</h2>
       </div>
       <div className="user-login-type">
-        <div className="item">
+        <div className="item" onClick={() => signIn("google")}>
           <Image src={googleLogin} alt="login-type" />
           <div className="title">
             <h5>Продовжити з Google</h5>

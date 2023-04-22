@@ -45,6 +45,11 @@
     margin: 0;
   }
 
+  &.user {
+    height: auto;
+    width: auto;
+  }
+
   &.interactive {
     position: relative;
     cursor: pointer;

@@ -33,5 +33,23 @@
         margin-right: $header_user_action_gap;
       }
     }
+
+    .user-icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: $user_icon_big;
+      width: $user_icon_big;
+      min-width: $user_icon_big;
+      margin-left: 52px;
+
+      img {
+        display: flex;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+    }
   }
 }

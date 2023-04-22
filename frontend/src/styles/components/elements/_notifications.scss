@@ -1,7 +1,7 @@
 .notification {
   position: absolute;
   right: -4px;
-  top: 30px;
+  top: 29px;
   max-height: 0;
   width: $notif_width;
   transition: all $transition_normal;
@@ -13,6 +13,47 @@
     max-height: 99999px;
     visibility: visible;
     opacity: 1;
+  }
+
+  &.is-user {
+    top: 38px;
+    right: 1px;
+    width: 185px;
+
+    .wrapper-content {
+      .header {
+        .welcomer {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+
+          .title {
+            margin-left: 4px;
+          }
+
+          .text-block > p {
+            font-size: $p_font_size_small;
+            font-weight: 400;
+            margin: 0;
+          }
+        }
+      }
+
+      .main {
+        .item {
+          .content {
+            .fafont-icon {
+              margin-right: 4px;
+            }
+
+            .text > p {
+              font-weight: 400;
+            }
+          }
+        }
+      }
+    }
   }
 
   .triangle {
@@ -102,7 +143,7 @@
             margin: 0;
           }
 
-          & > div {
+          & > div:not(.fafont-icon) {
             width: 100%;
             line-height: 1.45;
           }
