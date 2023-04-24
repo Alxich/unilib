@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["picsum.photos", "lh3.googleusercontent.com"],
+    domains: ["picsum.photos", "lh3.googleusercontent.com", "www.youtube.com"],
   },
   webpack: (config) => {
     if (!config.experiments) {
