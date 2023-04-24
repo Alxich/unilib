@@ -38,10 +38,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      border-radius: 100%;
       height: $user_icon_big;
       width: $user_icon_big;
       min-width: $user_icon_big;
       margin-left: 52px;
+      overflow: hidden;
 
       img {
         display: flex;

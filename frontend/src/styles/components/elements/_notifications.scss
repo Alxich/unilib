@@ -16,8 +16,8 @@
   }
 
   &.is-user {
-    top: 38px;
-    right: 1px;
+    top: 43px;
+    right: 8px;
     width: 185px;
 
     .wrapper-content {
@@ -42,6 +42,10 @@
 
       .main {
         .item {
+          &:hover .content .fafont-icon {
+            color: $active_elem
+          }
+
           .content {
             .fafont-icon {
               margin-right: 4px;

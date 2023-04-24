@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -91,8 +91,8 @@ const Header = ({
           className={classNames(
             "user-action container full-height flex-row width-auto",
             {
-              "not-logged": data === null,
-              logged: data !== null,
+              "not-logged": !data?.user,
+              logged: data?.user,
             }
           )}
         >
@@ -109,12 +109,17 @@ const Header = ({
             />
           </div>
           {data?.user && (
-            <div
-              className="fafont-icon big interactive user"
-              onClick={() => setActiveUser(activeUser ? false : true)}
-            >
-              <div className="user-icon">
-                <Image src={UserIcon} alt="user-icon-image" />
+            <div className="fafont-icon big interactive user">
+              <div
+                className="user-icon"
+                onClick={() => setActiveUser(activeUser ? false : true)}
+              >
+                <Image
+                  src={data?.user?.image ? data?.user?.image : UserIcon}
+                  height={65}
+                  width={65}
+                  alt="user-icon-image"
+                />
               </div>
               <Notification
                 username={data?.user?.name}
@@ -124,7 +129,7 @@ const Header = ({
               />
             </div>
           )}
-          {data === null && (
+          {!data?.user && (
             <Button filled onClick={() => setBannerActive(true)}>
               Увійти
             </Button>

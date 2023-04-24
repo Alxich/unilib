@@ -1,5 +1,11 @@
 import "../styles/globals.scss";
 import type { AppProps } from "next/app";
+
+// Apollo staff
+import { ApolloProvider } from "@apollo/client";
+import { client } from "../graphql/apollo-client";
+
+// Nextauth staff
 import { SessionProvider } from "next-auth/react";
 
 export default function App({
@@ -7,8 +13,10 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   return (
-    <SessionProvider session={session}>
-      <Component {...pageProps} />
-    </SessionProvider>
+    <ApolloProvider client={client}>
+      <SessionProvider session={session}>
+        <Component {...pageProps} />
+      </SessionProvider>
+    </ApolloProvider>
   );
 }
