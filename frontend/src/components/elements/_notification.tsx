@@ -1,11 +1,11 @@
-import Image, { StaticImageData } from "next/image";
+import { FC } from "react";
 
 import { signOut } from "next-auth/react";
 
 import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-interface types {
+interface NotificationProps {
   username?: string | null;
   items: {
     title: string;
@@ -17,7 +17,12 @@ interface types {
   type: string;
 }
 
-const Notification = ({ username, items, activeElem, type }: types) => {
+const Notification: FC<NotificationProps> = ({
+  username,
+  items,
+  activeElem,
+  type,
+}: NotificationProps) => {
   return (
     <div
       className={classNames("notification container flex-right", {

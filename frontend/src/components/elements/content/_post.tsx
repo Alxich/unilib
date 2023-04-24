@@ -1,3 +1,5 @@
+import { FC } from "react";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faComments,
@@ -9,7 +11,7 @@ import Button from "../_button";
 import classNames from "classnames";
 import Link from "next/link";
 
-interface PostTypes {
+interface PostProps {
   id: any;
   group: string;
   name: string;
@@ -21,7 +23,7 @@ interface PostTypes {
   children: any;
 }
 
-const Post = ({
+const Post: FC<PostProps> = ({
   id,
   group,
   name,
@@ -31,7 +33,7 @@ const Post = ({
   commentsCount,
   isFailPage,
   children,
-}: PostTypes) => {
+}: PostProps) => {
   return (
     <div
       className={classNames("post post-wrapper", {

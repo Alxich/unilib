@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { FC } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 
@@ -16,7 +16,7 @@ interface buttonProps {
   children: never[] | any;
 }
 
-const Button = ({
+const Button: FC<buttonProps> = ({
   onClick,
   className,
   outline,
@@ -28,7 +28,7 @@ const Button = ({
   iconIncluded,
   iconName,
   children,
-}: buttonProps): ReactElement => {
+}: buttonProps) => {
   return (
     <button
       onClick={onClick}

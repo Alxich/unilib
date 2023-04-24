@@ -1,8 +1,13 @@
-import React, { FC } from "react";
+import { FC, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faComments } from "@fortawesome/free-solid-svg-icons";
 
-const FlowItem = ({ title, counter }: { title: string; counter: number }) => {
+interface FlowItemProps {
+  title: string;
+  counter: number;
+}
+
+const FlowItem: FC<FlowItemProps> = ({ title, counter }: FlowItemProps) => {
   return (
     <div className="item">
       <p className="title">{title}</p>
@@ -21,10 +26,15 @@ const FlowItem = ({ title, counter }: { title: string; counter: number }) => {
   );
 };
 
-const NewestFlow: FC = () => {
-  const [openMore, setOpenMore] = React.useState(false);
+interface NewestFlowProps {
+  title: string;
+  counter: number;
+}
 
-  const flowItems: { title: string; counter: number }[] = [
+const NewestFlow: FC = () => {
+  const [openMore, setOpenMore] = useState(false);
+
+  const flowItems: NewestFlowProps[] = [
     {
       title:
         "Джеремі Реннер переніс першу операцію після нещасного випадку під час розчищення снігу",

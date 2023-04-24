@@ -5,7 +5,7 @@ import image from "../../public/images/404.png";
 
 const FourOhFour = () => {
   return (
-    <Content categories={[]} fandoms={[]}>
+    <Content>
       <Post
         id={0}
         group="UNILIB"

@@ -1,3 +1,5 @@
+import { FC } from "react";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faComments,
@@ -7,7 +9,7 @@ import {
 
 import Button from "../_button";
 
-interface PostTypes {
+interface PostProps {
   group: string;
   name: string;
   time: string;
@@ -19,7 +21,7 @@ interface PostTypes {
   children: any;
 }
 
-const PostPage = ({
+const PostPage: FC<PostProps> = ({
   group,
   name,
   time,
@@ -29,7 +31,7 @@ const PostPage = ({
   commentsCount,
   viewsCount,
   children,
-}: PostTypes) => {
+}: PostProps) => {
   return (
     <div className="post post-wrapper">
       <div className="user-author">

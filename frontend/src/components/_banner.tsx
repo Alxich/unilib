@@ -1,17 +1,19 @@
-import React from "react";
+import { FC, useState } from "react";
 import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Registration, UsualIntro } from "./elements/banner";
 
-const Banner = ({
-  bannerActive,
-  setBannerActive,
-}: {
+interface BannerProps {
   bannerActive: boolean;
   setBannerActive: any;
-}) => {
-  const [regClicked, setRegClicked] = React.useState(false);
+}
+
+const Banner: FC<BannerProps> = ({
+  bannerActive,
+  setBannerActive,
+}: BannerProps) => {
+  const [regClicked, setRegClicked] = useState(false);
 
   return (
     <div

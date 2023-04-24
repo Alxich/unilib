@@ -4,7 +4,7 @@ import { Content, AuthorInfo, MoreAuthor, Post } from "../../components";
 
 const Author = () => {
   return (
-    <Content categories={[]} fandoms={[]}>
+    <Content>
       <AuthorInfo />
       {/* <MoreAuthor /> */}
       <div className="posts-container container">

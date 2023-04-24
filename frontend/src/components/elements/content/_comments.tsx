@@ -1,10 +1,23 @@
-import React from "react";
+import { FC } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImages } from "@fortawesome/free-solid-svg-icons";
 
 import { CommentItem } from "./comments";
 
-const Comments = ({ commentArray }: { commentArray: any }) => {
+type CommentsTypes = {
+  author: {
+    name: string;
+    time: string;
+  };
+  likes: number;
+  content: any;
+  answers: string;
+};
+interface CommentsProps {
+  commentArray: CommentsTypes[];
+}
+
+const Comments: FC<CommentsProps> = ({ commentArray }: CommentsProps) => {
   const complainItems = [
     {
       title: "Скарга за копірайт",
@@ -42,7 +55,7 @@ const Comments = ({ commentArray }: { commentArray: any }) => {
         </button>
       </form>
       <div className="container comments-flow">
-        {commentArray.map((item: any, i: Number) => {
+        {commentArray.map((item: CommentsTypes, i: Number) => {
           const { author, likes, content, answers } = item;
           return (
             <CommentItem

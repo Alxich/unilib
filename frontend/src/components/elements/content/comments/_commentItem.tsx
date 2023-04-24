@@ -1,4 +1,4 @@
-import React from "react";
+import { FC, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faThumbsDown,
@@ -9,7 +9,7 @@ import {
 import Notification from "../../_notification";
 import UsualItem from "./_usualItem";
 
-interface commentsItemTypes {
+interface CommentsItemProps {
   author: {
     name: string;
     time: string;
@@ -20,14 +20,14 @@ interface commentsItemTypes {
   complainItems: { title: string; text: string }[];
 }
 
-const CommentItem = ({
+const CommentItem: FC<CommentsItemProps> = ({
   author,
   likes,
   content,
   answers,
   complainItems,
-}: commentsItemTypes) => {
-  const [activeElem, setActiveElem] = React.useState(false);
+}: CommentsItemProps) => {
+  const [activeElem, setActiveElem] = useState(false);
 
   return (
     <div className="item">
@@ -109,7 +109,7 @@ const CommentItem = ({
       </div>
       {answers.length > 0 && (
         <div className="comments-to-item">
-          {answers.map((item: commentsItemTypes, i: any) => {
+          {answers.map((item: CommentsItemProps, i: any) => {
             const { author, likes, content, answers } = item;
             return (
               <UsualItem

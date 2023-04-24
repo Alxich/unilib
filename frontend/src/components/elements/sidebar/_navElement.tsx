@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { FC } from "react";
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,7 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import classNames from "classnames";
 
-interface buttonProps {
+interface NavElementProps {
   icon?: any;
   title?: string;
   iconTypeImage?: boolean;
@@ -18,13 +18,13 @@ interface buttonProps {
   link: string;
 }
 
-const NavElement = ({
+const NavElement: FC<NavElementProps> = ({
   icon,
   title,
   iconTypeImage,
   iconTypeFaFont,
   link,
-}: buttonProps): ReactElement => {
+}: NavElementProps) => {
   const router = useRouter();
 
   const scroolToTop = (e: any, link: string) => {

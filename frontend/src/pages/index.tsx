@@ -1,10 +1,8 @@
-import Image from "next/image";
-
 import { Content, Flowrange, Newestflow, Post } from "../components";
 
 export default function Home() {
   return (
-    <Content categories={[]} fandoms={[]}>
+    <Content>
       <Flowrange />
       <Newestflow />
       <div className="posts-container container">

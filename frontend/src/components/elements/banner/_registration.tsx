@@ -1,6 +1,13 @@
+import { FC } from "react";
 import Button from "../_button";
 
-const Registration = ({ setRegClicked }: { setRegClicked: any }) => {
+interface RegistrationProps {
+  setRegClicked: any;
+}
+
+const Registration: FC<RegistrationProps> = ({
+  setRegClicked,
+}: RegistrationProps) => {
   return (
     <>
       <div className="title">

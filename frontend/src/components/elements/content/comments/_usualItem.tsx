@@ -1,4 +1,4 @@
-import React from "react";
+import { FC, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faThumbsDown,
@@ -8,7 +8,7 @@ import {
 
 import Notification from "../../_notification";
 
-interface commentsItemTypes {
+interface CommentsItemProps {
   author: {
     name: string;
     time: string;
@@ -19,14 +19,14 @@ interface commentsItemTypes {
   complainItems: { title: string; text: string }[];
 }
 
-const UsualItem = ({
+const UsualItem: FC<CommentsItemProps> = ({
   author,
   likes,
   content,
   answers,
   complainItems,
-}: commentsItemTypes) => {
-  const [activeElem, setActiveElem] = React.useState(false);
+}: CommentsItemProps) => {
+  const [activeElem, setActiveElem] = useState(false);
 
   return (
     <div className="item">

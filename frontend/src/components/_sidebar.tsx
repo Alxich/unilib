@@ -4,13 +4,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { NavElement } from "./elements";
 
-const Sidebar = ({
-  categories,
-  fandoms,
-}: {
+
+interface SidebarProps {
   categories?: object[] | undefined;
   fandoms?: object[] | undefined;
-}) => {
+}
+
+const Sidebar: FC<SidebarProps> = ({ categories, fandoms }: SidebarProps) => {
   const fandomsLengthBefore = 5;
   const [openAllFandom, setOpenAllFandom] = React.useState(false);
   const [openAllThemes, setOpenAllThemes] = React.useState(false);

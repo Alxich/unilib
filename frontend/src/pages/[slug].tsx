@@ -1,9 +1,8 @@
-import Image from "next/image";
 import { Content, AuthorInfo, Post } from "../components";
 
 const Category = ({}) => {
   return (
-    <Content categories={[]} fandoms={[]}>
+    <Content>
       <AuthorInfo />
       <div className="posts-container container">
         {[].map((item, i) => {
