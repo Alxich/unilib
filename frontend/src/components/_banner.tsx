@@ -1,8 +1,14 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import classNames from "classnames";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { Registration, UsualIntro } from "./elements/banner";
+
+import { Registration, UsualIntro, UsernameCreate } from "./elements/banner";
+
+import { useSession } from "next-auth/react";
+
+import { UserSessionData } from "../util/types";
 
 interface BannerProps {
   bannerActive: boolean;
@@ -14,16 +20,28 @@ const Banner: FC<BannerProps> = ({
   setBannerActive,
 }: BannerProps) => {
   const [regClicked, setRegClicked] = useState(false);
+  const [userData, setUserData] = useState<UserSessionData | undefined>(
+    undefined
+  );
+  const { data } = useSession();
+
+  useEffect(() => {
+    setUserData(data?.user);
+  }, [data]);
 
   return (
     <div
       id="banner"
       className={classNames({
-        active: bannerActive,
+        active: !userData?.username ? true : bannerActive,
       })}
     >
       <div className="background"></div>
-      <div className="wrapper container">
+      <div
+        className={classNames("wrapper container", {
+          nickname: !userData?.username,
+        })}
+      >
         <div
           className="fafont-icon big interactive cross"
           onClick={() => setBannerActive(false)}
@@ -36,7 +54,9 @@ const Banner: FC<BannerProps> = ({
         <div className="logo">
           <p>unilib</p>
         </div>
-        {regClicked ? (
+        {!userData?.username ? (
+          <UsernameCreate />
+        ) : regClicked ? (
           <Registration setRegClicked={setRegClicked} />
         ) : (
           <UsualIntro setRegClicked={setRegClicked} />

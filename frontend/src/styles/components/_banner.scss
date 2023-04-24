@@ -33,10 +33,15 @@
     background-color: $background;
     justify-content: flex-start;
     border-radius: $reg_radius;
+    border: 1px solid $overhigh_bg;
     max-width: $banner_usual_width;
     min-height: $banner_usual_height;
     padding-top: $banner_pad_top;
     z-index: 1;
+
+    &.nickname {
+      min-height: $banner_usual_height - 140;
+    }
 
     .cross {
       position: absolute;
