@@ -1,9 +1,10 @@
 import React, { FC } from "react";
+import classNames from "classnames";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -16,15 +17,14 @@ import {
 
 import { Button, Notification } from "./elements";
 import UserIcon from "../../public/images/user-icon.png";
-import classNames from "classnames";
 
 interface HeaderProps {
+  session: Session | null;
   setBannerActive: any;
 }
 
-const Header: FC<HeaderProps> = ({ setBannerActive }: HeaderProps) => {
+const Header: FC<HeaderProps> = ({ setBannerActive, session }: HeaderProps) => {
   const router = useRouter();
-  const { data } = useSession();
 
   const scroolToTop = (e: any) => {
     if (router.pathname === "/") {
@@ -91,8 +91,8 @@ const Header: FC<HeaderProps> = ({ setBannerActive }: HeaderProps) => {
           className={classNames(
             "user-action container full-height flex-row width-auto",
             {
-              "not-logged": !data?.user,
-              logged: data?.user,
+              "not-logged": !session?.user,
+              logged: session?.user,
             }
           )}
         >
@@ -108,28 +108,28 @@ const Header: FC<HeaderProps> = ({ setBannerActive }: HeaderProps) => {
               items={notifyItems}
             />
           </div>
-          {data?.user && (
+          {session?.user && (
             <div className="fafont-icon big interactive user">
               <div
                 className="user-icon"
                 onClick={() => setActiveUser(activeUser ? false : true)}
               >
                 <Image
-                  src={data?.user?.image ? data?.user?.image : UserIcon}
+                  src={session?.user?.image ? session?.user?.image : UserIcon}
                   height={65}
                   width={65}
                   alt="user-icon-image"
                 />
               </div>
               <Notification
-                username={data?.user?.name}
+                username={session?.user?.name}
                 activeElem={activeUser}
                 type={"user"}
                 items={userItems}
               />
             </div>
           )}
-          {!data?.user && (
+          {!session?.user && (
             <Button filled onClick={() => setBannerActive(true)}>
               Увійти
             </Button>

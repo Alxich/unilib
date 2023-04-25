@@ -1,8 +1,9 @@
+import type { NextPage } from "next";
 import { Content, AuthorInfo, Post } from "../../components";
 
-const Author = () => {
+const Author: NextPage = () => {
   return (
-    <Content>
+    <>
       <AuthorInfo />
       <div className="posts-container container">
         {[].map((item, i) => {
@@ -33,7 +34,7 @@ const Author = () => {
           );
         })}
       </div>
-    </Content>
+    </>
   );
 };
 

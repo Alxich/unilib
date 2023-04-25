@@ -13,6 +13,8 @@ interface buttonProps {
   fullWidth?: boolean;
   iconIncluded?: boolean;
   iconName?: any;
+  loading?: boolean;
+  disabled?: boolean;
   children: never[] | any;
 }
 
@@ -27,6 +29,8 @@ const Button: FC<buttonProps> = ({
   fullWidth,
   iconIncluded,
   iconName,
+  loading,
+  disabled,
   children,
 }: buttonProps) => {
   return (
@@ -40,18 +44,26 @@ const Button: FC<buttonProps> = ({
         big: big,
         className,
         form: form,
+        loading: loading,
+        disabled: disabled,
         "full-width": fullWidth,
       })}
     >
-      {iconIncluded && (
-        <div className="fafont-icon">
-          <FontAwesomeIcon
-            icon={iconName}
-            style={{ width: "100%", height: "100%", color: "inherit" }}
-          />
-        </div>
+      {loading ? (
+        <div className="loading-circle"></div>
+      ) : iconIncluded ? (
+        <>
+          <div className="fafont-icon">
+            <FontAwesomeIcon
+              icon={iconName}
+              style={{ width: "100%", height: "100%", color: "inherit" }}
+            />
+          </div>
+          {children}
+        </>
+      ) : (
+        children
       )}
-      {children}
     </button>
   );
 };

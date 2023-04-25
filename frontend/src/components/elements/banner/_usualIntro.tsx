@@ -1,18 +1,17 @@
 import Image from "next/image";
 import { useEffect } from "react";
-import { signIn, useSession } from "next-auth/react";
+
+import { signIn } from "next-auth/react";
 
 import googleLogin from "../../../../public/images/logins/google.svg";
 import appleLogin from "../../../../public/images/logins/apple.svg";
 import emailLogin from "../../../../public/images/logins/email.svg";
 
-const UsualIntro = ({ setRegClicked }: { setRegClicked: any }) => {
-  const { data, status } = useSession();
+interface UsualIntroProps {
+  setRegClicked: any;
+}
 
-  useEffect(() => {
-    console.log("Here is your session", { data, status });
-  }, [status]);
-
+const UsualIntro = ({ setRegClicked }: UsualIntroProps) => {
   return (
     <>
       <div className="title">

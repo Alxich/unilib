@@ -1,16 +1,16 @@
 import { FC, useEffect, useState } from "react";
 import classNames from "classnames";
 
+import { Session } from "next-auth";
+import { UserVariables } from "../util/types";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 import { Registration, UsualIntro, UsernameCreate } from "./elements/banner";
 
-import { useSession } from "next-auth/react";
-
-import { UserSessionData } from "../util/types";
-
 interface BannerProps {
+  session: Session | null;
   bannerActive: boolean;
   setBannerActive: any;
 }
@@ -18,22 +18,25 @@ interface BannerProps {
 const Banner: FC<BannerProps> = ({
   bannerActive,
   setBannerActive,
+  session,
 }: BannerProps) => {
   const [regClicked, setRegClicked] = useState(false);
-  const [userData, setUserData] = useState<UserSessionData | undefined>(
+  const [userData, setUserData] = useState<UserVariables | undefined>(
     undefined
   );
-  const { data } = useSession();
 
   useEffect(() => {
-    setUserData(data?.user);
-  }, [data]);
+    if (session !== null && session !== undefined) {
+      setUserData(session.user);
+    }
+  }, [session]);
 
   return (
     <div
       id="banner"
       className={classNames({
-        active: !userData?.username ? true : bannerActive,
+        active:
+          userData !== undefined && !userData.username ? true : bannerActive,
       })}
     >
       <div className="background"></div>
@@ -54,7 +57,7 @@ const Banner: FC<BannerProps> = ({
         <div className="logo">
           <p>unilib</p>
         </div>
-        {!userData?.username ? (
+        {session?.user && !userData?.username ? (
           <UsernameCreate />
         ) : regClicked ? (
           <Registration setRegClicked={setRegClicked} />

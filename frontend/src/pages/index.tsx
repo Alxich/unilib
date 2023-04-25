@@ -1,8 +1,9 @@
+import type { NextPage } from "next";
 import { Content, Flowrange, Newestflow, Post } from "../components";
 
-export default function Home() {
+const Home: NextPage = () => {
   return (
-    <Content>
+    <>
       <Flowrange />
       <Newestflow />
       <div className="posts-container container">
@@ -43,6 +44,8 @@ export default function Home() {
           );
         })}
       </div>
-    </Content>
+    </>
   );
-}
+};
+
+export default Home;

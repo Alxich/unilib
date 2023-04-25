@@ -1,4 +1,5 @@
 .button {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -8,6 +9,7 @@
   color: $color;
   padding: $button_gap;
   transition: all $transition_normal;
+  min-height: 42px;
 
   &.big {
     padding: $button_big_gap;
@@ -37,5 +39,32 @@
     & > div {
       margin-right: 8px;
     }
+  }
+
+  &.disabled {
+    cursor: default;
+    opacity: 0.75;
+    pointer-events: none;
+  }
+
+  .loading-circle {
+    position: absolute;
+    background-image: url('data:image/svg+xml,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 40 40">\
+<style> circle { animation: 4s a infinite linear, 3s o infinite linear; }\
+@keyframes a {from{stroke-dasharray:100 0}50%25{stroke-dasharray:0 100}to{stroke-dasharray:100 0}}\
+@keyframes o {from{stroke-dashoffset:75}to{stroke-dashoffset:375}}\
+<%2Fstyle><circle r="15.9154943092" stroke-width="7" fill="none" stroke="snow" />\
+</svg>');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 25px;
+    display: block;
+    height: 25px;
+    width: 25px;
+    top: 50%;
+    left: 50%;
+    opacity: 0.45;
+    transform: translate(-50%, -50%);
   }
 }

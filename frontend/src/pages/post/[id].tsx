@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { useRouter } from "next/router";
+import type { NextPage } from "next";
 
 import { Content, PostPage, Comments } from "../../components";
 
@@ -9,11 +9,10 @@ interface PostProps {
   id: any;
 }
 
-const Post: FC<PostProps> = ({ id }: PostProps) => {
+const Post: FC<PostProps & NextPage> = ({ id }: PostProps) => {
   return [] ? (
-    <Content>
-      <div className="posts-container container">
-        {/* <PostPage
+    <div className="posts-container container">
+      {/* <PostPage
           group={postContent.group}
           name={postContent.name}
           time={postContent.time}
@@ -26,8 +25,7 @@ const Post: FC<PostProps> = ({ id }: PostProps) => {
           {postContent.content}
         </PostPage>
         <Comments commentArray={postContent.comments} /> */}
-      </div>
-    </Content>
+    </div>
   ) : (
     <FourOhFour />
   );

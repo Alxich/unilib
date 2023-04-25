@@ -1,10 +1,11 @@
+import type { NextPage } from "next";
 import Image from "next/image";
 
 import { Content, AuthorInfo, MoreAuthor, Post } from "../../components";
 
-const Author = () => {
+const Author: NextPage = () => {
   return (
-    <Content>
+    <>
       <AuthorInfo />
       {/* <MoreAuthor /> */}
       <div className="posts-container container">
@@ -36,7 +37,7 @@ const Author = () => {
           );
         })}
       </div>
-    </Content>
+    </>
   );
 };
 

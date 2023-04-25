@@ -1,0 +1,9 @@
+{
+  "include": ["src"],
+  "files": ["src/lib/next-auth.d.ts"],
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "esModuleInterop": true
+  }
+}
