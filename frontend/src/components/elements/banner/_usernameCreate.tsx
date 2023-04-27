@@ -5,7 +5,7 @@ import {
   CreateUsernameData,
   CreateUsernameVariables,
 } from "../../../util/types";
-import userOperations from "../../../graphql/operations/user";
+import userOperations from "../../../graphql/operations/users";
 
 import Button from "../_button";
 
@@ -17,7 +17,7 @@ const UsernameCreate: FC<IUsernameCreateProps> = ({}: IUsernameCreateProps) => {
   const [createUsername, { data, loading, error }] = useMutation<
     CreateUsernameData,
     CreateUsernameVariables
-  >(userOperations.Mutation.createUsername);
+  >(userOperations.Mutations.createUsername);
 
   console.log("The sumbited data", data, loading, error);
 
