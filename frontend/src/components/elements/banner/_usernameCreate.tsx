@@ -1,4 +1,4 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, FormEvent, useEffect, useState } from "react";
 
 import { useMutation } from "@apollo/client";
 import {
@@ -9,17 +9,19 @@ import userOperations from "../../../graphql/operations/users";
 
 import Button from "../_button";
 
-interface IUsernameCreateProps {}
+interface IUsernameCreateProps {
+  setBannerActive: any;
+}
 
-const UsernameCreate: FC<IUsernameCreateProps> = ({}: IUsernameCreateProps) => {
+const UsernameCreate: FC<IUsernameCreateProps> = ({
+  setBannerActive,
+}: IUsernameCreateProps) => {
   const [username, setUsername] = useState("");
 
   const [createUsername, { data, loading, error }] = useMutation<
     CreateUsernameData,
     CreateUsernameVariables
   >(userOperations.Mutations.createUsername);
-
-  console.log("The sumbited data", data, loading, error);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -35,6 +37,18 @@ const UsernameCreate: FC<IUsernameCreateProps> = ({}: IUsernameCreateProps) => {
       console.log("Submiting username caused an error", error);
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      console.log("The error pop-ups from creating your username", error);
+
+      return;
+    }
+
+    if (data?.createUsername.success) {
+      setBannerActive(false);
+    }
+  }, [data, error, setBannerActive]);
 
   return (
     <>
