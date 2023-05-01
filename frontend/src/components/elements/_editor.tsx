@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBold,
   faCode,
-  faImagePortrait,
+  faImage,
   faItalic,
   faList,
   faListNumeric,
@@ -155,7 +155,7 @@ const Editor: FC<EditorProps> = ({}: EditorProps) => {
             >
               <div className="fafont-icon interactive undermain">
                 <FontAwesomeIcon
-                  icon={faImagePortrait}
+                  icon={faImage}
                   style={{ width: "100%", height: "100%", color: "inherit" }}
                 />
               </div>
@@ -191,6 +191,9 @@ const Editor: FC<EditorProps> = ({}: EditorProps) => {
               icon={faXmark}
               style={{ width: "100%", height: "100%", color: "inherit" }}
             />
+          </div>
+          <div className="title">
+            <h4>Добавлення зоображення</h4>
           </div>
           <input
             placeholder="Веддіть URL-посилання"
