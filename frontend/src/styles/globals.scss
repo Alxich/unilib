@@ -2,13 +2,20 @@
 @import "./components/elements/index";
 @import "./components/index";
 
-.main {
-    &.loading {
-        height: 100vh;
-        overflow: hidden;
-    }
-}
+body {
+  &.writter-active {
+    height: 100vh;
+    overflow: hidden;
+  }
 
-.main-content {
+  .main {
+    &.loading {
+      height: 100vh;
+      overflow: hidden;
+    }
+  }
+
+  .main-content {
     align-items: flex-start;
+  }
 }

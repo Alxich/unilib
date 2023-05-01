@@ -1,0 +1,223 @@
+#writter {
+  position: fixed;
+  background-color: $writter-bg;
+  height: 100%;
+  width: 100%;
+  top: $header_height;
+  padding-top: 35px;
+  padding-bottom: 120px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all $transition_normal;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+    overflow-y: scroll;
+  }
+
+  .head {
+    position: relative;
+    border-bottom: 1px solid $border_action;
+    min-height: 62px;
+    width: 100%;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+
+    p {
+      font-weight: 400;
+    }
+
+    .cross {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      top: 40%;
+      right: 5%;
+    }
+
+    & > .container {
+      height: 100%;
+      max-width: 716px;
+    }
+
+    .lt-side {
+      width: 100%;
+
+      .title h3 {
+        font-weight: 500;
+        color: $writter-color;
+        margin: 0;
+      }
+
+      .date {
+        padding-top: 10px;
+
+        p {
+          margin: 0;
+        }
+      }
+    }
+
+    .rt-side {
+      display: flex;
+      justify-content: flex-end;
+      flex-direction: row;
+      align-items: center;
+      width: 100%;
+
+      .category {
+        display: flex;
+        justify-content: flex-end;
+        flex-direction: row;
+        max-width: 85px;
+        margin-right: 20px;
+        cursor: pointer;
+
+        & > p {
+          margin-right: 4px;
+          color: $writter-color;
+        }
+
+        .fafont-icon {
+          width: 8px;
+          color: $writter-color;
+        }
+
+        .changer {
+          .wrapper {
+            bottom: -48px;
+            right: -11px;
+            width: 96px;
+
+            .list {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .content {
+    max-width: 716px;
+    width: 100%;
+
+    form {
+      position: relative;
+      height: 100%;
+
+      & > div {
+        width: 100%;
+        color: $writter-color;
+      }
+
+      & > input,
+      & > textarea {
+        background-color: transparent;
+        color: $writter-color;
+
+        &::placeholder {
+          color: $writter-placeholder;
+        }
+      }
+
+      & > input {
+        font-size: $h2_font_size;
+        font-weight: 500;
+        padding: 0;
+        margin-bottom: 0;
+
+        &::placeholder {
+          color: $writter-placeholder-title;
+        }
+      }
+
+      & > textarea {
+        height: 100%;
+        resize: none;
+        font-weight: 400;
+        padding: 0 0 0 0;
+        margin: 0;
+      }
+
+      #tippy-1,
+      #tippy-2,
+      #tippy-3,
+      #tippy-4,
+      #tippy-5,
+      #tippy-6,
+      div[data-tippy-root] {
+        width: fit-content;
+      }
+
+      .ProseMirror {
+        p {
+          margin: 10px 0;
+        }
+
+        ul,
+        ol {
+          padding: 0 1rem;
+        }
+      }
+
+      .bubble-menu {
+        display: flex;
+        background-color: $writter-interact-bg;
+        border-radius: $reg_radius;
+        padding: 5px;
+        width: fit-content;
+
+        button {
+          background: none;
+          border: none;
+          font-size: 0.85rem;
+          font-weight: 500;
+          color: $color;
+          padding: 0 0.2rem;
+          opacity: 0.6;
+
+          &:hover,
+          &.is-active {
+            color: $active_elem;
+            opacity: 1;
+          }
+        }
+      }
+
+      .floating-menu {
+        display: flex;
+        align-items: center;
+        width: fit-content;
+
+        & > .fafont-icon {
+          margin-right: 8px;
+          color: $writter-color;
+        }
+
+        .container {
+          background-color: $writter-interact-bg;
+          border-radius: $reg_radius;
+          padding: 6px;
+
+
+          button {
+            border: none;
+            background: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: $color;
+            padding: 0 0.2rem;
+            opacity: 0.6;
+
+            &:hover,
+            &.is-active {
+              color: $active_elem;
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+  }
+}

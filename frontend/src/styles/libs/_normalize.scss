@@ -47,6 +47,10 @@ $main-wrap-width-val: 1280px;
 
 * {
   box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+  }
 }
 
 // Corrects block display not defined in IE6/7/8/9 & FF3
@@ -172,7 +176,7 @@ a {
     outline: 0;
   }
 
-  // 4 
+  // 4
 
   text-decoration: none;
 

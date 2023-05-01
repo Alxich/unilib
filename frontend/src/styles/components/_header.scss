@@ -22,8 +22,24 @@
   }
 
   .interagtions {
+    position: relative;
+
+    &.writter-active {
+      .button {
+        margin: 0 -9.89% 0 0;
+        visibility: hidden;
+        opacity: 0;
+      }
+
+      .search {
+        max-width: 680px;
+      }
+    }
+
     .button {
-      margin-left: 121px;
+      position: relative;
+      margin: 0 0 0 121px;
+      transition: all $transition_normal;
     }
   }
 

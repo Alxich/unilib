@@ -51,6 +51,10 @@
   }
 
   &.interactive {
+    &.undermain {
+      color: inherit;
+    }
+    
     position: relative;
     cursor: pointer;
 

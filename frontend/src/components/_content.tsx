@@ -1,11 +1,12 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import type { NextPageContext } from "next";
 import Head from "next/head";
+import classNames from "classnames";
 
 // Importing once next-auth session
 import { getSession, useSession } from "next-auth/react";
 
-import { Header, Banner, Sidebar, Reels } from "../components";
+import { Header, Banner, Sidebar, Reels, WritterPost } from "../components";
 
 interface ContentProps {
   children: any;
@@ -13,8 +14,15 @@ interface ContentProps {
 
 const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   const [bannerActive, setBannerActive] = useState(false);
+  const [writterActive, setWritterActive] = useState(false);
 
   const { data: session } = useSession();
+
+  useEffect(() => {
+    writterActive
+      ? document.body.classList.add("writter-active")
+      : document.body.classList.remove("writter-active");
+  }, [writterActive]);
 
   return (
     <>
@@ -24,8 +32,17 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header setBannerActive={setBannerActive} session={session} />
-      <main className="main">
+      <Header
+        setBannerActive={setBannerActive}
+        session={session}
+        writterActive={writterActive}
+        setWritterActive={setWritterActive}
+      />
+      <main
+        className={classNames("main", {
+          "writter-active": writterActive,
+        })}
+      >
         <div className="container main-content flex-row flex-space">
           <Sidebar categories={[]} fandoms={[]} />
           <div id="content" className="container">
@@ -38,6 +55,10 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
         bannerActive={bannerActive}
         setBannerActive={setBannerActive}
         session={session}
+      />
+      <WritterPost
+        writterActive={writterActive}
+        setWritterActive={setWritterActive}
       />
       <footer className={"colophon"}></footer>
     </>

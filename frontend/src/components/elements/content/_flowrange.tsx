@@ -1,10 +1,11 @@
-import React, { FC } from "react";
+import { FC, useState } from "react";
 import classNames from "classnames";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
-const Flowrange = () => {
-  const [openRange, setOpenRange] = React.useState(false);
+const Flowrange: FC = () => {
+  const [openRange, setOpenRange] = useState(false);
 
   return (
     <div className="flow-range open-more">

@@ -1,13 +1,15 @@
-import React from "react";
-import classNames from "classnames";
+import { FC, useState } from "react";
 import Image from "next/image";
+
+import classNames from "classnames";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAlignCenter } from "@fortawesome/free-solid-svg-icons";
 
 import background from "../../../../public/images/background.png";
 
-const AuthorInfo = () => {
-  const [openFilter, setOpenFilter] = React.useState(false);
+const AuthorInfo: FC = () => {
+  const [openFilter, setOpenFilter] = useState(false);
 
   return (
     <div id="author-info" className="container">

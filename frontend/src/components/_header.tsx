@@ -22,9 +22,16 @@ import UserIcon from "../../public/images/user-icon.png";
 interface HeaderProps {
   session: Session | null;
   setBannerActive: any;
+  writterActive: boolean;
+  setWritterActive: any;
 }
 
-const Header: FC<HeaderProps> = ({ setBannerActive, session }: HeaderProps) => {
+const Header: FC<HeaderProps> = ({
+  setBannerActive,
+  session,
+  writterActive,
+  setWritterActive,
+}: HeaderProps) => {
   const router = useRouter();
 
   const scroolToTop = (e: any) => {
@@ -70,12 +77,20 @@ const Header: FC<HeaderProps> = ({ setBannerActive, session }: HeaderProps) => {
   ];
 
   return (
-    <header className="masthead">
+    <header
+      className={classNames("masthead", {
+        "writter-active": writterActive,
+      })}
+    >
       <div className="container full-height flex-space flex-row content-pad">
         <Link href={"/"} className="logo" onClick={(e) => scroolToTop(e)}>
           <p>UNILIB</p>
         </Link>
-        <div className="interagtions container full-height flex-row">
+        <div
+          className={classNames("interagtions container full-height flex-row", {
+            "writter-active": writterActive,
+          })}
+        >
           <form className="search">
             <input
               name="Search"
@@ -84,7 +99,13 @@ const Header: FC<HeaderProps> = ({ setBannerActive, session }: HeaderProps) => {
             />
           </form>
 
-          <Button iconIncluded iconName={faPlus} filled big>
+          <Button
+            iconIncluded
+            iconName={faPlus}
+            filled
+            big
+            onClick={() => setWritterActive(true)}
+          >
             {"Cтворити"}
           </Button>
         </div>
