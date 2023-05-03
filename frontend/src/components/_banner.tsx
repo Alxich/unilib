@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useCallback } from "react";
 import classNames from "classnames";
 
 import { Session } from "next-auth";
@@ -25,6 +25,15 @@ const Banner: FC<BannerProps> = ({
     undefined
   );
 
+  const escFunction = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        bannerActive != false && setBannerActive(false);
+      }
+    },
+    [bannerActive, setBannerActive]
+  );
+
   useEffect(() => {
     if (session !== null && session !== undefined) {
       setUserData(session.user);
@@ -32,6 +41,14 @@ const Banner: FC<BannerProps> = ({
 
     userData !== undefined && !userData.username && setBannerActive(true);
   }, [session, setBannerActive, userData]);
+
+  useEffect(() => {
+    document.addEventListener("keydown", escFunction, false);
+
+    return () => {
+      document.removeEventListener("keydown", escFunction, false);
+    };
+  }, [escFunction]);
 
   return (
     <div

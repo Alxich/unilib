@@ -1,4 +1,4 @@
-import { FC, useState, useCallback } from "react";
+import { FC, useState, useCallback, useEffect } from "react";
 import classNames from "classnames";
 
 import {
@@ -28,6 +28,8 @@ import { Button } from "../elements";
 interface EditorProps {}
 
 const Editor: FC<EditorProps> = ({}: EditorProps) => {
+  const [content, setContent] = useState({});
+
   const editor = useEditor({
     extensions: [StarterKit, Image],
     content: `
@@ -35,6 +37,9 @@ const Editor: FC<EditorProps> = ({}: EditorProps) => {
         Вибиріть слово щоб його редагувати.
       </p>
     `,
+    onUpdate: ({ editor }) => {
+      setContent(editor.getJSON());
+    },
   });
 
   const [openImagePop, setOpenImagePop] = useState(false);
@@ -47,6 +52,10 @@ const Editor: FC<EditorProps> = ({}: EditorProps) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
+
+  useEffect(() => {
+    console.log("HERE IS YOUR CONTENT", content);
+  }, [content]);
 
   if (!editor) {
     return null;

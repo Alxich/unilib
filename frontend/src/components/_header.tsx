@@ -105,6 +105,7 @@ const Header: FC<HeaderProps> = ({
             filled
             big
             onClick={() => setWritterActive(true)}
+            disabled={!session?.user}
           >
             {"Cтворити"}
           </Button>
@@ -144,7 +145,7 @@ const Header: FC<HeaderProps> = ({
                 />
               </div>
               <Notification
-                username={session?.user?.name}
+                username={session?.user?.username}
                 activeElem={activeUser}
                 type={"user"}
                 items={userItems}
