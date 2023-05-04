@@ -1,11 +1,15 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import classNames from "classnames";
+import { ObjectId } from "bson";
+import toast from "react-hot-toast";
 
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
 import { Session } from "next-auth";
+
+import { useMutation, useQuery } from "@apollo/client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -19,8 +23,11 @@ import {
 import { Button, Notification } from "./elements";
 import UserIcon from "../../public/images/user-icon.png";
 
+import PostsOperations from "../graphql/operations/posts";
+import { CreatePostArguments, PostData, PostsVariables } from "../util/types";
+
 interface HeaderProps {
-  session: Session | null;
+  session: Session;
   setBannerActive: any;
   writterActive: boolean;
   setWritterActive: any;
@@ -76,6 +83,62 @@ const Header: FC<HeaderProps> = ({
     },
   ];
 
+  const [createPost] = useMutation<
+    { createPost: boolean },
+    CreatePostArguments
+  >(PostsOperations.Mutations.createPost);
+
+  const onCreatePost = async () => {
+    // event.preventDefault();
+
+    try {
+      const { id: userID, username } = session.user;
+      const newId = new ObjectId().toString();
+      const post = {
+        id: newId,
+        title: "New Post",
+        content: "This is the content of my new post",
+        authorId: userID,
+        authorName: username,
+      };
+
+      const { data, errors } = await createPost({
+        variables: {
+          ...post,
+        },
+        /**
+         * Optimistically update UI
+         */
+        // optimisticResponse: {
+        //   createPost: true,
+        // },
+      });
+
+      if (!data?.createPost || errors) {
+        throw new Error("Error creating post");
+      }
+    } catch (error: any) {
+      console.log("onCreatePost error", error);
+      toast.error(error?.message);
+    }
+  };
+
+  const id = "6453ff3d35a60160df3f6f3f";
+
+  const { data, loading, error, subscribeToMore } = useQuery<
+    PostData,
+    PostsVariables
+  >(PostsOperations.Queries.queryPosts, {
+    variables: {
+      id,
+    },
+    onError: ({ message }) => {
+      toast.error(message);
+    },
+  });
+
+  console.log(data);
+
   return (
     <header
       className={classNames("masthead", {
@@ -104,7 +167,10 @@ const Header: FC<HeaderProps> = ({
             iconName={faPlus}
             filled
             big
-            onClick={() => setWritterActive(true)}
+            onClick={() => {
+              // setWritterActive(true)
+              onCreatePost();
+            }}
             disabled={!session?.user}
           >
             {"Cтворити"}

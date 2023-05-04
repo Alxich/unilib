@@ -6,6 +6,7 @@ import {
   participantPopulated,
 } from "../graphql/resolvers/conversations";
 import { messagePopulated } from "../graphql/resolvers/messages";
+import { postPopulated } from "../graphql/resolvers/posts";
 
 /**
  * Server Configuration
@@ -26,17 +27,17 @@ export interface SubscriptionContext extends Context {
   };
 }
 
+export interface CreateItemResoponse {
+  success?: boolean;
+  error?: string;
+}
+
 /**
  * Users
  */
 export interface User {
   id: string;
   username: string;
-}
-
-export interface CreateUsernameResponse {
-  success?: boolean;
-  error?: string;
 }
 
 export interface SearchUsersResponse {
@@ -87,3 +88,19 @@ export interface ConversationUpdatedSubscriptionData {
 export interface ConversationDeletedSubscriptionPayload {
   conversationDeleted: ConversationPopulated;
 }
+
+/**
+ * Posts
+ */
+
+export interface CreatePostArguments {
+  id: string;
+  title: string;
+  content: string;
+  authorId: string;
+  authorName: string;
+}
+
+export type PostPopulated = Prisma.PostGetPayload<{
+  include: typeof postPopulated;
+}>;

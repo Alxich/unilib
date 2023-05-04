@@ -4,8 +4,10 @@ const POST_QUERIES = {
   posts: gql`
     query Posts {
       posts {
-        author
-        comment
+        title
+        content
+        authorId
+        authorName
       }
     }
   `,

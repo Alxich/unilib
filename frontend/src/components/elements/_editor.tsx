@@ -53,9 +53,9 @@ const Editor: FC<EditorProps> = ({}: EditorProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
 
-  useEffect(() => {
-    console.log("HERE IS YOUR CONTENT", content);
-  }, [content]);
+  // useEffect(() => {
+  //   console.log("HERE IS YOUR CONTENT", content);
+  // }, [content]);
 
   if (!editor) {
     return null;

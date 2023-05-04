@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client";
-import { CreateUsernameResponse, ParticipantPopulated } from "./types";
+import { CreateItemResoponse, ParticipantPopulated } from "./types";
 
 export async function verifyAndCreateUsername(
   args: { userId: string; username: string },
   prisma: PrismaClient
-): Promise<CreateUsernameResponse> {
+): Promise<CreateItemResoponse> {
   const { userId, username } = args;
 
   try {

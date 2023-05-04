@@ -42,6 +42,7 @@ model User {
   emailVerified DateTime?
   image         String?
   username      String?                   @unique
+  posts         Post[]
   messages      Message[]
   conversations ConversationParticipant[]
   accounts      Account[]
@@ -59,59 +60,18 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Category {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  name  String
-  posts Post[] @relation("category")
-}
-
 model Post {
-  id             String           @id @default(auto()) @map("_id") @db.ObjectId
-  title          String
-  content        String
-  authorName     String
-  createdAt      DateTime
-  category       Category         @relation("category", fields: [categoryId], references: [id])
-  categoryId     String
-  tags           Tag[]            @relation(fields: [tagsIDs], references: [id])
-  tagsIDs        String[]         @db.ObjectId
-  likes          Int
-  dislikes       Int
-  views          Int
-  comments       Comment[]        @relation(name: "CommentToPost")
-  isPinned       Boolean?
-  updatedAt      DateTime?
-  LatestComments LatestComments[]
-}
-
-model Tag {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  posts    Post[]   @relation(fields: [postsIds], references: [id])
-  postsIds String[] @db.ObjectId
-}
-
-model Comment {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  content         String
-  authorName      String
-  createdAt       DateTime
-  likes           Int
-  dislikes        Int
-  post            Post      @relation(name: "CommentToPost", fields: [postId], references: [id])
-  postId          String
-  parentComment   Comment?  @relation(name: "CommentToComment", fields: [parentCommentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  parentCommentId String?
-  replies         Comment[] @relation(name: "CommentToComment")
-}
-
-model LatestComments {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  content   String
-  post      Post     @relation(fields: [postId], references: [id])
-  postId    String
-  author    String
-  createdAt DateTime
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  title      String    @unique
+  content    String
+  author     User      @relation(fields: [authorId], references: [id])
+  authorName String
+  authorId   String    @db.ObjectId
+  createdAt  DateTime  @default(now())
+  likes      Int?
+  dislikes   Int?
+  views      Int?
+  updatedAt  DateTime?
 }
 
 model Conversation {

@@ -1,6 +1,7 @@
 import {
   ConversationPopulated,
   MessagePopulated,
+  PostPopulated,
 } from "../../../backend/src/util/types";
 
 /**
@@ -54,6 +55,25 @@ export interface MessagesSubscriptionData {
       messageSent: MessagePopulated;
     };
   };
+}
+
+/**
+ * Posts
+ */
+export interface CreatePostArguments {
+  id: string;
+  title: string;
+  content: string;
+  authorId: string;
+  authorName: string;
+}
+
+export interface PostsVariables {
+  id: string;
+}
+
+export interface PostData {
+  posts: Array<PostPopulated>;
 }
 
 /**
