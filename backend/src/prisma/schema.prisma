@@ -72,6 +72,15 @@ model Post {
   dislikes   Int?
   views      Int?
   updatedAt  DateTime?
+  Tag        Tag?      @relation(fields: [tagId], references: [id])
+  tagId      String[]  @db.ObjectId
+}
+
+model Tag {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String   @unique
+  createdAt DateTime @default(now())
+  posts     Post[]
 }
 
 model Conversation {

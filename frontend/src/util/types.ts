@@ -2,6 +2,7 @@ import {
   ConversationPopulated,
   MessagePopulated,
   PostPopulated,
+  TagPopulated,
 } from "../../../backend/src/util/types";
 
 /**
@@ -58,25 +59,6 @@ export interface MessagesSubscriptionData {
 }
 
 /**
- * Posts
- */
-export interface CreatePostArguments {
-  id: string;
-  title: string;
-  content: string;
-  authorId: string;
-  authorName: string;
-}
-
-export interface PostsVariables {
-  id: string;
-}
-
-export interface PostData {
-  posts: Array<PostPopulated>;
-}
-
-/**
  * Conversations
  */
 export interface CreateConversationData {
@@ -111,4 +93,39 @@ export interface ConversationDeletedData {
   conversationDeleted: {
     id: string;
   };
+}
+
+/**
+ * Posts
+ */
+export interface CreatePostArguments {
+  id: string;
+  title: string;
+  content: string;
+  authorId: string;
+  authorName: string;
+}
+
+export interface PostsVariables {
+  id: string;
+}
+
+export interface PostData {
+  posts: Array<PostPopulated>;
+}
+
+/**
+ * Tags
+ */
+export interface CreateTagArguments {
+  id: string;
+  title: string;
+}
+
+export interface TagsVariables {
+  id: string;
+}
+
+export interface TagData {
+  posts: Array<TagPopulated>;
 }

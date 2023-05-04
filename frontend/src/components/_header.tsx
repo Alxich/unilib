@@ -123,21 +123,19 @@ const Header: FC<HeaderProps> = ({
     }
   };
 
-  const id = "6453ff3d35a60160df3f6f3f";
+  // const id = "645406314860ced181d337f4";
 
-  const { data, loading, error, subscribeToMore } = useQuery<
-    PostData,
-    PostsVariables
-  >(PostsOperations.Queries.queryPosts, {
-    variables: {
-      id,
-    },
-    onError: ({ message }) => {
-      toast.error(message);
-    },
-  });
-
-  console.log(data);
+  // const { data, loading, error, subscribeToMore } = useQuery<
+  //   PostData,
+  //   PostsVariables
+  // >(PostsOperations.Queries.queryPosts, {
+  //   variables: {
+  //     id,
+  //   },
+  //   onError: ({ message }) => {
+  //     toast.error(message);
+  //   },
+  // });
 
   return (
     <header

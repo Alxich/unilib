@@ -7,6 +7,7 @@ import {
 } from "../graphql/resolvers/conversations";
 import { messagePopulated } from "../graphql/resolvers/messages";
 import { postPopulated } from "../graphql/resolvers/posts";
+import { tagPopulated } from "../graphql/resolvers/tags";
 
 /**
  * Server Configuration
@@ -103,4 +104,17 @@ export interface CreatePostArguments {
 
 export type PostPopulated = Prisma.PostGetPayload<{
   include: typeof postPopulated;
+}>;
+
+/**
+ * Tags
+ */
+
+export interface CreateTagArguments {
+  id: string;
+  title: string;
+}
+
+export type TagPopulated = Prisma.TagGetPayload<{
+  include: typeof tagPopulated;
 }>;
