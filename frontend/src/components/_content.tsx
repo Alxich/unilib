@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from "react";
 import type { NextPageContext } from "next";
 import Head from "next/head";
 import classNames from "classnames";
+import { Toaster } from "react-hot-toast";
 
 // Importing once next-auth session
 import { getSession, useSession } from "next-auth/react";
@@ -24,7 +25,7 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
       : document.body.classList.remove("writter-active");
   }, [writterActive]);
 
-  return (
+  return session ? (
     <>
       <Head>
         <title>UNILIB - Український форум</title>
@@ -57,11 +58,17 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
         session={session}
       />
       <WritterPost
+        session={session}
         writterActive={writterActive}
         setWritterActive={setWritterActive}
       />
       <footer className={"colophon"}></footer>
+      <div>
+        <Toaster position="bottom-right" />
+      </div>
     </>
+  ) : (
+    <div>Page loading</div>
   );
 };
 

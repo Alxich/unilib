@@ -1,4 +1,5 @@
 import {
+  CategoryPopulated,
   ConversationPopulated,
   MessagePopulated,
   PostPopulated,
@@ -103,7 +104,8 @@ export interface CreatePostArguments {
   title: string;
   content: string;
   authorId: string;
-  authorName: string;
+  categoryId: string;
+  tagId?: string[] | string;
 }
 
 export interface PostsVariables {
@@ -127,5 +129,22 @@ export interface TagsVariables {
 }
 
 export interface TagData {
-  posts: Array<TagPopulated>;
+  tags: Array<TagPopulated>;
+}
+
+/**
+ * Categories
+ */
+export interface CreateCategoryArguments {
+  id: string;
+  title: string;
+  desc: string;
+}
+
+export interface CategoriesVariables {
+  id: string;
+}
+
+export interface CategoryData {
+  categories: Array<CategoryPopulated>;
 }

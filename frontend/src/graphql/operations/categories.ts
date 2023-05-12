@@ -3,18 +3,19 @@ import { gql } from "@apollo/client";
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   Queries: {
-    queryTags: gql`
-      query queryTags {
-        queryTags {
+    queryCategories: gql`
+      query queryCategories {
+        queryCategories {
           title
+          desc
         }
       }
     `,
   },
   Mutations: {
-    createTag: gql`
-      mutation createTag($title: String) {
-        createTag(title: $title)
+    createCategory: gql`
+      mutation createCategory($title: String, $desc: String) {
+        createCategory(title: $title, desc: $desc)
       }
     `,
   },

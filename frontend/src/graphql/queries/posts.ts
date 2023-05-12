@@ -7,7 +7,6 @@ const POST_QUERIES = {
         title
         content
         authorId
-        authorName
       }
     }
   `,

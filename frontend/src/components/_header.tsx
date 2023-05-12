@@ -1,15 +1,11 @@
-import React, { FC, useEffect } from "react";
+import React, { FC } from "react";
 import classNames from "classnames";
-import { ObjectId } from "bson";
-import toast from "react-hot-toast";
 
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
 import { Session } from "next-auth";
-
-import { useMutation, useQuery } from "@apollo/client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -23,8 +19,13 @@ import {
 import { Button, Notification } from "./elements";
 import UserIcon from "../../public/images/user-icon.png";
 
-import PostsOperations from "../graphql/operations/posts";
-import { CreatePostArguments, PostData, PostsVariables } from "../util/types";
+import { useMutation } from "@apollo/client";
+import { ObjectId } from "bson";
+import toast from "react-hot-toast";
+
+import CategoriesOperations from "../graphql/operations/categories";
+import TagsOperations from "../graphql/operations/tags";
+import { CreateCategoryArguments, CreateTagArguments } from "../util/types";
 
 interface HeaderProps {
   session: Session;
@@ -83,59 +84,85 @@ const Header: FC<HeaderProps> = ({
     },
   ];
 
-  const [createPost] = useMutation<
-    { createPost: boolean },
-    CreatePostArguments
-  >(PostsOperations.Mutations.createPost);
+  // Starting working with backend and using hoo createCategory
 
-  const onCreatePost = async () => {
-    // event.preventDefault();
+  const [createCategory] = useMutation<
+    { createCategory: boolean },
+    CreateCategoryArguments
+  >(CategoriesOperations.Mutations.createCategory);
 
+  const onCreateCategory = async () => {
     try {
-      const { id: userID, username } = session.user;
+      const { username } = session.user;
       const newId = new ObjectId().toString();
-      const post = {
+
+      // Check if user exist to make post secure
+      if (!username) {
+        throw new Error("Not authorized user");
+      }
+
+      const category = {
         id: newId,
-        title: "New Post",
-        content: "This is the content of my new post",
-        authorId: userID,
-        authorName: username,
+        title: "Gamedev",
+        desc: "It is a Gamedev cateogory bla bla bla welcome",
       };
 
-      const { data, errors } = await createPost({
+      const { data, errors } = await createCategory({
         variables: {
-          ...post,
+          ...category,
         },
-        /**
-         * Optimistically update UI
-         */
-        // optimisticResponse: {
-        //   createPost: true,
-        // },
       });
 
-      if (!data?.createPost || errors) {
-        throw new Error("Error creating post");
+      if (!data?.createCategory || errors) {
+        throw new Error("Error creating category");
+      }
+
+      if (!errors) {
+        toast.success("Category was created!");
       }
     } catch (error: any) {
-      console.log("onCreatePost error", error);
+      console.log("onCreateCategory error", error);
       toast.error(error?.message);
     }
   };
 
-  // const id = "645406314860ced181d337f4";
+  const [createTag] = useMutation<{ createTag: boolean }, CreateTagArguments>(
+    TagsOperations.Mutations.createTag
+  );
 
-  // const { data, loading, error, subscribeToMore } = useQuery<
-  //   PostData,
-  //   PostsVariables
-  // >(PostsOperations.Queries.queryPosts, {
-  //   variables: {
-  //     id,
-  //   },
-  //   onError: ({ message }) => {
-  //     toast.error(message);
-  //   },
-  // });
+  const onCreateTag = async () => {
+    try {
+      const { username } = session.user;
+      const newId = new ObjectId().toString();
+
+      // Check if user exist to make post secure
+      if (!username) {
+        throw new Error("Not authorized user");
+      }
+
+      const tag = {
+        id: newId,
+        title: "gamedevelop",
+      };
+
+      const { data, errors } = await createTag({
+        variables: {
+          ...tag,
+        },
+      });
+
+      if (!data?.createTag || errors) {
+        throw new Error("Error creating tag");
+      }
+
+      if (!errors) {
+        toast.success("Tag was created!");
+      }
+    } catch (error: any) {
+      console.log("onCreateTag error", error);
+      toast.error(error?.message);
+    }
+  };
 
   return (
     <header
@@ -166,12 +193,31 @@ const Header: FC<HeaderProps> = ({
             filled
             big
             onClick={() => {
-              // setWritterActive(true)
-              onCreatePost();
+              setWritterActive(true);
             }}
             disabled={!session?.user}
           >
             {"Cтворити"}
+          </Button>
+          <Button
+            iconIncluded
+            iconName={faPlus}
+            filled
+            big
+            onClick={() => onCreateCategory()}
+            disabled={!session?.user}
+          >
+            {"Cтворити категорію"}
+          </Button>
+          <Button
+            iconIncluded
+            iconName={faPlus}
+            filled
+            big
+            onClick={() => onCreateTag()}
+            disabled={!session?.user}
+          >
+            {"Cтворити тег"}
           </Button>
         </div>
         <div

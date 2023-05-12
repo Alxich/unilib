@@ -1,16 +1,13 @@
 import { gql } from "@apollo/client";
 
-const POST_QUERIES = {
-  posts: gql`
-    query Posts {
-      posts {
+const TAG_QUERIES = {
+  tags: gql`
+    query Tags {
+      tags {
         title
-        content
-        authorId
-        authorName
       }
     }
   `,
 };
 
-export default POST_QUERIES;
+export default TAG_QUERIES;

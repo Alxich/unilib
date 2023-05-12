@@ -7,8 +7,11 @@ const typeDefs = gql`
     id: String
     title: String
     content: String
-    author: User
     createdAt: Date
+    author: User
+    categoryId: String
+    category: Category
+    tags: [PostTag]
   }
 
   type Query {
@@ -21,7 +24,8 @@ const typeDefs = gql`
       title: String
       content: String
       authorId: String
-      authorName: String
+      categoryId: String
+      tagsId: [String]
     ): Boolean
   }
 `;

@@ -8,6 +8,7 @@ import {
 import { messagePopulated } from "../graphql/resolvers/messages";
 import { postPopulated } from "../graphql/resolvers/posts";
 import { tagPopulated } from "../graphql/resolvers/tags";
+import { categoryPopulated } from "../graphql/resolvers/categories";
 
 /**
  * Server Configuration
@@ -93,13 +94,13 @@ export interface ConversationDeletedSubscriptionPayload {
 /**
  * Posts
  */
-
 export interface CreatePostArguments {
   id: string;
   title: string;
   content: string;
   authorId: string;
-  authorName: string;
+  categoryId: string;
+  tagsId: Array<string>;
 }
 
 export type PostPopulated = Prisma.PostGetPayload<{
@@ -109,7 +110,6 @@ export type PostPopulated = Prisma.PostGetPayload<{
 /**
  * Tags
  */
-
 export interface CreateTagArguments {
   id: string;
   title: string;
@@ -117,4 +117,17 @@ export interface CreateTagArguments {
 
 export type TagPopulated = Prisma.TagGetPayload<{
   include: typeof tagPopulated;
+}>;
+
+/**
+ * Categories
+ */
+export interface CreateCategoryArguments {
+  id: string;
+  title: string;
+  desc: string;
+}
+
+export type CategoryPopulated = Prisma.CategoryGetPayload<{
+  include: typeof categoryPopulated;
 }>;

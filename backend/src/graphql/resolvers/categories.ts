@@ -1,47 +1,47 @@
 import { Prisma } from "@prisma/client";
 import {
   GraphQLContext,
-  CreateTagArguments,
-  TagPopulated,
+  CreateCategoryArguments,
+  CategoryPopulated,
 } from "../../util/types";
 import { GraphQLError } from "graphql";
 
 const resolvers = {
   Query: {
-    queryTags: async function (
+    queryCategory: async function (
       _: any,
       args: { id: string },
       context: GraphQLContext
-    ): Promise<Array<TagPopulated>> {
+    ): Promise<Array<CategoryPopulated>> {
       const { session, prisma } = context;
-      const { id: tagID } = args;
+      const { id: catID } = args;
 
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
 
       try {
-        const tags = await prisma.tag.findMany({
+        const categories = await prisma.category.findMany({
           where: {
-            id: tagID,
+            id: catID,
           },
-          include: tagPopulated,
+          include: categoryPopulated,
           orderBy: {
             createdAt: "desc",
           },
         });
 
-        return tags;
+        return categories;
       } catch (error: any) {
-        console.log("Tags error", error);
+        console.log("Categories error", error);
         throw new GraphQLError(error?.message);
       }
     },
   },
   Mutation: {
-    createTag: async function (
+    createCategory: async function (
       _: any,
-      args: CreateTagArguments,
+      args: CreateCategoryArguments,
       context: GraphQLContext
     ): Promise<boolean> {
       const { session, prisma } = context;
@@ -50,32 +50,33 @@ const resolvers = {
         throw new GraphQLError("Not authorized");
       }
 
-      const { id, title } = args;
+      const { id, title, desc } = args;
 
       try {
         /**
-         * Create new tag entity
+         * Create new category entity
          */
-        const newTag = await prisma.tag.create({
+        const newCategory = await prisma.category.create({
           data: {
             id,
             title,
+            desc,
           },
-          include: tagPopulated,
+          include: categoryPopulated,
         });
 
-        console.log(newTag);
+        console.log(newCategory);
 
         return true;
       } catch (error) {
-        console.log("createTag error", error);
+        console.log("createCategory error", error);
         throw new GraphQLError("Error sending message");
       }
     },
   },
 };
 
-export const tagPopulated = Prisma.validator<Prisma.TagInclude>()({
+export const categoryPopulated = Prisma.validator<Prisma.CategoryInclude>()({
   posts: {
     select: {
       id: true,

@@ -22,13 +22,15 @@ export default {
         $title: String
         $content: String
         $authorId: String
-        $authorName: String
+        $categoryId: String
+        $tagsId: [String]
       ) {
         createPost(
           title: $title
           content: $content
           authorId: $authorId
-          authorName: $authorName
+          categoryId: $categoryId
+          tagsId: $tagsId
         )
       }
     `,

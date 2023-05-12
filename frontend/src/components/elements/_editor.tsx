@@ -1,14 +1,7 @@
-import { FC, useState, useCallback, useEffect } from "react";
+import { FC, useState, useCallback } from "react";
 import classNames from "classnames";
 
-import {
-  BubbleMenu,
-  EditorContent,
-  FloatingMenu,
-  useEditor,
-} from "@tiptap/react";
-import Image from "@tiptap/extension-image";
-import StarterKit from "@tiptap/starter-kit";
+import { BubbleMenu, EditorContent, FloatingMenu } from "@tiptap/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -25,23 +18,11 @@ import {
 
 import { Button } from "../elements";
 
-interface EditorProps {}
+interface EditorProps {
+  editor: any;
+}
 
-const Editor: FC<EditorProps> = ({}: EditorProps) => {
-  const [content, setContent] = useState({});
-
-  const editor = useEditor({
-    extensions: [StarterKit, Image],
-    content: `
-      <p>
-        Вибиріть слово щоб його редагувати.
-      </p>
-    `,
-    onUpdate: ({ editor }) => {
-      setContent(editor.getJSON());
-    },
-  });
-
+const EditorBlock: FC<EditorProps> = ({ editor }: EditorProps) => {
   const [openImagePop, setOpenImagePop] = useState(false);
   const [imagePopText, setImagePopText] = useState("");
 
@@ -52,10 +33,6 @@ const Editor: FC<EditorProps> = ({}: EditorProps) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
-
-  // useEffect(() => {
-  //   console.log("HERE IS YOUR CONTENT", content);
-  // }, [content]);
 
   if (!editor) {
     return null;
@@ -224,4 +201,4 @@ const Editor: FC<EditorProps> = ({}: EditorProps) => {
   );
 };
 
-export default Editor;
+export default EditorBlock;

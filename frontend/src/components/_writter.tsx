@@ -1,34 +1,57 @@
 import { FC, useState, useEffect, useCallback } from "react";
 import classNames from "classnames";
+import { ObjectId } from "bson";
+import toast from "react-hot-toast";
+
+import { useMutation } from "@apollo/client";
+
+import { Session } from "next-auth";
+
+import PostsOperations from "../graphql/operations/posts";
+import { CreatePostArguments } from "../util/types";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faXmark } from "@fortawesome/free-solid-svg-icons";
 
-import Editor from "./elements/_editor";
+import { useEditor } from "@tiptap/react";
+import Image from "@tiptap/extension-image";
+import StarterKit from "@tiptap/starter-kit";
+import EditorBlock from "./elements/_editor";
+
 import { Button } from "./elements";
 
 export interface IWritterPostProps {
+  session: Session;
   writterActive: boolean;
   setWritterActive: any;
 }
 
 const WritterPost: FC<IWritterPostProps> = ({
+  session,
   writterActive,
   setWritterActive,
 }: IWritterPostProps) => {
   const [openFilter, setOpenFilter] = useState(false);
-  const [filterText, setFilterText] = useState("Мій блог");
+  const [filterText, setFilterText] = useState({
+    title: "Мій блог",
+    id: "123",
+  });
   const [dateText, setDateText] = useState("");
   const [titleText, setTitleText] = useState("");
-
-  const escFunction = useCallback(
-    (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        writterActive != false && setWritterActive(false);
-      }
-    },
-    [setWritterActive, writterActive]
+  const [content, setContent] = useState(
+    `<p>Вибиріть слово щоб його редагувати.</p>`
   );
+
+  // Initialize tiptap editor
+
+  const editor = useEditor({
+    extensions: [StarterKit, Image],
+    content: content,
+    onUpdate: ({ editor }) => {
+      // @ts-ignore
+      setContent(editor.getJSON());
+    },
+  });
 
   const returnMeDate = () => {
     const date = new Date();
@@ -59,9 +82,22 @@ const WritterPost: FC<IWritterPostProps> = ({
     setDateText(`${monthNames[month]} ${year} рік ${time}`);
   };
 
+  // Helps to capitalize first letter in title
+
   const capitalize = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
+
+  // If user pressed esq clore our editor
+
+  const escFunction = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        writterActive != false && setWritterActive(false);
+      }
+    },
+    [setWritterActive, writterActive]
+  );
 
   useEffect(() => {
     document.addEventListener("keydown", escFunction, false);
@@ -78,6 +114,61 @@ const WritterPost: FC<IWritterPostProps> = ({
       clearInterval(timerId);
     };
   }, []);
+
+  // Starting working with backend and using hoo createPost
+
+  const [createPost] = useMutation<
+    { createPost: boolean },
+    CreatePostArguments
+  >(PostsOperations.Mutations.createPost);
+
+  const onCreatePost = async () => {
+    try {
+      const { id: userID, username } = session.user;
+      const newId = new ObjectId().toString();
+
+      // Check if user exist to make post secure
+      if (!username) {
+        throw new Error("Not authorized user");
+      }
+
+      if (!titleText || !content) {
+        throw new Error("Error: Please fill all forms");
+      }
+
+      const post = {
+        id: newId,
+        title: titleText,
+        content: JSON.stringify(content),
+        authorId: userID,
+        categoryId: filterText.id,
+        tagsId: ["645cfdb3e5c882a2c163706f"],
+      };
+
+      const { data, errors } = await createPost({
+        variables: {
+          ...post,
+        },
+      });
+
+      if (!data?.createPost || errors) {
+        throw new Error("Error creating post");
+      }
+
+      if (!errors) {
+        setContent("");
+        setTitleText("");
+        editor?.commands.setContent(
+          `<p>Вибиріть слово щоб його редагувати.</p>`
+        );
+        setWritterActive(false);
+        toast.success("Post was created!");
+      }
+    } catch (error: any) {
+      console.log("onCreatePost error", error);
+      toast.error(error?.message);
+    }
+  };
 
   return (
     <div id="writter" className={classNames({ active: writterActive })}>
@@ -106,7 +197,7 @@ const WritterPost: FC<IWritterPostProps> = ({
                 className="category"
                 onClick={() => setOpenFilter(openFilter ? false : true)}
               >
-                <p>{filterText}</p>
+                <p>{filterText.title}</p>
                 <div className="changer open-more">
                   <div className="fafont-icon interactive">
                     <FontAwesomeIcon
@@ -130,21 +221,24 @@ const WritterPost: FC<IWritterPostProps> = ({
                     <div className="list container flex-left width-auto">
                       <p
                         onClick={() => {
-                          setFilterText("Мій блог");
+                          setFilterText({ title: "Мій блог", id: "123" });
                         }}
                       >
                         Мій блог
                       </p>
                       <p
                         onClick={() => {
-                          setFilterText("Наука");
+                          setFilterText({
+                            title: "GameDev",
+                            id: "645ce049f0a62838a0f9c857",
+                          });
                         }}
                       >
-                        Наука
+                        GameDev
                       </p>
                       <p
                         onClick={() => {
-                          setFilterText("Ігри");
+                          setFilterText({ title: "Ігри", id: "123" });
                         }}
                       >
                         Ігри
@@ -153,7 +247,9 @@ const WritterPost: FC<IWritterPostProps> = ({
                   </div>
                 </div>
               </div>
-              <Button filled>Опублікувати</Button>
+              <Button filled onClick={() => onCreatePost()}>
+                Опублікувати
+              </Button>
             </div>
           </div>
         </div>
@@ -169,13 +265,7 @@ const WritterPost: FC<IWritterPostProps> = ({
               value={capitalize(titleText)}
               onChange={(e) => setTitleText(e.target.value)}
             />
-            {/* <textarea
-              className="text"
-              placeholder="Нажміть Tab для вибору інструмента"
-              value={contentText}
-              onChange={(e) => setContentText(e.target.value)}
-            /> */}
-            <Editor />
+            <EditorBlock editor={editor} />
           </form>
         </div>
       </div>

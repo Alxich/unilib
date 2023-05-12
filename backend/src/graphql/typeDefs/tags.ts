@@ -7,6 +7,14 @@ const typeDefs = gql`
     id: String
     title: String
     createdAt: Date
+    posts: [PostTag]
+  }
+
+  type PostTag {
+    id: String
+    post: Post
+    tag: Tag
+    createdAt: Date
   }
 
   type Query {
@@ -14,7 +22,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    createPost(id: String, title: String): Boolean
+    createTag(id: String, title: String): Boolean
   }
 `;
 

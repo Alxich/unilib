@@ -10,11 +10,11 @@ const resolvers = {
   Query: {
     queryPosts: async function (
       _: any,
-      args: { id: string },
+      args: { postID: string },
       context: GraphQLContext
     ): Promise<Array<PostPopulated>> {
       const { session, prisma } = context;
-      const { id: postID } = args;
+      const { postID } = args;
 
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
@@ -50,7 +50,7 @@ const resolvers = {
         throw new GraphQLError("Not authorized");
       }
 
-      const { id, title, content, authorId, authorName } = args;
+      const { id, title, content, authorId, categoryId, tagsId } = args;
 
       try {
         /**
@@ -62,17 +62,24 @@ const resolvers = {
             title,
             content,
             authorId,
-            authorName,
+            categoryId,
+            tags: {
+              create: tagsId.map((tagId) => ({
+                tag: { connect: { id: tagId } },
+              })),
+            },
           },
-          include: postPopulated,
+          include: {
+            ...postPopulated,
+          },
         });
 
         console.log(newPost);
 
         return true;
       } catch (error) {
-        console.log("sendMessage error", error);
-        throw new GraphQLError("Error sending message");
+        console.log("createPost error", error);
+        throw new GraphQLError("Error creating message");
       }
     },
   },
@@ -83,6 +90,22 @@ export const postPopulated = Prisma.validator<Prisma.PostInclude>()({
     select: {
       id: true,
       username: true,
+    },
+  },
+  category: {
+    select: {
+      id: true,
+      title: true,
+    },
+  },
+  tags: {
+    select: {
+      tag: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
     },
   },
 });
