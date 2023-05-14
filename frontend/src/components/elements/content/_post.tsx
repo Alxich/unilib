@@ -1,4 +1,6 @@
 import { FC } from "react";
+import Link from "next/link";
+import classNames from "classnames";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,8 +10,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import Button from "../_button";
-import classNames from "classnames";
-import Link from "next/link";
+
+import { generateHTML } from "@tiptap/html";
+import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
 
 interface PostProps {
   id: any;
@@ -20,7 +24,7 @@ interface PostProps {
   isFailPage?: boolean;
   likesCount: number;
   commentsCount: number;
-  children: any;
+  children: string;
 }
 
 const Post: FC<PostProps> = ({
@@ -34,6 +38,12 @@ const Post: FC<PostProps> = ({
   isFailPage,
   children,
 }: PostProps) => {
+  const returnMeContent = (str: string) => {
+    const html = generateHTML(JSON.parse(str), [StarterKit, Image]);
+
+    return <div className="text-block" dangerouslySetInnerHTML={{ __html: html }} />;
+  };
+
   return (
     <div
       className={classNames("post post-wrapper", {
@@ -65,7 +75,7 @@ const Post: FC<PostProps> = ({
             <h3>{title}</h3>
           </Link>
         </div>
-        <div className="text-block">{children}</div>
+        {returnMeContent(children)}
       </div>
       <div className="interactions">
         <div className="lt-side">

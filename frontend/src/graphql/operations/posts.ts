@@ -4,14 +4,16 @@ import { gql } from "@apollo/client";
 export default {
   Queries: {
     queryPosts: gql`
-      query queryPosts {
-        queryPosts {
+      query queryPosts($skip: Int!, $take: Int!) {
+        queryPosts(skip: $skip, take: $take) {
+          id
           title
           content
           author {
             id
             username
           }
+          createdAt
         }
       }
     `,

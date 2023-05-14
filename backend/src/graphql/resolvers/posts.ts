@@ -10,11 +10,11 @@ const resolvers = {
   Query: {
     queryPosts: async function (
       _: any,
-      args: { postID: string },
+      args: { postID: string; skip: number; take: number },
       context: GraphQLContext
     ): Promise<Array<PostPopulated>> {
       const { session, prisma } = context;
-      const { postID } = args;
+      const { skip, take } = args;
 
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
@@ -22,13 +22,12 @@ const resolvers = {
 
       try {
         const posts = await prisma.post.findMany({
-          where: {
-            id: postID,
-          },
           include: postPopulated,
           orderBy: {
             createdAt: "desc",
           },
+          skip, // Skip post to query (not copy the result)
+          take, // First 10 posts
         });
 
         return posts;

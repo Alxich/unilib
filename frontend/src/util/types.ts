@@ -109,11 +109,12 @@ export interface CreatePostArguments {
 }
 
 export interface PostsVariables {
-  id: string;
+  skip: number;
+  take: number;
 }
 
 export interface PostData {
-  posts: Array<PostPopulated>;
+  queryPosts: Array<PostPopulated>;
 }
 
 /**

@@ -15,7 +15,7 @@ const typeDefs = gql`
   }
 
   type Query {
-    queryPosts(id: String): [Post]
+    queryPosts(take: Int!, skip: Int!): [Post]
   }
 
   type Mutation {
