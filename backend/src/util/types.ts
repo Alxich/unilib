@@ -100,7 +100,7 @@ export interface CreatePostArguments {
   content: string;
   authorId: string;
   categoryId: string;
-  tagsId: Array<string>;
+  tagsId: Array<TagPostCreateArguments>;
 }
 
 export type PostPopulated = Prisma.PostGetPayload<{
@@ -110,6 +110,10 @@ export type PostPopulated = Prisma.PostGetPayload<{
 /**
  * Tags
  */
+export interface TagPostCreateArguments {
+  id: string;
+  title: string;
+}
 export interface CreateTagArguments {
   id: string;
   title: string;

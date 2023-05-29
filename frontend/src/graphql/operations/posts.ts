@@ -13,7 +13,32 @@ export default {
             id
             username
           }
+          category {
+            id
+            title
+          }
           createdAt
+        }
+      }
+    `,
+    queryPost: gql`
+      query queryPost($id: String!) {
+        queryPost(id: $id) {
+          id
+          title
+          content
+          author {
+            id
+            username
+          }
+          category {
+            id
+            title
+          }
+          createdAt
+          tags {
+            id
+          }
         }
       }
     `,
@@ -25,7 +50,7 @@ export default {
         $content: String
         $authorId: String
         $categoryId: String
-        $tagsId: [String]
+        $tagsId: [TagInput]
       ) {
         createPost(
           title: $title

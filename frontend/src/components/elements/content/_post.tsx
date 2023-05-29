@@ -75,7 +75,7 @@ const Post: FC<PostProps> = ({
             <h3>{title}</h3>
           </Link>
         </div>
-        {returnMeContent(children)}
+        {isFailPage ? children : returnMeContent(children)}
       </div>
       <div className="interactions">
         <div className="lt-side">

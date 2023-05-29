@@ -43,14 +43,14 @@ const resolvers = {
       _: any,
       args: CreateTagArguments,
       context: GraphQLContext
-    ): Promise<boolean> {
+    ): Promise<TagPopulated> {
       const { session, prisma } = context;
 
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
 
-      const { id, title } = args;
+      const { title } = args;
 
       try {
         /**
@@ -58,18 +58,17 @@ const resolvers = {
          */
         const newTag = await prisma.tag.create({
           data: {
-            id,
             title,
           },
-          include: tagPopulated,
+          include: {
+            ...tagPopulated,
+          },
         });
 
-        console.log(newTag);
-
-        return true;
+        return newTag;
       } catch (error) {
         console.log("createTag error", error);
-        throw new GraphQLError("Error sending message");
+        throw new GraphQLError("Error creating tag");
       }
     },
   },

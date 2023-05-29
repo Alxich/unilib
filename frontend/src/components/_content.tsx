@@ -25,7 +25,8 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
       : document.body.classList.remove("writter-active");
   }, [writterActive]);
 
-  return session ? (
+  return (
+    // session ? (
     <>
       <Head>
         <title>UNILIB - Український форум</title>
@@ -67,8 +68,8 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
         <Toaster position="bottom-right" />
       </div>
     </>
-  ) : (
-    <div>Page loading</div>
+    // ) : (
+    //   <div>Page loading</div>
   );
 };
 

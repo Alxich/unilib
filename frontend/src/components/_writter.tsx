@@ -142,7 +142,7 @@ const WritterPost: FC<IWritterPostProps> = ({
         content: JSON.stringify(content),
         authorId: userID,
         categoryId: filterText.id,
-        tagsId: ["645cfdb3e5c882a2c163706f"],
+        tagsId: [{ id: "645cfdb3e5c882a2c163706f" }],
       };
 
       const { data, errors } = await createPost({

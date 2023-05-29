@@ -113,8 +113,16 @@ export interface PostsVariables {
   take: number;
 }
 
-export interface PostData {
+export interface PostVariables {
+  id: string;
+}
+
+export interface PostsData {
   queryPosts: Array<PostPopulated>;
+}
+
+export interface PostData {
+  queryPost: PostPopulated;
 }
 
 /**

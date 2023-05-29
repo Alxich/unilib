@@ -10,15 +10,11 @@ const resolvers = {
   Query: {
     queryPosts: async function (
       _: any,
-      args: { postID: string; skip: number; take: number },
+      args: { skip: number; take: number },
       context: GraphQLContext
     ): Promise<Array<PostPopulated>> {
-      const { session, prisma } = context;
+      const { prisma } = context;
       const { skip, take } = args;
-
-      if (!session?.user) {
-        throw new GraphQLError("Not authorized");
-      }
 
       try {
         const posts = await prisma.post.findMany({
@@ -29,8 +25,40 @@ const resolvers = {
           skip, // Skip post to query (not copy the result)
           take, // First 10 posts
         });
-
         return posts;
+      } catch (error: any) {
+        console.log("Posts error", error);
+        throw new GraphQLError(error?.message);
+      }
+    },
+
+    queryPost: async function (
+      _: any,
+      args: { id: string },
+      context: GraphQLContext
+    ): Promise<PostPopulated> {
+      const { prisma } = context;
+      const { id } = args;
+
+      try {
+        if (!id) {
+          throw new GraphQLError("Not id inserted");
+        }
+
+        const post = await prisma.post.findUnique({
+          where: {
+            id: id,
+          },
+          include: postPopulated,
+        });
+
+        if (!post) {
+          throw new GraphQLError("No such a post 404");
+        }
+
+        console.log(post);
+
+        return post;
       } catch (error: any) {
         console.log("Posts error", error);
         throw new GraphQLError(error?.message);
@@ -63,9 +91,7 @@ const resolvers = {
             authorId,
             categoryId,
             tags: {
-              create: tagsId.map((tagId) => ({
-                tag: { connect: { id: tagId } },
-              })),
+              connect: tagsId.map((tagId) => ({ id: tagId.id })),
             },
           },
           include: {
@@ -99,12 +125,7 @@ export const postPopulated = Prisma.validator<Prisma.PostInclude>()({
   },
   tags: {
     select: {
-      tag: {
-        select: {
-          id: true,
-          title: true,
-        },
-      },
+      id: true,
     },
   },
 });

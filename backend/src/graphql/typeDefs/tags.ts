@@ -7,14 +7,7 @@ const typeDefs = gql`
     id: String
     title: String
     createdAt: Date
-    posts: [PostTag]
-  }
-
-  type PostTag {
-    id: String
-    post: Post
-    tag: Tag
-    createdAt: Date
+    posts: [Post]
   }
 
   type Query {

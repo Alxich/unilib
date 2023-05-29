@@ -11,21 +11,25 @@ const typeDefs = gql`
     author: User
     categoryId: String
     category: Category
-    tags: [PostTag]
+    tags: [Tag]
   }
 
   type Query {
     queryPosts(take: Int!, skip: Int!): [Post]
+    queryPost(id: String!): Post
+  }
+
+  input TagInput {
+    id: String
   }
 
   type Mutation {
     createPost(
-      id: String
       title: String
       content: String
       authorId: String
       categoryId: String
-      tagsId: [String]
+      tagsId: [TagInput]
     ): Boolean
   }
 `;
