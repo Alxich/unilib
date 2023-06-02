@@ -58,11 +58,14 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
         setBannerActive={setBannerActive}
         session={session}
       />
-      <WritterPost
-        session={session}
-        writterActive={writterActive}
-        setWritterActive={setWritterActive}
-      />
+      {session && (
+        <WritterPost
+          session={session}
+          writterActive={writterActive}
+          setWritterActive={setWritterActive}
+        />
+      )}
+
       <footer className={"colophon"}></footer>
       <div>
         <Toaster position="bottom-right" />

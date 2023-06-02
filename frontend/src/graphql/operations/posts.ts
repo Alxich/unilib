@@ -38,7 +38,11 @@ export default {
           createdAt
           tags {
             id
+            title
           }
+          views
+          likes
+          dislikes
         }
       }
     `,
@@ -59,6 +63,58 @@ export default {
           categoryId: $categoryId
           tagsId: $tagsId
         )
+      }
+    `,
+
+    addLikeToPost: gql`
+      mutation addLikeToPost($id: ID!) {
+        addLikeToPost(id: $id) {
+          id
+          title
+          content
+          author {
+            id
+            username
+          }
+          category {
+            id
+            title
+          }
+          createdAt
+          tags {
+            id
+            title
+          }
+          views
+          likes
+          dislikes
+        }
+      }
+    `,
+
+    addDislikeToPost: gql`
+      mutation addDislikeToPost($id: ID!) {
+        addDislikeToPost(id: $id) {
+          id
+          title
+          content
+          author {
+            id
+            username
+          }
+          category {
+            id
+            title
+          }
+          createdAt
+          tags {
+            id
+            title
+          }
+          views
+          likes
+          dislikes
+        }
       }
     `,
   },

@@ -103,6 +103,10 @@ export interface CreatePostArguments {
   tagsId: Array<TagPostCreateArguments>;
 }
 
+export interface PostInteractionArguments {
+  id: string;
+}
+
 export type PostPopulated = Prisma.PostGetPayload<{
   include: typeof postPopulated;
 }>;

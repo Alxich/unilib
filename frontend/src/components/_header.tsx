@@ -28,7 +28,7 @@ import TagsOperations from "../graphql/operations/tags";
 import { CreateCategoryArguments, CreateTagArguments } from "../util/types";
 
 interface HeaderProps {
-  session: Session;
+  session: Session | null;
   setBannerActive: any;
   writterActive: boolean;
   setWritterActive: any;
@@ -92,6 +92,12 @@ const Header: FC<HeaderProps> = ({
   >(CategoriesOperations.Mutations.createCategory);
 
   const onCreateCategory = async () => {
+    if (session == null) {
+      console.log("onCreateCategory error: Not Authorized Session");
+
+      return null;
+    }
+
     try {
       const { username } = session.user;
       const newId = new ObjectId().toString();
@@ -131,6 +137,12 @@ const Header: FC<HeaderProps> = ({
   );
 
   const onCreateTag = async () => {
+    if (session == null) {
+      console.log("onCreateCategory error: Not Authorized Session");
+
+      return null;
+    }
+
     try {
       const { username } = session.user;
       const newId = new ObjectId().toString();

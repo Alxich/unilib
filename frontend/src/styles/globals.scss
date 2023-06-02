@@ -9,6 +9,8 @@ body {
   }
 
   .main {
+    padding-top: $header_height + $content_top_pad;
+    
     &.loading {
       height: 100vh;
       overflow: hidden;

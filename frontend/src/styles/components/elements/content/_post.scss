@@ -184,18 +184,21 @@
       }
     }
 
-    .image-holder {
-      background: $overhigh_bg;
-      padding: $post_image_hold_pad;
 
       img {
+        background: $overhigh_bg;
         display: flex;
+        border-top: $post_image_hold_pad_vt $overhigh_bg;
+        border-bottom: $post_image_hold_pad_vt $overhigh_bg;
+        border-left: $post_image_hold_pad_hr $overhigh_bg;
+        border-right: $post_image_hold_pad_hr $overhigh_bg;
         height: auto;
-        width: auto;
+        width: 100%;
         min-width: 50%;
         object-fit: contain;
         object-position: center;
+        padding: $post_image_hold_pad_vt $post_image_hold_pad_hr;
       }
-    }
+    
   }
 }

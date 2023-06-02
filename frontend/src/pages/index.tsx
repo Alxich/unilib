@@ -2,7 +2,6 @@ import type { NextPage } from "next";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { toast } from "react-hot-toast";
-import { formatRelative } from "date-fns";
 
 import { Flowrange, Newestflow, Post } from "../components";
 
@@ -10,7 +9,6 @@ import { useQuery } from "@apollo/client";
 import { PostsData, PostsVariables } from "../util/types";
 import { PostPopulated } from "../../../backend/src/util/types";
 import PostOperations from "../graphql/operations/posts";
-import enUS from "date-fns/locale/en-US";
 
 const Home: NextPage = () => {
   const { data, loading, fetchMore } = useQuery<PostsData, PostsVariables>(
@@ -62,13 +60,6 @@ const Home: NextPage = () => {
     return [];
   };
 
-  const formatRelativeLocale = {
-    lastWeek: "eeee",
-    yesterday: "'Yesterday",
-    today: "p",
-    other: "MM/dd/yy",
-  };
-
   return (
     <>
       <Flowrange />
@@ -86,39 +77,7 @@ const Home: NextPage = () => {
               endMessage={<h4>Nothing more to show</h4>}
             >
               {posts.map((item: PostPopulated, i: number) => {
-                const {
-                  id,
-                  title,
-                  content,
-                  category,
-                  author,
-                  createdAt,
-                  likes,
-                  tags,
-                } = item;
-
-                return (
-                  <Post
-                    key={`${item}__${i}`}
-                    id={id}
-                    group={category?.title}
-                    name={author.username ? author.username : "Author"}
-                    time={formatRelative(createdAt, new Date(), {
-                      locale: {
-                        ...enUS,
-                        formatRelative: (token) =>
-                          formatRelativeLocale[
-                            token as keyof typeof formatRelativeLocale
-                          ],
-                      },
-                    })}
-                    title={title}
-                    likesCount={likes ? likes : 0}
-                    commentsCount={likes ? likes : 0}
-                  >
-                    {content}
-                  </Post>
-                );
+                return <Post data={item} key={`${item}__${i}`} />;
               })}
             </InfiniteScroll>
           )

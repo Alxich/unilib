@@ -1,58 +1,64 @@
-import React, { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import type { NextPage } from "next";
 
 import { toast } from "react-hot-toast";
 
-import { Content, PostPage, Comments } from "../../components";
+import { PostPage, Comments } from "../../components";
 
 import FourOhFour from "../404";
 import { PostData, PostVariables } from "../../util/types";
 import { useQuery } from "@apollo/client";
 import PostOperations from "../../graphql/operations/posts";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
-const Post: FC<NextPage> = ({}) => {
+const Post: FC<NextPage> = () => {
   const router = useRouter();
+  const { data: session } = useSession();
 
-  const id = router.query.id;
+  // Used as sting because knew that it will only be variable not array
+  const id = router.query.id as string;
+
+  const [postData, setPostData] = useState<PostData>();
 
   const { data, loading, error } = useQuery<PostData, PostVariables>(
     PostOperations.Queries.queryPost,
     {
       variables: { id },
       onError: ({ message }) => {
-        toast.error(message);
+        console.error(message);
       },
     }
   );
 
+  useEffect(() => {
+    loading != true && setPostData(data);
+  }, [data, loading]);
+
   if (error) {
-    toast.error(error.message);
+    console.error(error.message);
   }
 
-  const postData = data?.queryPost;
+  if (loading == false && !id) {
+    toast.error("There is no id for the post");
+  }
 
-  // return loading ? (
-  //   <div>LOADING...</div>
-  // ) : postData ? (
-  //   <div className="posts-container container">
-  //     {/* <PostPage
-  //           group={postData.category.title}
-  //           name={postData.author.username}
-  //           time={postData.createdAt}
-  //           title={postData.title}
-  //           tags={postData.tags}
-  //           likesCount={postData.likesCount}
-  //           commentsCount={postData.commentsCount}
-  //           viewsCount={postData.viewsCount}
-  //         >
-  //           {postData.content}
-  //         </PostPage> */}
-  //     {/* <Comments commentArray={postData.comments} /> */}
-  //   </div>
-  // ) : (
-  //   <FourOhFour />
-  // );
+  // Note fix props
+
+  return loading ? (
+    <div>LOADING...</div>
+  ) : (
+    <div className="posts-container container">
+      {postData ? (
+        <>
+          <PostPage data={postData} session={session} />
+          {/* <Comments commentArray={postData.comments} /> */}
+        </>
+      ) : (
+        <FourOhFour />
+      )}
+    </div>
+  );
 };
 
 export default Post;

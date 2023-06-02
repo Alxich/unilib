@@ -15,33 +15,51 @@ import { generateHTML } from "@tiptap/html";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 
-interface PostProps {
-  id: any;
-  group: string;
-  name: string;
-  time: string;
-  title: string;
+import { formatTimeToPost } from "../../../util/functions";
+import { PostFail } from "../../../util/types";
+import { PostPopulated } from "../../../../../backend/src/util/types";
+
+interface PostPageProps {
+  data: PostPopulated | PostFail;
   isFailPage?: boolean;
-  likesCount: number;
-  commentsCount: number;
-  children: string;
+  children?: any | string;
 }
 
-const Post: FC<PostProps> = ({
-  id,
-  group,
-  name,
-  time,
-  title,
-  likesCount,
-  commentsCount,
+const Post: FC<PostPageProps> = ({
+  data,
   isFailPage,
   children,
-}: PostProps) => {
+}: PostPageProps) => {
+  if (isFailPage) {
+    const { title } = data as PostFail;
+
+    return (
+      <div
+        className={classNames("post post-wrapper", {
+          "fail-page": isFailPage,
+        })}
+      >
+        <div className="content">
+          <div className="title">
+            <Link href={`404`}>
+              <h3>{title}</h3>
+            </Link>
+          </div>
+          <div className="text-block">{children}</div>
+        </div>
+      </div>
+    );
+  }
+
+  const { id, title, author, category, content, createdAt, likes } =
+    data as PostPopulated;
+
   const returnMeContent = (str: string) => {
     const html = generateHTML(JSON.parse(str), [StarterKit, Image]);
 
-    return <div className="text-block" dangerouslySetInnerHTML={{ __html: html }} />;
+    return (
+      <div className="text-block" dangerouslySetInnerHTML={{ __html: html }} />
+    );
   };
 
   return (
@@ -54,13 +72,13 @@ const Post: FC<PostProps> = ({
         <div className="author">
           <Link href={"/group/1"} className="user-icon"></Link>
           <div className="author-names">
-            <Link href={"/group/1"} className="group">
-              <p>{group}</p>
+            <Link href={`/group/${category.id}`} className="group">
+              <p>{category.title}</p>
             </Link>
             <Link href={"/author/1"} className="name">
               <p>
-                {name}
-                {" " + time}
+                {author.username ? author.username : "Unknown"}
+                {" " + formatTimeToPost(createdAt)}
               </p>
             </Link>
           </div>
@@ -69,13 +87,14 @@ const Post: FC<PostProps> = ({
           Підписатися
         </Button>
       </div>
+
       <div className="content">
         <div className="title">
           <Link href={`post/${id}`}>
             <h3>{title}</h3>
           </Link>
         </div>
-        {isFailPage ? children : returnMeContent(children)}
+        {returnMeContent(content)}
       </div>
       <div className="interactions">
         <div className="lt-side">
@@ -87,7 +106,7 @@ const Post: FC<PostProps> = ({
               />
             </div>
             <div className="counter">
-              <p>{likesCount}</p>
+              <p>{likes != null ? likes : 0}</p>
             </div>
           </div>
           <div className="comments">
@@ -98,7 +117,12 @@ const Post: FC<PostProps> = ({
               />
             </div>
             <div className="counter">
-              <p>{commentsCount}</p>
+              <p>
+                {/**
+                 * Must be here a comment count etc
+                 */}
+                0
+              </p>
             </div>
           </div>
         </div>

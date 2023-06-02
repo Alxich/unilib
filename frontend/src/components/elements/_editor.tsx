@@ -27,10 +27,12 @@ const EditorBlock: FC<EditorProps> = ({ editor }: EditorProps) => {
   const [imagePopText, setImagePopText] = useState("");
 
   const addImage = useCallback(() => {
-    editor?.chain().focus().setImage({ src: imagePopText }).run();
+    if (imagePopText) {
+      editor?.chain().focus().setImage({ src: imagePopText }).run();
 
-    setOpenImagePop(false);
-
+      console.log(imagePopText);
+      setOpenImagePop(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
 

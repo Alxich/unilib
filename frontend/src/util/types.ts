@@ -117,6 +117,10 @@ export interface PostVariables {
   id: string;
 }
 
+export interface PostInteractionArguments {
+  id: string;
+}
+
 export interface PostsData {
   queryPosts: Array<PostPopulated>;
 }
@@ -125,9 +129,18 @@ export interface PostData {
   queryPost: PostPopulated;
 }
 
+export interface PostFail {
+  title: string;
+}
+
 /**
  * Tags
  */
+export interface TagArguments {
+  id: string;
+  title: string;
+}
+
 export interface CreateTagArguments {
   id: string;
   title: string;

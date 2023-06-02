@@ -3,6 +3,7 @@ import {
   GraphQLContext,
   CreatePostArguments,
   PostPopulated,
+  PostInteractionArguments,
 } from "../../util/types";
 import { GraphQLError } from "graphql";
 
@@ -45,6 +46,9 @@ const resolvers = {
           throw new GraphQLError("Not id inserted");
         }
 
+        /**
+         * Query post by its id
+         */
         const post = await prisma.post.findUnique({
           where: {
             id: id,
@@ -56,9 +60,16 @@ const resolvers = {
           throw new GraphQLError("No such a post 404");
         }
 
+        // Increment the viewsCount property
+        const updatedPost = await prisma.post.update({
+          where: { id },
+          data: { views: post.views + 1 },
+          include: postPopulated,
+        });
+
         console.log(post);
 
-        return post;
+        return updatedPost;
       } catch (error: any) {
         console.log("Posts error", error);
         throw new GraphQLError(error?.message);
@@ -107,6 +118,110 @@ const resolvers = {
         throw new GraphQLError("Error creating message");
       }
     },
+
+    addLikeToPost: async function (
+      _: any,
+      args: PostInteractionArguments,
+      context: GraphQLContext
+    ) {
+      const { session, prisma } = context;
+
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      const { id: postId } = args;
+      const userId = session.user.id;
+
+      try {
+        const post = await prisma.post.findUnique({ where: { id: postId } });
+
+        if (!post) {
+          throw new Error("Post is not exist");
+        }
+
+        if (post.likedByUserIDs.includes(userId)) {
+          throw new Error("You have already liked this post.");
+        }
+
+        const updatedPost = await prisma.post.update({
+          where: { id: postId },
+          data: {
+            likedByUserIDs: [userId],
+            dislikedByUserIDs: {
+              set: post.dislikedByUserIDs.filter((id) => id !== userId),
+            },
+            likes: { set: post.likes != null ? post.likes + 1 : 0 },
+            dislikes: {
+              set:
+                post.dislikes != null
+                  ? post.dislikes != 0
+                    ? post.dislikes - 1
+                    : 0
+                  : 0,
+            },
+          },
+          include: postPopulated,
+        });
+
+        console.log(updatedPost);
+
+        return updatedPost;
+      } catch (error) {
+        console.log("addLikeToPost error", error);
+        throw new GraphQLError("Error to like the post");
+      }
+    },
+
+    addDislikeToPost: async function (
+      _: any,
+      args: PostInteractionArguments,
+      context: GraphQLContext
+    ) {
+      const { session, prisma } = context;
+
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      const { id: postId } = args;
+      const userId = session.user.id;
+
+      try {
+        const post = await prisma.post.findUnique({ where: { id: postId } });
+
+        if (!post) {
+          throw new Error("Post is not exist");
+        }
+
+        if (post.dislikedByUserIDs.includes(userId)) {
+          throw new Error("You have already disliked this post.");
+        }
+
+        const updatedPost = await prisma.post.update({
+          where: { id: postId },
+          data: {
+            dislikedByUserIDs: [userId], // заміна на масив [userId]
+            likedByUserIDs: {
+              set: post.likedByUserIDs.filter((id) => id !== userId),
+            },
+            dislikes: { set: post.dislikes != null ? post.dislikes + 1 : 0 },
+            likes: {
+              set:
+                post.likes != null ? (post.likes != 0 ? post.likes - 1 : 0) : 0,
+            },
+          },
+          include: postPopulated,
+        });
+
+        console.log(updatedPost);
+
+        return updatedPost;
+      } catch (error) {
+        console.log("addDislikeToPost error", error);
+        throw new GraphQLError("Error to dislike the post");
+      }
+    },
   },
 };
 
@@ -126,6 +241,7 @@ export const postPopulated = Prisma.validator<Prisma.PostInclude>()({
   tags: {
     select: {
       id: true,
+      title: true,
     },
   },
 });

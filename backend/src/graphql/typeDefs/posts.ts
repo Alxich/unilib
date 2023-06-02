@@ -12,6 +12,11 @@ const typeDefs = gql`
     categoryId: String
     category: Category
     tags: [Tag]
+    likes: Int
+    likedBy: [User!]!
+    dislikes: Int
+    dislikedBy: [User!]!
+    views: Int
   }
 
   type Query {
@@ -31,6 +36,9 @@ const typeDefs = gql`
       categoryId: String
       tagsId: [TagInput]
     ): Boolean
+
+    addLikeToPost(id: ID!): Post
+    addDislikeToPost(id: ID!): Post
   }
 `;
 

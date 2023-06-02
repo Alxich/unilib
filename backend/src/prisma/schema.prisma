@@ -36,19 +36,23 @@ model Session {
 }
 
 model User {
-  id            String                    @id @default(auto()) @map("_id") @db.ObjectId
-  name          String?
-  email         String?                   @unique
-  emailVerified DateTime?
-  image         String?
-  username      String?                   @unique
-  posts         Post[]
-  messages      Message[]
-  conversations ConversationParticipant[]
-  accounts      Account[]
-  sessions      Session[]
-  createdAt     DateTime                  @default(now())
-  updatedAt     DateTime                  @updatedAt
+  id              String                    @id @default(auto()) @map("_id") @db.ObjectId
+  name            String?
+  email           String?                   @unique
+  emailVerified   DateTime?
+  image           String?
+  username        String?                   @unique
+  posts           Post[]                    @relation("postAuthor")
+  likedPostIDs    String[]                  @db.ObjectId
+  likedPosts      Post[]                    @relation("userLikedPosts", fields: [likedPostIDs], references: [id])
+  dislikedPostIDs String[]                  @db.ObjectId
+  dislikedPosts   Post[]                    @relation("userDislikedPosts", fields: [dislikedPostIDs], references: [id])
+  messages        Message[]
+  conversations   ConversationParticipant[]
+  accounts        Account[]
+  sessions        Session[]
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
 }
 
 model VerificationToken {
@@ -61,20 +65,24 @@ model VerificationToken {
 }
 
 model Post {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  title      String   @unique
-  content    String
-  author     User     @relation(fields: [authorId], references: [id])
-  authorId   String   @db.ObjectId
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  likes      Int?
-  dislikes   Int?
-  views      Int?
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String   @db.ObjectId
-  tagIDs     String[] @db.ObjectId
-  tags       Tag[]    @relation(fields: [tagIDs], references: [id])
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  title             String   @unique
+  content           String
+  author            User     @relation("postAuthor", fields: [authorId], references: [id])
+  authorId          String   @db.ObjectId
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  likes             Int?
+  likedByUserIDs    String[] @db.ObjectId
+  likedBy           User[]   @relation("userLikedPosts", fields: [likedByUserIDs], references: [id])
+  dislikes          Int?
+  dislikedByUserIDs String[] @db.ObjectId
+  dislikedBy        User[]   @relation("userDislikedPosts", fields: [dislikedByUserIDs], references: [id])
+  views             Int      @default(0)
+  category          Category @relation(fields: [categoryId], references: [id])
+  categoryId        String   @db.ObjectId
+  tagIDs            String[] @db.ObjectId
+  tags              Tag[]    @relation("postTags", fields: [tagIDs], references: [id])
 }
 
 model Tag {
@@ -83,7 +91,7 @@ model Tag {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   postIDs   String[] @db.ObjectId
-  posts     Post[]   @relation(fields: [postIDs], references: [id])
+  posts     Post[]   @relation("postTags", fields: [postIDs], references: [id])
 }
 
 model Category {

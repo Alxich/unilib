@@ -144,7 +144,6 @@ body {
 @if $main-wrap-width-bool == true {
   main {
     max-width: $main-wrap-width-val;
-    padding-top: $header_height + $content_top_pad;
     margin: 0 auto;
   }
 }
