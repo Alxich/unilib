@@ -6,16 +6,19 @@ import {
   PostInteractionArguments,
 } from "../../util/types";
 import { GraphQLError } from "graphql";
+import { getDateQueryRange } from "../../util/functions";
 
 const resolvers = {
   Query: {
     queryPosts: async function (
       _: any,
-      args: { skip: number; take: number },
+      args: { period: string; skip: number; take: number },
       context: GraphQLContext
     ): Promise<Array<PostPopulated>> {
       const { prisma } = context;
-      const { skip, take } = args;
+      const { period, skip, take } = args;
+
+      const { startDate, endDate } = getDateQueryRange(period);
 
       try {
         const posts = await prisma.post.findMany({
@@ -23,6 +26,9 @@ const resolvers = {
           orderBy: {
             createdAt: "desc",
           },
+          ...(period
+            ? { where: { createdAt: { gte: startDate, lt: endDate } } }
+            : {}),
           skip, // Skip post to query (not copy the result)
           take, // First 10 posts
         });
@@ -34,20 +40,15 @@ const resolvers = {
       }
     },
 
-    /**
-     * Query by time with other function because need to change all types in queryPost
-     * And I think its better to use specifig function
-     * Maybe later will change with one function in queryPost with variable queryBy or orderBy
-     * There is another function to query by time
-     */
-
     queryPostsByTag: async function (
       _: any,
-      args: { tagId: string; skip: number; take: number },
+      args: { period: string; tagId: string; skip: number; take: number },
       context: GraphQLContext
     ): Promise<Array<PostPopulated>> {
       const { prisma } = context;
-      const { tagId, skip, take } = args;
+      const { period, tagId, skip, take } = args;
+
+      const { startDate, endDate } = getDateQueryRange(period);
 
       try {
         const posts = await prisma.post.findMany({
@@ -58,6 +59,7 @@ const resolvers = {
                 id: tagId,
               },
             },
+            ...(period ? { createdAt: { gte: startDate, lt: endDate } } : {}),
           },
           orderBy: {
             createdAt: "desc",
@@ -75,11 +77,13 @@ const resolvers = {
 
     queryPostsByCat: async function (
       _: any,
-      args: { catId: string; skip: number; take: number },
+      args: { period: string; catId: string; skip: number; take: number },
       context: GraphQLContext
     ): Promise<Array<PostPopulated>> {
       const { prisma } = context;
-      const { catId, skip, take } = args;
+      const {period, catId, skip, take } = args;
+
+      const { startDate, endDate } = getDateQueryRange(period);
 
       try {
         const posts = await prisma.post.findMany({
@@ -88,6 +92,7 @@ const resolvers = {
             category: {
               id: catId,
             },
+            ...(period ? { createdAt: { gte: startDate, lt: endDate } } : {}),
           },
           orderBy: {
             createdAt: "desc",
@@ -105,12 +110,14 @@ const resolvers = {
 
     queryPostsByAuthor: async function (
       _: any,
-      args: { authorId: string; skip: number; take: number },
+      args: { period: string; authorId: string; skip: number; take: number },
       context: GraphQLContext
     ): Promise<Array<PostPopulated>> {
       const { prisma } = context;
-      const { authorId, skip, take } = args;
+      const {period, authorId, skip, take } = args;
 
+      const { startDate, endDate } = getDateQueryRange(period);
+      
       try {
         const posts = await prisma.post.findMany({
           include: postPopulated,
@@ -118,6 +125,7 @@ const resolvers = {
             author: {
               id: authorId,
             },
+            ...(period ? { createdAt: { gte: startDate, lt: endDate } } : {}),
           },
           orderBy: {
             createdAt: "desc",

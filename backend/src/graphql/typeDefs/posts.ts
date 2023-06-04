@@ -20,10 +20,25 @@ const typeDefs = gql`
   }
 
   type Query {
-    queryPosts(take: Int!, skip: Int!): [Post]
-    queryPostsByTag(tagId: String!, take: Int!, skip: Int!): [Post]
-    queryPostsByCat(catId: String!, take: Int!, skip: Int!): [Post]
-    queryPostsByAuthor(authorId: String!, take: Int!, skip: Int!): [Post]
+    queryPosts(period: String, take: Int!, skip: Int!): [Post]
+    queryPostsByTag(
+      period: String
+      tagId: String!
+      take: Int!
+      skip: Int!
+    ): [Post]
+    queryPostsByCat(
+      period: String
+      catId: String!
+      take: Int!
+      skip: Int!
+    ): [Post]
+    queryPostsByAuthor(
+      period: String
+      authorId: String!
+      take: Int!
+      skip: Int!
+    ): [Post]
     queryPost(id: String!): Post
   }
 
