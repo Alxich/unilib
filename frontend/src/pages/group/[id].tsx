@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { Content, AuthorInfo, Post } from "../../components";
+import { AuthorInfo, Post } from "../../components";
 
 const Author: NextPage = () => {
   return (

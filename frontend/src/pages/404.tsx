@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Image from "next/image";
 
-import { Content, Post } from "../components";
+import { Post } from "../components";
 
 import image from "../../public/images/404.png";
 import { PostFail } from "../../src/util/types";

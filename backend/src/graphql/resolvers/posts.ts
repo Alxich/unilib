@@ -26,6 +26,39 @@ const resolvers = {
           skip, // Skip post to query (not copy the result)
           take, // First 10 posts
         });
+        
+        return posts;
+      } catch (error: any) {
+        console.log("Posts error", error);
+        throw new GraphQLError(error?.message);
+      }
+    },
+
+    queryPostsByTag: async function (
+      _: any,
+      args: { tagId: string; skip: number; take: number },
+      context: GraphQLContext
+    ): Promise<Array<PostPopulated>> {
+      const { prisma } = context;
+      const { tagId, skip, take } = args;
+
+      try {
+        const posts = await prisma.post.findMany({
+          include: postPopulated,
+          where: {
+            tags: {
+              some: {
+                id: tagId,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          skip, // Skip post to query (not copy the result)
+          take, // First 10 posts
+        });
+
         return posts;
       } catch (error: any) {
         console.log("Posts error", error);

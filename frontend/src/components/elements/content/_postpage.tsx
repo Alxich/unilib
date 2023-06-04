@@ -1,4 +1,5 @@
 import { FC, useState } from "react";
+import Link from "next/link";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -179,7 +180,11 @@ const PostPage: FC<PostPageProps> = ({ data, session }) => {
           {tags.length && (
             <div className="hashtags">
               {tags.map((item, i) => {
-                return <p key={`${item}__${i}`}>{item.title}</p>;
+                return (
+                  <Link href={`/tag/${item.id}`} key={`${item}__${i}`}>
+                    {item.title}
+                  </Link>
+                );
               })}
             </div>
           )}

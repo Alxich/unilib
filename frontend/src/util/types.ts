@@ -113,6 +113,12 @@ export interface PostsVariables {
   take: number;
 }
 
+export interface PostsTagVariables {
+  tagId: string;
+  skip: number;
+  take: number;
+}
+
 export interface PostVariables {
   id: string;
 }
@@ -123,6 +129,10 @@ export interface PostInteractionArguments {
 
 export interface PostsData {
   queryPosts: Array<PostPopulated>;
+}
+
+export interface PostsByTagData {
+  queryPostsByTag: Array<PostPopulated>;
 }
 
 export interface PostData {

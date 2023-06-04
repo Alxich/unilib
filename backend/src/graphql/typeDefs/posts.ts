@@ -21,6 +21,7 @@ const typeDefs = gql`
 
   type Query {
     queryPosts(take: Int!, skip: Int!): [Post]
+    queryPostsByTag(tagId: String!, take: Int!, skip: Int!): [Post]
     queryPost(id: String!): Post
   }
 

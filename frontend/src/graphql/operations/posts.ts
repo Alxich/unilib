@@ -21,6 +21,28 @@ export default {
         }
       }
     `,
+    queryPostsByTag: gql`
+      query queryPostsByTag($tagId: String!, $skip: Int!, $take: Int!) {
+        queryPostsByTag(tagId: $tagId, skip: $skip, take: $take) {
+          id
+          title
+          content
+          author {
+            id
+            username
+          }
+          category {
+            id
+            title
+          }
+          createdAt
+          tags {
+            id
+            title
+          }
+        }
+      }
+    `,
     queryPost: gql`
       query queryPost($id: String!) {
         queryPost(id: $id) {
