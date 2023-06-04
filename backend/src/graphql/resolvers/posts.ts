@@ -26,13 +26,20 @@ const resolvers = {
           skip, // Skip post to query (not copy the result)
           take, // First 10 posts
         });
-        
+
         return posts;
       } catch (error: any) {
         console.log("Posts error", error);
         throw new GraphQLError(error?.message);
       }
     },
+
+    /**
+     * Query by time with other function because need to change all types in queryPost
+     * And I think its better to use specifig function
+     * Maybe later will change with one function in queryPost with variable queryBy or orderBy
+     * There is another function to query by time
+     */
 
     queryPostsByTag: async function (
       _: any,
@@ -50,6 +57,66 @@ const resolvers = {
               some: {
                 id: tagId,
               },
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          skip, // Skip post to query (not copy the result)
+          take, // First 10 posts
+        });
+
+        return posts;
+      } catch (error: any) {
+        console.log("Posts error", error);
+        throw new GraphQLError(error?.message);
+      }
+    },
+
+    queryPostsByCat: async function (
+      _: any,
+      args: { catId: string; skip: number; take: number },
+      context: GraphQLContext
+    ): Promise<Array<PostPopulated>> {
+      const { prisma } = context;
+      const { catId, skip, take } = args;
+
+      try {
+        const posts = await prisma.post.findMany({
+          include: postPopulated,
+          where: {
+            category: {
+              id: catId,
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          skip, // Skip post to query (not copy the result)
+          take, // First 10 posts
+        });
+
+        return posts;
+      } catch (error: any) {
+        console.log("Posts error", error);
+        throw new GraphQLError(error?.message);
+      }
+    },
+
+    queryPostsByAuthor: async function (
+      _: any,
+      args: { authorId: string; skip: number; take: number },
+      context: GraphQLContext
+    ): Promise<Array<PostPopulated>> {
+      const { prisma } = context;
+      const { authorId, skip, take } = args;
+
+      try {
+        const posts = await prisma.post.findMany({
+          include: postPopulated,
+          where: {
+            author: {
+              id: authorId,
             },
           },
           orderBy: {

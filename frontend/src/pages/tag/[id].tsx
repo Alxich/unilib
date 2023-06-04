@@ -3,6 +3,8 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 
+import { useSession } from "next-auth/react";
+
 import { AuthorInfo, Post } from "../../components";
 
 import { useQuery } from "@apollo/client";
@@ -12,8 +14,9 @@ import { PostPopulated } from "../../../../backend/src/util/types";
 
 import InfiniteScroll from "react-infinite-scroll-component";
 
-const Author: FC<NextPage> = () => {
+const TagPage: FC<NextPage> = () => {
   const router = useRouter();
+  const { data: session } = useSession();
 
   // Used as sting because knew that it will only be variable not array
   const id = router.query.id as string;
@@ -83,7 +86,9 @@ const Author: FC<NextPage> = () => {
               endMessage={<h4>Nothing more to show</h4>}
             >
               {posts.map((item: PostPopulated, i: number) => {
-                return <Post data={item} key={`${item}__${i}`} />;
+                return (
+                  <Post session={session} data={item} key={`${item}__${i}`} />
+                );
               })}
             </InfiniteScroll>
           )
@@ -93,4 +98,4 @@ const Author: FC<NextPage> = () => {
   );
 };
 
-export default Author;
+export default TagPage;

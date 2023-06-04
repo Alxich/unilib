@@ -119,6 +119,18 @@ export interface PostsTagVariables {
   take: number;
 }
 
+export interface PostsCatVariables {
+  catId: string;
+  skip: number;
+  take: number;
+}
+
+export interface PostsAuthorVariables {
+  authorId: string;
+  skip: number;
+  take: number;
+}
+
 export interface PostVariables {
   id: string;
 }
@@ -133,6 +145,14 @@ export interface PostsData {
 
 export interface PostsByTagData {
   queryPostsByTag: Array<PostPopulated>;
+}
+
+export interface PostsByCatData {
+  queryPostsByCat: Array<PostPopulated>;
+}
+
+export interface PostsByAuthorData {
+  queryPostsByAuthor: Array<PostPopulated>;
 }
 
 export interface PostData {

@@ -16,7 +16,8 @@
 }
 
 .posts-container {
-  & > div, & > div > div {
+  & > div,
+  & > div > div {
     width: 100%;
   }
 }
@@ -56,10 +57,8 @@
         cursor: pointer;
 
         .name {
-          p {
-            font-size: $p_font_size_small;
-            font-weight: 300;
-          }
+          font-size: $p_font_size_small;
+          font-weight: 300;
         }
       }
     }
@@ -184,21 +183,19 @@
       }
     }
 
-
-      img {
-        background: $overhigh_bg;
-        display: flex;
-        border-top: $post_image_hold_pad_vt $overhigh_bg;
-        border-bottom: $post_image_hold_pad_vt $overhigh_bg;
-        border-left: $post_image_hold_pad_hr $overhigh_bg;
-        border-right: $post_image_hold_pad_hr $overhigh_bg;
-        height: auto;
-        width: 100%;
-        min-width: 50%;
-        object-fit: contain;
-        object-position: center;
-        padding: $post_image_hold_pad_vt $post_image_hold_pad_hr;
-      }
-    
+    img {
+      background: $overhigh_bg;
+      display: flex;
+      border-top: $post_image_hold_pad_vt $overhigh_bg;
+      border-bottom: $post_image_hold_pad_vt $overhigh_bg;
+      border-left: $post_image_hold_pad_hr $overhigh_bg;
+      border-right: $post_image_hold_pad_hr $overhigh_bg;
+      height: auto;
+      width: 100%;
+      min-width: 50%;
+      object-fit: contain;
+      object-position: center;
+      padding: $post_image_hold_pad_vt $post_image_hold_pad_hr;
+    }
   }
 }

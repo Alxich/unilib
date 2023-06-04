@@ -1,16 +1,17 @@
 import { FC, useEffect, useState } from "react";
 import type { NextPage } from "next";
 
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+
 import { toast } from "react-hot-toast";
 
 import { PostPage, Comments } from "../../components";
-
 import FourOhFour from "../404";
+
 import { PostData, PostVariables } from "../../util/types";
 import { useQuery } from "@apollo/client";
 import PostOperations from "../../graphql/operations/posts";
-import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
 
 const Post: FC<NextPage> = () => {
   const router = useRouter();

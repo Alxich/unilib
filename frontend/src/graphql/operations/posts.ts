@@ -1,70 +1,66 @@
 import { gql } from "@apollo/client";
 
+const PostFields = `
+  id
+  title
+  content
+  author {
+    id
+    username
+  }
+  category {
+    id
+    title
+  }
+  tags {
+    id
+    title
+  }
+  createdAt
+  likes
+  dislikes
+  views
+`;
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   Queries: {
     queryPosts: gql`
       query queryPosts($skip: Int!, $take: Int!) {
         queryPosts(skip: $skip, take: $take) {
-          id
-          title
-          content
-          author {
-            id
-            username
-          }
-          category {
-            id
-            title
-          }
-          createdAt
+         ${PostFields}
         }
       }
     `,
+
     queryPostsByTag: gql`
       query queryPostsByTag($tagId: String!, $skip: Int!, $take: Int!) {
         queryPostsByTag(tagId: $tagId, skip: $skip, take: $take) {
-          id
-          title
-          content
-          author {
-            id
-            username
-          }
-          category {
-            id
-            title
-          }
-          createdAt
-          tags {
-            id
-            title
-          }
+          ${PostFields}
         }
       }
     `,
+
+    queryPostsByCat: gql`
+      query queryPostsByCat($catId: String!, $skip: Int!, $take: Int!) {
+        queryPostsByCat(catId: $catId, skip: $skip, take: $take) {
+          ${PostFields}
+        }
+      }
+    `,
+
+    queryPostsByAuthor: gql`
+      query queryPostsByAuthor($authorId: String!, $skip: Int!, $take: Int!) {
+        queryPostsByAuthor(authorId: $authorId, skip: $skip, take: $take) {
+          ${PostFields}
+        }
+      }
+    `,
+
     queryPost: gql`
       query queryPost($id: String!) {
         queryPost(id: $id) {
-          id
-          title
-          content
-          author {
-            id
-            username
-          }
-          category {
-            id
-            title
-          }
-          createdAt
-          tags {
-            id
-            title
-          }
-          views
-          likes
-          dislikes
+          ${PostFields}
         }
       }
     `,
@@ -91,25 +87,7 @@ export default {
     addLikeToPost: gql`
       mutation addLikeToPost($id: ID!) {
         addLikeToPost(id: $id) {
-          id
-          title
-          content
-          author {
-            id
-            username
-          }
-          category {
-            id
-            title
-          }
-          createdAt
-          tags {
-            id
-            title
-          }
-          views
-          likes
-          dislikes
+          ${PostFields}
         }
       }
     `,
@@ -117,25 +95,7 @@ export default {
     addDislikeToPost: gql`
       mutation addDislikeToPost($id: ID!) {
         addDislikeToPost(id: $id) {
-          id
-          title
-          content
-          author {
-            id
-            username
-          }
-          category {
-            id
-            title
-          }
-          createdAt
-          tags {
-            id
-            title
-          }
-          views
-          likes
-          dislikes
+          ${PostFields}
         }
       }
     `,

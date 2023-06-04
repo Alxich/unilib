@@ -17,12 +17,12 @@ import { PostData } from "../../../util/types";
 
 import Button from "../_button";
 
+import { toast } from "react-hot-toast";
 import { Session } from "next-auth";
 
 import { useMutation } from "@apollo/client";
 import PostsOperations from "../../../graphql/operations/posts";
 import { PostInteractionArguments } from "../../../util/types";
-import { toast } from "react-hot-toast";
 import { PostPopulated } from "../../../../../backend/src/util/types";
 
 interface PostPageProps {
@@ -80,23 +80,23 @@ const PostPage: FC<PostPageProps> = ({ data, session }) => {
   >(PostsOperations.Mutations.addDislikeToPost, {
     onError: (error) => {
       console.log("addDislikeToPost error", error);
-      toast.error("Error occurred while liking the post");
+      toast.error("Error occurred while disliking the post");
     },
     onCompleted: (data) => {
       if (data.addDislikeToPost) {
         // Update the component's state or trigger a refetch to update the data
         setPostData(data.addDislikeToPost);
 
-        toast.success("Post was liked!");
+        toast.success("Post was disliked!");
       } else {
-        toast.error("Failed to like the post");
+        toast.error("Failed to dislike the post");
       }
     },
   });
 
   const onPostInteraction = async (type: boolean) => {
     /**
-     * If it is true its meanswe want to like the post
+     * If it is true its means we want to like the post
      * else if it is false its means to dislike the post
      */
     try {
@@ -133,7 +133,7 @@ const PostPage: FC<PostPageProps> = ({ data, session }) => {
         });
 
         if (!data?.addDislikeToPost || errors) {
-          throw new Error("Error addDislikeToPost when trying to like");
+          throw new Error("Error addDislikeToPost when trying to dislike");
         }
 
         if (!errors) {
@@ -146,22 +146,20 @@ const PostPage: FC<PostPageProps> = ({ data, session }) => {
     }
   };
 
-  console.log(postData);
-
   return (
     <div className="post post-wrapper">
       <div className="user-author">
         <div className="author">
           <div className="user-icon"></div>
           <div className="author-names">
-            <div className="group">
+            <Link href={`/group/${category.id}`} className="group">
               <p>{category.title}</p>
-            </div>
+            </Link>
             <div className="name">
-              <p>
+              <Link href={`/author/${author.id}`}>
                 {author.username ? author.username : "Unknown"}
                 {" " + formatTimeToPost(createdAt)}
-              </p>
+              </Link>
             </div>
           </div>
         </div>
