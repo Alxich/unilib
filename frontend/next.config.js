@@ -3,12 +3,22 @@ const nextConfig = {
   reactStrictMode: true,
   experimental: { appDir: true },
   images: {
-    domains: ["picsum.photos", "lh3.googleusercontent.com", "www.youtube.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
   },
   webpack(config) {
     config.experiments = { ...config.experiments, topLevelAwait: true };
     return config;
   },
 };
+
+/**
+ * I know that is not safe to do that but now is only way 
+ * (maybe later specify which host be for image providing)
+ */
 
 module.exports = nextConfig;

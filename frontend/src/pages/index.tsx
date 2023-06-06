@@ -5,12 +5,16 @@ import { toast } from "react-hot-toast";
 
 import { Flowrange, Newestflow, Post } from "../components";
 
+import { useSession } from "next-auth/react";
 import { useQuery } from "@apollo/client";
+
 import { PostsData, PostsVariables } from "../util/types";
 import { PostPopulated } from "../../../backend/src/util/types";
 import PostOperations from "../graphql/operations/posts";
 
 const Home: NextPage = () => {
+  const { data: session } = useSession();
+
   const { data, loading, fetchMore } = useQuery<PostsData, PostsVariables>(
     PostOperations.Queries.queryPosts,
     {
@@ -77,7 +81,9 @@ const Home: NextPage = () => {
               endMessage={<h4>Nothing more to show</h4>}
             >
               {posts.map((item: PostPopulated, i: number) => {
-                return <Post data={item} key={`${item}__${i}`} />;
+                return (
+                  <Post session={session} data={item} key={`${item}__${i}`} />
+                );
               })}
             </InfiniteScroll>
           )

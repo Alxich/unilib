@@ -132,8 +132,15 @@ export type TagPopulated = Prisma.TagGetPayload<{
  */
 export interface CreateCategoryArguments {
   id: string;
+  banner: string;
+  icon: string;
   title: string;
   desc: string;
+}
+
+export interface SubscribeCategoryArguments {
+  categoryId: string;
+  userId: string;
 }
 
 export type CategoryPopulated = Prisma.CategoryGetPayload<{

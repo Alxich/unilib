@@ -3,6 +3,7 @@ import {
   GraphQLContext,
   CreateCategoryArguments,
   CategoryPopulated,
+  SubscribeCategoryArguments,
 } from "../../util/types";
 import { GraphQLError } from "graphql";
 
@@ -12,24 +13,46 @@ const resolvers = {
       _: any,
       args: { id: string },
       context: GraphQLContext
-    ): Promise<Array<CategoryPopulated>> {
-      const { session, prisma } = context;
+    ): Promise<CategoryPopulated> {
+      const { prisma } = context;
       const { id: catID } = args;
 
-      if (!session?.user) {
-        throw new GraphQLError("Not authorized");
-      }
-
       try {
-        const categories = await prisma.category.findMany({
+        const category = await prisma.category.findUnique({
           where: {
             id: catID,
           },
+          include: categoryPopulated,
+        });
+
+        if (!category) {
+          throw new Error("Category is not exist");
+        }
+
+        return category;
+      } catch (error: any) {
+        console.log("Categories error", error);
+        throw new GraphQLError(error?.message);
+      }
+    },
+    queryCategories: async function (
+      _: any,
+      __: any,
+      context: GraphQLContext
+    ): Promise<Array<CategoryPopulated>> {
+      const { prisma } = context;
+
+      try {
+        const categories = await prisma.category.findMany({
           include: categoryPopulated,
           orderBy: {
             createdAt: "desc",
           },
         });
+
+        if (!categories) {
+          throw new Error("Categories is not exist");
+        }
 
         return categories;
       } catch (error: any) {
@@ -50,7 +73,7 @@ const resolvers = {
         throw new GraphQLError("Not authorized");
       }
 
-      const { id, title, desc } = args;
+      const { id, title, desc, banner, icon } = args;
 
       try {
         /**
@@ -61,6 +84,8 @@ const resolvers = {
             id,
             title,
             desc,
+            banner,
+            icon,
           },
           include: categoryPopulated,
         });
@@ -73,11 +98,114 @@ const resolvers = {
         throw new GraphQLError("Error sending message");
       }
     },
+
+    subscribeToCategory: async function (
+      _: any,
+      args: SubscribeCategoryArguments,
+      context: GraphQLContext
+    ): Promise<CategoryPopulated> {
+      const { session, prisma } = context;
+
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      const { categoryId, userId } = args;
+
+      try {
+        /**
+         * Subscribe new user to category
+         */
+        const category = await prisma.category.findUnique({
+          where: { id: categoryId },
+        });
+
+        if (!category) {
+          throw new Error("Category is not exist");
+        }
+
+        if (category.subscriberIDs.includes(userId)) {
+          throw new Error("You have already subscribed this category.");
+        }
+
+        const updatedCategory = await prisma.category.update({
+          where: { id: categoryId },
+          data: {
+            subscribers: {
+              connect: { id: userId },
+            },
+            subscriberCount: {
+              increment: 1,
+            },
+          },
+          include: categoryPopulated,
+        });
+
+        return updatedCategory;
+      } catch (error) {
+        console.log("subscribeToCategory error", error);
+        throw new GraphQLError("Error to subscribe category");
+      }
+    },
+
+    unsubscribeToCategory: async function (
+      _: any,
+      args: SubscribeCategoryArguments,
+      context: GraphQLContext
+    ): Promise<CategoryPopulated> {
+      const { session, prisma } = context;
+
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      const { categoryId, userId } = args;
+
+      try {
+        /**
+         * unsubscribe new user to category
+         */
+        const category = await prisma.category.findUnique({
+          where: { id: categoryId },
+        });
+
+        if (!category) {
+          throw new Error("Category is not exist");
+        }
+
+        if (!category.subscriberIDs.includes(userId)) {
+          throw new Error("You have already unsubscribed this category.");
+        }
+
+        const updatedCategory = await prisma.category.update({
+          where: { id: categoryId },
+          data: {
+            subscribers: {
+              disconnect: { id: userId },
+            },
+            subscriberCount: {
+              decrement: 1,
+            },
+          },
+          include: categoryPopulated,
+        });
+
+        return updatedCategory;
+      } catch (error) {
+        console.log("unsubscribeToCategory error", error);
+        throw new GraphQLError("Error to unsubscribe category");
+      }
+    },
   },
 };
 
 export const categoryPopulated = Prisma.validator<Prisma.CategoryInclude>()({
   posts: {
+    select: {
+      id: true,
+    },
+  },
+  subscribers: {
     select: {
       id: true,
     },

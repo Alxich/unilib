@@ -9,7 +9,11 @@ import { AuthorInfo, Post } from "../../components";
 
 import { useQuery } from "@apollo/client";
 import PostOperations from "../../graphql/operations/posts";
-import { PostsByCatData, PostsCatVariables } from "../../util/types";
+import {
+  PostsByCatData,
+  PostsCatVariables,
+  SubscribeCategoryArguments,
+} from "../../util/types";
 import { PostPopulated } from "../../../../backend/src/util/types";
 
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -72,7 +76,7 @@ const Author: FC<NextPage> = () => {
 
   return (
     <>
-      <AuthorInfo />
+      <AuthorInfo id={id} session={session} />
       <div className="posts-container container">
         {loading ? (
           <h3> Loading...</h3>

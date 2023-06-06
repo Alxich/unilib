@@ -38,6 +38,36 @@ const resolvers = {
         throw new GraphQLError(error?.message);
       }
     },
+
+    searchUser: async function searchUser(
+      _: any,
+      args: { id: string },
+      context: GraphQLContext
+    ): Promise<User> {
+      const { id } = args;
+      const { prisma, session } = context;
+
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      try {
+        const user = await prisma.user.findUnique({
+          where: {
+            id: id,
+          },
+        });
+
+        if (!user) {
+          throw new GraphQLError("No user found");
+        }
+
+        return user;
+      } catch (error: any) {
+        console.log("error", error);
+        throw new GraphQLError(error?.message);
+      }
+    },
   },
   Mutation: {
     createUsername: async function createUsername(

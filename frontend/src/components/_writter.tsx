@@ -142,7 +142,7 @@ const WritterPost: FC<IWritterPostProps> = ({
         content: JSON.stringify(content),
         authorId: userID,
         categoryId: filterText.id,
-        tagsId: [{ id: "645cfdb3e5c882a2c163706f" }],
+        tagsId: [{ id: "647f4670285771952d403d26" }],
       };
 
       const { data, errors } = await createPost({
@@ -230,7 +230,7 @@ const WritterPost: FC<IWritterPostProps> = ({
                         onClick={() => {
                           setFilterText({
                             title: "GameDev",
-                            id: "645ce049f0a62838a0f9c857",
+                            id: "647f454f8f38358775c3e8c3",
                           });
                         }}
                       >

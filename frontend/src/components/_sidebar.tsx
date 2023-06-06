@@ -3,11 +3,11 @@ import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { NavElement } from "./elements";
-
+import { CategoryPopulated } from "../../../backend/src/util/types";
 
 interface SidebarProps {
-  categories?: object[] | undefined;
-  fandoms?: object[] | undefined;
+  categories?: Array<CategoryPopulated>;
+  fandoms?: Array<CategoryPopulated>;
 }
 
 const Sidebar: FC<SidebarProps> = ({ categories, fandoms }: SidebarProps) => {
@@ -15,18 +15,10 @@ const Sidebar: FC<SidebarProps> = ({ categories, fandoms }: SidebarProps) => {
   const [openAllFandom, setOpenAllFandom] = React.useState(false);
   const [openAllThemes, setOpenAllThemes] = React.useState(false);
 
-  // List of usual user nav
-
-  const listOfNavUser = categories;
-
-  // List of usual nav categories
-
-  const listOfNavUsual = fandoms;
-
   return (
     <div id="sidebar" className="container full-height flex-left to-left">
       <div className="nav-user nav">
-        {listOfNavUser?.map((item: any, i) => (
+        {categories?.map((item: any, i: number) => (
           <NavElement
             key={`${item}__${i}`}
             iconTypeFaFont
@@ -37,14 +29,14 @@ const Sidebar: FC<SidebarProps> = ({ categories, fandoms }: SidebarProps) => {
         ))}
       </div>
       <div className="nav-usual nav">
-        {listOfNavUsual?.map((item: any, i) =>
+        {fandoms?.map((item: CategoryPopulated, i: number) =>
           openAllFandom ? (
             <NavElement
               key={`${item}__${i}`}
               iconTypeImage
               icon={item.icon}
               title={item.title}
-              link={item.link}
+              link={`${item.id}`}
             />
           ) : (
             i <= fandomsLengthBefore && (
@@ -53,12 +45,12 @@ const Sidebar: FC<SidebarProps> = ({ categories, fandoms }: SidebarProps) => {
                 iconTypeImage
                 icon={item.icon}
                 title={item.title}
-                link={item.link}
+                link={`${item.id}`}
               />
             )
           )
         )}
-        {listOfNavUsual && listOfNavUsual.length > 6 && (
+        {fandoms && fandoms.length > 6 && (
           <div
             className={classNames("open", {
               active: openAllFandom,

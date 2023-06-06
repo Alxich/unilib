@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   Queries: {
     searchUsers: gql`
@@ -7,6 +8,15 @@ export default {
         searchUsers(username: $username) {
           id
           username
+        }
+      }
+    `,
+    searchUser: gql`
+      query searchUser($id: String!) {
+        searchUser(id: $id) {
+          id
+          username
+          subscribedCategoryIDs
         }
       }
     `,

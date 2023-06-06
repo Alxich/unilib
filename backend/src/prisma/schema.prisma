@@ -36,23 +36,25 @@ model Session {
 }
 
 model User {
-  id              String                    @id @default(auto()) @map("_id") @db.ObjectId
-  name            String?
-  email           String?                   @unique
-  emailVerified   DateTime?
-  image           String?
-  username        String?                   @unique
-  posts           Post[]                    @relation("postAuthor")
-  likedPostIDs    String[]                  @db.ObjectId
-  likedPosts      Post[]                    @relation("userLikedPosts", fields: [likedPostIDs], references: [id])
-  dislikedPostIDs String[]                  @db.ObjectId
-  dislikedPosts   Post[]                    @relation("userDislikedPosts", fields: [dislikedPostIDs], references: [id])
-  messages        Message[]
-  conversations   ConversationParticipant[]
-  accounts        Account[]
-  sessions        Session[]
-  createdAt       DateTime                  @default(now())
-  updatedAt       DateTime                  @updatedAt
+  id                    String                    @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String?
+  email                 String?                   @unique
+  emailVerified         DateTime?
+  image                 String?
+  username              String?                   @unique
+  posts                 Post[]                    @relation("postAuthor")
+  likedPostIDs          String[]                  @db.ObjectId
+  likedPosts            Post[]                    @relation("userLikedPosts", fields: [likedPostIDs], references: [id])
+  dislikedPostIDs       String[]                  @db.ObjectId
+  dislikedPosts         Post[]                    @relation("userDislikedPosts", fields: [dislikedPostIDs], references: [id])
+  messages              Message[]
+  conversations         ConversationParticipant[]
+  accounts              Account[]
+  sessions              Session[]
+  createdAt             DateTime                  @default(now())
+  updatedAt             DateTime                  @updatedAt
+  subscribedCategoryIDs String[]                  @db.ObjectId
+  subscribedCategories  Category[]                @relation("categorySubscribers", fields: [subscribedCategoryIDs], references: [id])
 }
 
 model VerificationToken {
@@ -72,10 +74,10 @@ model Post {
   authorId          String   @db.ObjectId
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-  likes             Int?
+  likes             Int?     @default(0)
   likedByUserIDs    String[] @db.ObjectId
   likedBy           User[]   @relation("userLikedPosts", fields: [likedByUserIDs], references: [id])
-  dislikes          Int?
+  dislikes          Int?     @default(0)
   dislikedByUserIDs String[] @db.ObjectId
   dislikedBy        User[]   @relation("userDislikedPosts", fields: [dislikedByUserIDs], references: [id])
   views             Int      @default(0)
@@ -95,12 +97,17 @@ model Tag {
 }
 
 model Category {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  title     String   @unique
-  desc      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  posts     Post[]
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  icon            String   @unique
+  banner          String   @unique
+  title           String   @unique
+  desc            String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  posts           Post[]
+  subscriberIDs   String[] @db.ObjectId
+  subscribers     User[]   @relation("categorySubscribers", fields: [subscriberIDs], references: [id])
+  subscriberCount Int      @default(0)
 }
 
 model Conversation {

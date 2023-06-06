@@ -43,7 +43,7 @@ const resolvers = {
       _: any,
       args: CreateTagArguments,
       context: GraphQLContext
-    ): Promise<TagPopulated> {
+    ): Promise<boolean> {
       const { session, prisma } = context;
 
       if (!session?.user) {
@@ -65,7 +65,7 @@ const resolvers = {
           },
         });
 
-        return newTag;
+        return true;
       } catch (error) {
         console.log("createTag error", error);
         throw new GraphQLError("Error creating tag");

@@ -24,6 +24,14 @@ export interface SearchUsersInputs {
   username: string;
 }
 
+export interface SearchUserVariables {
+  id: string;
+}
+
+export interface SearchUserData {
+  searchUser: SearchedUserById;
+}
+
 export interface SearchUsersData {
   searchUsers: Array<SearchedUser>;
 }
@@ -31,6 +39,18 @@ export interface SearchUsersData {
 export interface SearchedUser {
   id: string;
   username: string;
+}
+
+export interface SearchedUserById {
+  id: string;
+  username: string;
+  subscribedCategoryIDs: [string];
+}
+
+export interface UserArguments {
+  id: string;
+  username: string;
+  subscribedCategoryIDs: [string];
 }
 
 /**
@@ -189,8 +209,15 @@ export interface TagData {
  */
 export interface CreateCategoryArguments {
   id: string;
+  banner: string;
+  icon: string;
   title: string;
   desc: string;
+}
+
+export interface SubscribeCategoryArguments {
+  categoryId: string;
+  userId: string;
 }
 
 export interface CategoriesVariables {
@@ -198,5 +225,18 @@ export interface CategoriesVariables {
 }
 
 export interface CategoryData {
-  categories: Array<CategoryPopulated>;
+  queryCategory: CategoryPopulated;
+}
+
+export interface CategoriesData {
+  queryCategories: Array<CategoryPopulated>;
+}
+
+export interface CategoryDataById {
+  id: string;
+  banner: string;
+  icon: string;
+  title: string;
+  desc: string;
+  subscriberCount: number;
 }

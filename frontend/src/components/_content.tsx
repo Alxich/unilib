@@ -2,12 +2,16 @@ import { FC, useEffect, useState } from "react";
 import type { NextPageContext } from "next";
 import Head from "next/head";
 import classNames from "classnames";
-import { Toaster } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 
 // Importing once next-auth session
 import { getSession, useSession } from "next-auth/react";
 
 import { Header, Banner, Sidebar, Reels, WritterPost } from "../components";
+
+import { useQuery } from "@apollo/client";
+import CategoriesOperations from "../graphql/operations/categories";
+import { CategoriesData } from "../util/types";
 
 interface ContentProps {
   children: any;
@@ -25,8 +29,19 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
       : document.body.classList.remove("writter-active");
   }, [writterActive]);
 
+  useEffect(() => {
+    setBannerActive(session?.user ? false : true);
+  }, [session]);
+
+  const { data: categories, loading: categoriesLoading } =
+    useQuery<CategoriesData>(CategoriesOperations.Queries.queryCategories, {
+      onError: (error) => {
+        toast.error(`Error loading user: ${error}`);
+        console.log("Error in queryCategory func", error);
+      },
+    });
+
   return (
-    // session ? (
     <>
       <Head>
         <title>UNILIB - Український форум</title>
@@ -34,25 +49,36 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header
-        setBannerActive={setBannerActive}
-        session={session}
-        writterActive={writterActive}
-        setWritterActive={setWritterActive}
-      />
-      <main
-        className={classNames("main", {
-          "writter-active": writterActive,
-        })}
-      >
-        <div className="container main-content flex-row flex-space">
-          <Sidebar categories={[]} fandoms={[]} />
-          <div id="content" className="container">
-            {children}
-          </div>
-          <Reels />
-        </div>
-      </main>
+      {session && (
+        <>
+          <Header
+            setBannerActive={setBannerActive}
+            session={session}
+            writterActive={writterActive}
+            setWritterActive={setWritterActive}
+          />
+          <main
+            className={classNames("main", {
+              "writter-active": writterActive,
+            })}
+          >
+            <div className="container main-content flex-row flex-space">
+              {categoriesLoading ? (
+                "loading"
+              ) : (
+                <Sidebar
+                  categories={[]}
+                  fandoms={categories?.queryCategories}
+                />
+              )}
+              <div id="content" className="container">
+                {children}
+              </div>
+              <Reels />
+            </div>
+          </main>
+        </>
+      )}
       <Banner
         bannerActive={bannerActive}
         setBannerActive={setBannerActive}
@@ -71,8 +97,6 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
         <Toaster position="bottom-right" />
       </div>
     </>
-    // ) : (
-    //   <div>Page loading</div>
   );
 };
 

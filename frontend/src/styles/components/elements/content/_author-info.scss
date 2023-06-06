@@ -7,6 +7,7 @@
     justify-content: center;
     align-items: center;
     height: $banner_height;
+    width: 100%;
     border-radius: $reg_radius $reg_radius 0 0;
     overflow: hidden;
 
@@ -29,6 +30,11 @@
       border: $post_author_icon_border;
       border-radius: 50%;
       margin-top: -40px;
+      overflow: hidden;
+
+      img {
+        object-fit: cover;
+      }
     }
 
     .disription > *,

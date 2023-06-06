@@ -6,10 +6,12 @@ const typeDefs = gql`
   type User {
     id: String
     username: String
+    subscribedCategoryIDs: [String]
   }
 
   type Query {
     searchUsers(username: String!): [User]
+    searchUser(id: String!): User
   }
 
   type Mutation {
