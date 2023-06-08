@@ -19,6 +19,8 @@ import { PostPopulated } from "../../../../backend/src/util/types";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const Author: FC<NextPage> = () => {
+  const [period, setPeriod] = useState<string>("popular"); // Initialize period as an empty string
+
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -30,6 +32,8 @@ const Author: FC<NextPage> = () => {
     PostsCatVariables
   >(PostOperations.Queries.queryPostsByCat, {
     variables: {
+      period: period !== "popular" ? period : "today",
+      popular: period === "popular", // Set the popular variable based on the selected period
       catId: id,
       skip: 0,
       take: 3,
@@ -38,6 +42,19 @@ const Author: FC<NextPage> = () => {
       toast.error(message);
     },
   });
+
+  useEffect(() => {
+    // Call the queryPostsByCat function whenever the period changes
+    fetchMore({
+      variables: {
+        period: period !== "popular" ? period : "today",
+        popular: period === "popular",
+        catId: id,
+        skip: 0,
+        take: 3,
+      },
+    });
+  }, [period, id, fetchMore]);
 
   const [onceLoaded, setOnceLoaded] = useState(false);
   const [posts, setPosts] = useState<PostPopulated[] | undefined>();
@@ -76,7 +93,13 @@ const Author: FC<NextPage> = () => {
 
   return (
     <>
-      <AuthorInfo id={id} session={session} />
+      <AuthorInfo
+        type={"group"}
+        period={period}
+        setPeriod={setPeriod}
+        id={id}
+        session={session}
+      />
       <div className="posts-container container">
         {loading ? (
           <h3> Loading...</h3>

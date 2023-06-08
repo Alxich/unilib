@@ -36,7 +36,7 @@ const Sidebar: FC<SidebarProps> = ({ categories, fandoms }: SidebarProps) => {
               iconTypeImage
               icon={item.icon}
               title={item.title}
-              link={`${item.id}`}
+              link={`group/${item.id}`}
             />
           ) : (
             i <= fandomsLengthBefore && (
@@ -45,7 +45,7 @@ const Sidebar: FC<SidebarProps> = ({ categories, fandoms }: SidebarProps) => {
                 iconTypeImage
                 icon={item.icon}
                 title={item.title}
-                link={`${item.id}`}
+                link={`group/${item.id}`}
               />
             )
           )

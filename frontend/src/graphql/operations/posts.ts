@@ -26,32 +26,32 @@ const PostFields = `
 export default {
   Queries: {
     queryPosts: gql`
-      query queryPosts($skip: Int!, $take: Int!) {
-        queryPosts(skip: $skip, take: $take) {
+      query queryPosts($period: String,  $popular: Boolean, $skip: Int!, $take: Int!) {
+        queryPosts(period: $period, popular: $popular, skip: $skip, take: $take) {
          ${PostFields}
         }
       }
     `,
 
     queryPostsByTag: gql`
-      query queryPostsByTag($tagId: String!, $skip: Int!, $take: Int!) {
-        queryPostsByTag(tagId: $tagId, skip: $skip, take: $take) {
+      query queryPostsByTag($period: String, $popular: Boolean, $tagId: String!, $skip: Int!, $take: Int!) {
+        queryPostsByTag(period: $period, popular: $popular, tagId: $tagId, skip: $skip, take: $take) {
           ${PostFields}
         }
       }
     `,
 
     queryPostsByCat: gql`
-      query queryPostsByCat($catId: String!, $skip: Int!, $take: Int!) {
-        queryPostsByCat(catId: $catId, skip: $skip, take: $take) {
+      query queryPostsByCat($period: String, $popular: Boolean, $catId: String!, $skip: Int!, $take: Int!) {
+        queryPostsByCat(period: $period, popular: $popular, catId: $catId, skip: $skip, take: $take) {
           ${PostFields}
         }
       }
     `,
 
     queryPostsByAuthor: gql`
-      query queryPostsByAuthor($authorId: String!, $skip: Int!, $take: Int!) {
-        queryPostsByAuthor(authorId: $authorId, skip: $skip, take: $take) {
+      query queryPostsByAuthor($period: String, $popular: Boolean, $authorId: String!, $skip: Int!, $take: Int!) {
+        queryPostsByAuthor(period: $period, popular: $popular, authorId: $authorId, skip: $skip, take: $take) {
           ${PostFields}
         }
       }

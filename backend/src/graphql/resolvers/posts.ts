@@ -12,25 +12,31 @@ const resolvers = {
   Query: {
     queryPosts: async function (
       _: any,
-      args: { period: string; skip: number; take: number },
+      args: { period: string; popular: boolean; skip: number; take: number },
       context: GraphQLContext
     ): Promise<Array<PostPopulated>> {
       const { prisma } = context;
-      const { period, skip, take } = args;
+      const { popular, period, skip, take } = args;
 
       const { startDate, endDate } = getDateQueryRange(period);
 
       try {
         const posts = await prisma.post.findMany({
           include: postPopulated,
-          orderBy: {
-            createdAt: "desc",
-          },
-          ...(period
-            ? { where: { createdAt: { gte: startDate, lt: endDate } } }
-            : {}),
-          skip, // Skip post to query (not copy the result)
-          take, // First 10 posts
+          orderBy:
+            popular !== true
+              ? {
+                  createdAt: "desc",
+                }
+              : {
+                  views: "desc",
+                },
+          ...(popular !== true &&
+            period && {
+              where: { createdAt: { gte: startDate, lt: endDate } },
+            }),
+          skip,
+          take,
         });
 
         return posts;
@@ -42,32 +48,47 @@ const resolvers = {
 
     queryPostsByTag: async function (
       _: any,
-      args: { period: string; tagId: string; skip: number; take: number },
+      args: {
+        popular: boolean;
+        period: string;
+        tagId: string;
+        skip: number;
+        take: number;
+      },
       context: GraphQLContext
     ): Promise<Array<PostPopulated>> {
       const { prisma } = context;
-      const { period, tagId, skip, take } = args;
+      const { popular, period, tagId, skip, take } = args;
 
       const { startDate, endDate } = getDateQueryRange(period);
 
       try {
         const posts = await prisma.post.findMany({
           include: postPopulated,
-          where: {
-            tags: {
-              some: {
-                id: tagId,
+          orderBy:
+            popular !== true
+              ? {
+                  createdAt: "desc",
+                }
+              : {
+                  views: "desc",
+                },
+          ...(popular !== true &&
+            period && {
+              where: {
+                tags: {
+                  some: {
+                    id: tagId,
+                  },
+                },
+                createdAt: { gte: startDate, lt: endDate },
               },
-            },
-            ...(period ? { createdAt: { gte: startDate, lt: endDate } } : {}),
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
+            }),
           skip, // Skip post to query (not copy the result)
           take, // First 10 posts
         });
 
+        console.log(posts);
         return posts;
       } catch (error: any) {
         console.log("Posts error", error);
@@ -77,26 +98,40 @@ const resolvers = {
 
     queryPostsByCat: async function (
       _: any,
-      args: { period: string; catId: string; skip: number; take: number },
+      args: {
+        popular: boolean;
+        period: string;
+        catId: string;
+        skip: number;
+        take: number;
+      },
       context: GraphQLContext
     ): Promise<Array<PostPopulated>> {
       const { prisma } = context;
-      const {period, catId, skip, take } = args;
+      const { popular, period, catId, skip, take } = args;
 
       const { startDate, endDate } = getDateQueryRange(period);
 
       try {
         const posts = await prisma.post.findMany({
           include: postPopulated,
-          where: {
-            category: {
-              id: catId,
-            },
-            ...(period ? { createdAt: { gte: startDate, lt: endDate } } : {}),
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
+          orderBy:
+            popular !== true
+              ? {
+                  createdAt: "desc",
+                }
+              : {
+                  views: "desc",
+                },
+          ...(popular !== true &&
+            period && {
+              where: {
+                category: {
+                  id: catId,
+                },
+                createdAt: { gte: startDate, lt: endDate },
+              },
+            }),
           skip, // Skip post to query (not copy the result)
           take, // First 10 posts
         });
@@ -110,26 +145,40 @@ const resolvers = {
 
     queryPostsByAuthor: async function (
       _: any,
-      args: { period: string; authorId: string; skip: number; take: number },
+      args: {
+        popular: boolean;
+        period: string;
+        authorId: string;
+        skip: number;
+        take: number;
+      },
       context: GraphQLContext
     ): Promise<Array<PostPopulated>> {
       const { prisma } = context;
-      const {period, authorId, skip, take } = args;
+      const { popular, period, authorId, skip, take } = args;
 
       const { startDate, endDate } = getDateQueryRange(period);
-      
+
       try {
         const posts = await prisma.post.findMany({
           include: postPopulated,
-          where: {
-            author: {
-              id: authorId,
-            },
-            ...(period ? { createdAt: { gte: startDate, lt: endDate } } : {}),
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
+          orderBy:
+            popular !== true
+              ? {
+                  createdAt: "desc",
+                }
+              : {
+                  views: "desc",
+                },
+          ...(popular !== true &&
+            period && {
+              where: {
+                author: {
+                  id: authorId,
+                },
+                createdAt: { gte: startDate, lt: endDate },
+              },
+            }),
           skip, // Skip post to query (not copy the result)
           take, // First 10 posts
         });
@@ -174,8 +223,6 @@ const resolvers = {
           data: { views: post.views + 1 },
           include: postPopulated,
         });
-
-        console.log(post);
 
         return updatedPost;
       } catch (error: any) {

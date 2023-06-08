@@ -180,7 +180,7 @@ const PostPage: FC<PostPageProps> = ({ data, session }) => {
               {tags.map((item, i) => {
                 return (
                   <Link href={`/tag/${item.id}`} key={`${item}__${i}`}>
-                    {item.title}
+                    {"#" + item.title}
                   </Link>
                 );
               })}
@@ -217,7 +217,7 @@ const PostPage: FC<PostPageProps> = ({ data, session }) => {
               <p>{likes != null ? likes : 0}</p>
             </div>
           </div>
-          <div className="dislikes">
+          {/* <div className="dislikes">
             <div
               className="fafont-icon dislike"
               onClick={() => onPostInteraction(false)}
@@ -230,7 +230,7 @@ const PostPage: FC<PostPageProps> = ({ data, session }) => {
             <div className="counter">
               <p>{dislikes != null ? dislikes : 0}</p>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="rt-side">
           <div className="complain item interactive">

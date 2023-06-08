@@ -12,6 +12,7 @@ const typeDefs = gql`
 
   type Query {
     queryTags(id: String): [Tag]
+    queryTag(id: String): Tag
   }
 
   type Mutation {

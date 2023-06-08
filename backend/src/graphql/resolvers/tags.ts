@@ -8,6 +8,41 @@ import { GraphQLError } from "graphql";
 
 const resolvers = {
   Query: {
+    queryTag: async function (
+      _: any,
+      args: { id: string },
+      context: GraphQLContext
+    ): Promise<TagPopulated> {
+      const { session, prisma } = context;
+      const { id: tagID } = args;
+
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      try {
+        if (!tagID) {
+          throw new GraphQLError("Not id inserted");
+        }
+
+        const tag = await prisma.tag.findUnique({
+          where: {
+            id: tagID,
+          },
+          include: tagPopulated,
+        });
+
+        if (!tag) {
+          throw new GraphQLError("No such a tag 404");
+        }
+
+        return tag;
+      } catch (error: any) {
+        console.log("Tags error", error);
+        throw new GraphQLError(error?.message);
+      }
+    },
+
     queryTags: async function (
       _: any,
       args: { id: string },

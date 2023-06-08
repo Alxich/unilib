@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import Image from "next/image";
 
 import classNames from "classnames";
@@ -18,21 +18,36 @@ import {
   SearchUserData,
   SearchUserVariables,
   SubscribeCategoryArguments,
+  TagData,
+  TagDataById,
+  TagsVariables,
 } from "../../../util/types";
 
 import CategoryOperations from "../../../graphql/operations/categories";
+import TagOperations from "../../../graphql/operations/tags";
 import UserOperations from "../../../graphql/operations/users";
 import { CategoryPopulated } from "../../../../../backend/src/util/types";
 
 interface AuthorInfoProps {
+  type: "group" | "tag" | "author";
   id: string;
   session: Session | null;
+  period: String;
+  setPeriod: Dispatch<SetStateAction<string>>;
 }
 
-const AuthorInfo: FC<AuthorInfoProps> = ({ session, id }: AuthorInfoProps) => {
+const AuthorInfo: FC<AuthorInfoProps> = ({
+  type,
+  session,
+  id,
+  period,
+  setPeriod,
+}: AuthorInfoProps) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [userSubscribed, setUserSubscribed] = useState(false);
-  const [category, setCategory] = useState<CategoryDataById>();
+  const [blockContent, setBlockContent] = useState<
+    CategoryDataById | TagDataById
+  >();
 
   const [subscribeToCategory] = useMutation<
     { subscribeToCategory: CategoryPopulated },
@@ -79,7 +94,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({ session, id }: AuthorInfoProps) => {
 
         if (!errors) {
           toast.success("Category was subscribed!");
-          setCategory(data.subscribeToCategory);
+          setBlockContent(data.subscribeToCategory);
           setUserSubscribed(true);
         }
       } else {
@@ -95,7 +110,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({ session, id }: AuthorInfoProps) => {
 
         if (!errors) {
           toast.success("Category was unsubscribed!");
-          setCategory(data.unsubscribeToCategory);
+          setBlockContent(data.unsubscribeToCategory);
           setUserSubscribed(false);
         }
       }
@@ -112,7 +127,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({ session, id }: AuthorInfoProps) => {
     variables: {
       id: session?.user.id || "",
     },
-    skip: !session, // Skip the query when sessionUser is null or undefined
+    skip: !session || type !== "group", // Skip the query when sessionUser is null or undefined and if the type is not "group"
     onError: (error) => {
       toast.error(`Error loading user: ${error}`);
       console.log("Error in queryCategory func", error);
@@ -120,24 +135,42 @@ const AuthorInfo: FC<AuthorInfoProps> = ({ session, id }: AuthorInfoProps) => {
   });
 
   useEffect(() => {
-    if (currentUser && currentUserLoading != true) {
-      const subscribedCategoryIDs =
-        currentUser.searchUser.subscribedCategoryIDs;
-      const isSubscribed = subscribedCategoryIDs.find(
-        (categoryId) => categoryId === id
-      );
+    if (type !== "group") {
+      // Skip the query if the type is not "group"
+      if (currentUser && currentUserLoading != true) {
+        const subscribedCategoryIDs =
+          currentUser.searchUser.subscribedCategoryIDs;
+        const isSubscribed = subscribedCategoryIDs.find(
+          (categoryId) => categoryId === id
+        );
 
-      setUserSubscribed(isSubscribed ? true : false);
+        setUserSubscribed(isSubscribed ? true : false);
+      }
     }
-  }, [currentUserLoading, currentUser, id, session]);
+  }, [currentUserLoading, currentUser, id, session, type]);
 
-  const { data: categoryData, loading } = useQuery<
+  const { data: categoryData, loading: categoryLoading } = useQuery<
     CategoryData,
     CategoriesVariables
   >(CategoryOperations.Queries.queryCategory, {
     variables: {
       id: id,
     },
+    skip: type !== "group", // Skip the query if the type is not "group"
+    onError: (error) => {
+      toast.error(`Error on loading category ${error}`);
+      console.log("Error queryCategory func", error);
+    },
+  });
+
+  const { data: tagData, loading: tagLoading } = useQuery<
+    TagData,
+    TagsVariables
+  >(TagOperations.Queries.queryTag, {
+    variables: {
+      id: id,
+    },
+    skip: type !== "tag", // Skip the query if the type is not "group"
     onError: (error) => {
       toast.error(`Error on loading category ${error}`);
       console.log("Error queryCategory func", error);
@@ -145,56 +178,104 @@ const AuthorInfo: FC<AuthorInfoProps> = ({ session, id }: AuthorInfoProps) => {
   });
 
   useEffect(() => {
-    loading !== true && categoryData && setCategory(categoryData.queryCategory);
-  }, [categoryData, loading]);
+    switch (type) {
+      case "group":
+        categoryLoading !== true &&
+          categoryData &&
+          setBlockContent(categoryData.queryCategory);
+        break;
+      case "tag":
+        tagLoading !== true &&
+          tagData &&
+          setBlockContent(tagData.queryTag as TagDataById);
+        break;
+      case "author":
+        categoryLoading !== true &&
+          categoryData &&
+          setBlockContent(categoryData.queryCategory);
+        break;
+      default:
+        break;
+    }
+  }, [categoryData, categoryLoading, tagData, tagLoading, type]);
 
-  return loading ? (
+  const filterOptions = [
+    { key: "popular", text: "По популярності" },
+    { key: "today", text: "Cьогодні у ленті" },
+    { key: "month", text: "Місяць" },
+    { key: "year", text: "Рік" },
+  ];
+
+  return categoryLoading ? (
     <div>Loading</div>
   ) : (
-    <div id="author-info" className="container">
-      <div className="banner">
-        <Image
-          src={category ? category.banner : background}
-          height={1080}
-          width={1920}
-          alt="author-background"
-        />
-      </div>
-      <div className="info post-wrapper">
-        <div className="icon">
+    <div
+      id="author-info"
+      className={classNames("container", {
+        tag: type === "tag",
+      })}
+    >
+      {type !== "tag" && blockContent && "banner" in blockContent && (
+        <div className="banner">
           <Image
-            src={category ? category.icon : background}
+            src={blockContent ? blockContent.banner : background}
             height={1080}
             width={1920}
-            alt="author-icon"
+            alt="author-background"
           />
         </div>
+      )}
+      <div className="info post-wrapper">
+        {type !== "tag" && blockContent && "icon" in blockContent && (
+          <div className="icon">
+            <Image
+              src={blockContent ? blockContent.icon : background}
+              height={1080}
+              width={1920}
+              alt="author-icon"
+            />
+          </div>
+        )}
         <div className="name">
-          <h2>{category ? category.title : "Нова категорія"}</h2>
+          <h2>{blockContent ? blockContent.title : "Нова категорія"}</h2>
         </div>
         <div className="disription">
-          <p>{category ? category.desc : "Тут могла бути ваша реклама"}</p>
+          <p>
+            {type !== "tag" && blockContent && "icon" in blockContent
+              ? blockContent.desc
+              : type === "tag"
+              ? "Ви зараз переглядаєте унікальний тег за яким ви можете знайти пост такої самої тематики. Вдачі вам у ваших пошуках :)"
+              : "Тут могла бути ваша реклама"}
+          </p>
         </div>
-        <div className="author-counters">
-          <div className="item">
-            <div className="count">
-              <p>{category ? category.subscriberCount : 0}</p>
-            </div>
-            <div className="title">
-              <p>стежувачів</p>
-            </div>
-          </div>
-          {category === null && (
-            <div className="item">
-              <div className="count">
-                <p>110</p>
+        {type !== "tag" &&
+          blockContent &&
+          "desc" in blockContent &&
+          blockContent &&
+          "subscriberCount" in blockContent && (
+            <>
+              <div className="author-counters">
+                <div className="item">
+                  <div className="count">
+                    <p>{blockContent ? blockContent.subscriberCount : 0}</p>
+                  </div>
+                  <div className="title">
+                    <p>стежувачів</p>
+                  </div>
+                </div>
+                {blockContent === null && (
+                  <div className="item">
+                    <div className="count">
+                      <p>110</p>
+                    </div>
+                    <div className="title">
+                      <p>стежує</p>
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="title">
-                <p>стежує</p>
-              </div>
-            </div>
+            </>
           )}
-        </div>
         <div className="actions">
           <div className="list-of-actions">
             <div className="item active">
@@ -212,7 +293,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({ session, id }: AuthorInfoProps) => {
                 <p>{userSubscribed != true ? "Відстежувати" : "Відписатися"}</p>
               </div>
             )}
-            {category === null && (
+            {blockContent === null && (
               <>
                 <div className="item">
                   <p>Коментарі</p>
@@ -238,9 +319,19 @@ const AuthorInfo: FC<AuthorInfoProps> = ({ session, id }: AuthorInfoProps) => {
             >
               <div className="triangle"></div>
               <div className="list container flex-left width-auto">
-                <p>По даті</p>
-                <p>По популярності</p>
-                <p>За рейтингом</p>
+                {filterOptions.map(
+                  (item: { key: string; text: string }, i: number) => (
+                    <p
+                      key={`${item}__${i}`}
+                      className={classNames({ active: period === item.key })}
+                      onClick={() => {
+                        period !== item.key && setPeriod(item.key);
+                      }}
+                    >
+                      {item.text}
+                    </p>
+                  )
+                )}
               </div>
             </div>
           </div>

@@ -63,6 +63,10 @@
         &:not(:last-child) {
           margin-bottom: $smpop_inner_elem_gap;
         }
+
+        &.active {
+          color: $active_elem
+        }
       }
     }
   }

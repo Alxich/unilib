@@ -129,23 +129,31 @@ export interface CreatePostArguments {
 }
 
 export interface PostsVariables {
+  popular?: boolean;
+  period?: string;
   skip: number;
   take: number;
 }
 
 export interface PostsTagVariables {
+  popular?: boolean;
+  period?: string;
   tagId: string;
   skip: number;
   take: number;
 }
 
 export interface PostsCatVariables {
+  popular?: boolean;
+  period?: string;
   catId: string;
   skip: number;
   take: number;
 }
 
 export interface PostsAuthorVariables {
+  popular?: boolean;
+  period?: string;
   authorId: string;
   skip: number;
   take: number;
@@ -163,7 +171,7 @@ export interface PostsData {
   queryPosts: Array<PostPopulated>;
 }
 
-export interface PostsByTagData {
+export interface PostsByTagsData {
   queryPostsByTag: Array<PostPopulated>;
 }
 
@@ -201,6 +209,14 @@ export interface TagsVariables {
 }
 
 export interface TagData {
+  queryTag: TagPopulated;
+}
+
+export interface TagDataById {
+  title: string;
+}
+
+export interface TagsData {
   tags: Array<TagPopulated>;
 }
 

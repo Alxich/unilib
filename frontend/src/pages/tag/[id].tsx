@@ -9,12 +9,14 @@ import { AuthorInfo, Post } from "../../components";
 
 import { useQuery } from "@apollo/client";
 import PostOperations from "../../graphql/operations/posts";
-import { PostsByTagData, PostsTagVariables } from "../../util/types";
+import { PostsByTagsData, PostsTagVariables } from "../../util/types";
 import { PostPopulated } from "../../../../backend/src/util/types";
 
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const TagPage: FC<NextPage> = () => {
+  const [period, setPeriod] = useState<string>("popular"); // Initialize period as an empty string
+
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -22,10 +24,12 @@ const TagPage: FC<NextPage> = () => {
   const id = router.query.id as string;
 
   const { data, loading, fetchMore } = useQuery<
-    PostsByTagData,
+    PostsByTagsData,
     PostsTagVariables
   >(PostOperations.Queries.queryPostsByTag, {
     variables: {
+      period: period !== "popular" ? period : "today",
+      popular: period === "popular", // Set the popular variable based on the selected period
       tagId: id,
       skip: 0,
       take: 3,
@@ -72,7 +76,13 @@ const TagPage: FC<NextPage> = () => {
 
   return (
     <>
-      <AuthorInfo />
+      <AuthorInfo
+        type="tag"
+        id={id}
+        session={session}
+        period={period}
+        setPeriod={setPeriod}
+      />
       <div className="posts-container container">
         {loading ? (
           <h3> Loading...</h3>

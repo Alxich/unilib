@@ -10,6 +10,14 @@ export default {
         }
       }
     `,
+
+    queryTag: gql`
+      query queryTag($id: String) {
+        queryTag(id: $id) {
+          title
+        }
+      }
+    `,
   },
   Mutations: {
     createTag: gql`
