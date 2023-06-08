@@ -12,9 +12,9 @@ import background from "../../../../public/images/background.png";
 import { Session } from "next-auth";
 import { useMutation, useQuery } from "@apollo/client";
 import {
+  AuthorInfoTypes,
   CategoriesVariables,
   CategoryData,
-  CategoryDataById,
   SearchUserData,
   SearchUserVariables,
   SubscribeCategoryArguments,
@@ -45,9 +45,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
 }: AuthorInfoProps) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [userSubscribed, setUserSubscribed] = useState(false);
-  const [blockContent, setBlockContent] = useState<
-    CategoryDataById | TagDataById
-  >();
+  const [blockContent, setBlockContent] = useState<AuthorInfoTypes>();
 
   const [subscribeToCategory] = useMutation<
     { subscribeToCategory: CategoryPopulated },
@@ -125,9 +123,16 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
     SearchUserVariables
   >(UserOperations.Queries.searchUser, {
     variables: {
-      id: session?.user.id || "",
+      id: type === "author" ? id : session?.user.id || "",
     },
-    skip: !session || type !== "group", // Skip the query when sessionUser is null or undefined and if the type is not "group"
+    /**
+     * Skip the query when sessionUser is null
+     * or undefined and if the type is not "group".
+     * -----------------------------------------------
+     * If it is a user we ignore it and load all staff
+     * because session not important in that case.
+     */
+    ...(type !== "author" && { skip: !session || type !== "group" }),
     onError: (error) => {
       toast.error(`Error loading user: ${error}`);
       console.log("Error in queryCategory func", error);
@@ -135,7 +140,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
   });
 
   useEffect(() => {
-    if (type !== "group") {
+    if (type !== "author" && type !== "tag") {
       // Skip the query if the type is not "group"
       if (currentUser && currentUserLoading != true) {
         const subscribedCategoryIDs =
@@ -185,19 +190,27 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
           setBlockContent(categoryData.queryCategory);
         break;
       case "tag":
-        tagLoading !== true &&
-          tagData &&
-          setBlockContent(tagData.queryTag as TagDataById);
+        tagLoading !== true && tagData && setBlockContent(tagData.queryTag);
         break;
       case "author":
-        categoryLoading !== true &&
-          categoryData &&
-          setBlockContent(categoryData.queryCategory);
+        currentUserLoading !== true &&
+          currentUser &&
+          setBlockContent(currentUser.searchUser);
+
+        console.log(currentUser);
         break;
       default:
         break;
     }
-  }, [categoryData, categoryLoading, tagData, tagLoading, type]);
+  }, [
+    categoryData,
+    categoryLoading,
+    currentUser,
+    currentUserLoading,
+    tagData,
+    tagLoading,
+    type,
+  ]);
 
   const filterOptions = [
     { key: "popular", text: "По популярності" },
@@ -215,10 +228,10 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
         tag: type === "tag",
       })}
     >
-      {type !== "tag" && blockContent && "banner" in blockContent && (
+      {type !== "tag" && blockContent && (
         <div className="banner">
           <Image
-            src={blockContent ? blockContent.banner : background}
+            src={blockContent?.banner ? blockContent.banner : background}
             height={1080}
             width={1920}
             alt="author-background"
@@ -226,10 +239,16 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
         </div>
       )}
       <div className="info post-wrapper">
-        {type !== "tag" && blockContent && "icon" in blockContent && (
+        {type !== "tag" && blockContent && (
           <div className="icon">
             <Image
-              src={blockContent ? blockContent.icon : background}
+              src={
+                blockContent?.icon
+                  ? blockContent.icon
+                  : blockContent?.image
+                  ? blockContent?.image
+                  : background
+              }
               height={1080}
               width={1920}
               alt="author-icon"
@@ -237,51 +256,91 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
           </div>
         )}
         <div className="name">
-          <h2>{blockContent ? blockContent.title : "Нова категорія"}</h2>
+          <h2>
+            {blockContent && blockContent?.title
+              ? blockContent.title
+              : blockContent?.username
+              ? blockContent.username
+              : "Нова категорія"}
+          </h2>
         </div>
-        <div className="disription">
-          <p>
-            {type !== "tag" && blockContent && "icon" in blockContent
-              ? blockContent.desc
-              : type === "tag"
-              ? "Ви зараз переглядаєте унікальний тег за яким ви можете знайти пост такої самої тематики. Вдачі вам у ваших пошуках :)"
-              : "Тут могла бути ваша реклама"}
-          </p>
-        </div>
-        {type !== "tag" &&
-          blockContent &&
-          "desc" in blockContent &&
-          blockContent &&
-          "subscriberCount" in blockContent && (
-            <>
-              <div className="author-counters">
+
+        {blockContent &&
+          (type === "author" ? (
+            blockContent?.aboutMe ? (
+              <div className="disription">
+                <p>{blockContent.aboutMe}</p>
+              </div>
+            ) : (
+              <div className="disription">
+                <p>
+                  Ви зараз переглядаєте мій профіль за яким ви можете знайти
+                  пости які я викладаю на цьому сайті. Приємного перегляду{" "}
+                  {":)"}
+                </p>
+              </div>
+            )
+          ) : type === "tag" ? (
+            blockContent?.desc ? (
+              <div className="disription">
+                <p>{blockContent.desc}</p>
+              </div>
+            ) : (
+              <div className="disription">
+                <p>
+                  Ви зараз переглядаєте унікальний тег за яким ви можете знайти
+                  пост такої самої тематики. Вдачі вам у ваших пошуках {":)"}
+                </p>
+              </div>
+            )
+          ) : type === "group" && blockContent?.desc ? (
+            <div className="disription">
+              <p>{blockContent.desc}</p>
+            </div>
+          ) : (
+            <div className="disription">
+              <p>
+                Ви зараз переглядаєте унікальну групу за яким ви можете знайти
+                пост такої самої тематики. Вдачі вам у ваших пошуках {":)"}
+              </p>
+            </div>
+          ))}
+
+        {type !== "tag" && type !== "author" && blockContent && (
+          <>
+            <div className="author-counters">
+              <div className="item">
+                <div className="count">
+                  <p>
+                    {blockContent?.subscriberCount &&
+                    blockContent?.subscriberCount > 0
+                      ? blockContent.subscriberCount
+                      : 0}
+                  </p>
+                </div>
+                <div className="title">
+                  <p>стежувачів</p>
+                </div>
+              </div>
+              {blockContent === null && (
                 <div className="item">
                   <div className="count">
-                    <p>{blockContent ? blockContent.subscriberCount : 0}</p>
+                    <p>110</p>
                   </div>
                   <div className="title">
-                    <p>стежувачів</p>
+                    <p>стежує</p>
                   </div>
                 </div>
-                {blockContent === null && (
-                  <div className="item">
-                    <div className="count">
-                      <p>110</p>
-                    </div>
-                    <div className="title">
-                      <p>стежує</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </>
-          )}
+              )}
+            </div>
+          </>
+        )}
         <div className="actions">
           <div className="list-of-actions">
             <div className="item active">
               <p>Записів</p>
             </div>
-            {currentUser && (
+            {currentUser && type !== "author" && (
               <div
                 className="item"
                 onClick={() => {
@@ -293,7 +352,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
                 <p>{userSubscribed != true ? "Відстежувати" : "Відписатися"}</p>
               </div>
             )}
-            {blockContent === null && (
+            {type === "author" && (
               <>
                 <div className="item">
                   <p>Коментарі</p>

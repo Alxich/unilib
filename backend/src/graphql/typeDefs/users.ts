@@ -6,6 +6,9 @@ const typeDefs = gql`
   type User {
     id: String
     username: String
+    image: String
+    banner: String
+    aboutMe: String
     subscribedCategoryIDs: [String]
   }
 

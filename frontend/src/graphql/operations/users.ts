@@ -16,6 +16,9 @@ export default {
         searchUser(id: $id) {
           id
           username
+          image
+          banner
+          aboutMe
           subscribedCategoryIDs
         }
       }

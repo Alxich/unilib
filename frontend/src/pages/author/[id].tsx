@@ -15,6 +15,8 @@ import { PostPopulated } from "../../../../backend/src/util/types";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const Author: FC<NextPage> = () => {
+  const [period, setPeriod] = useState<string>("popular"); // Initialize period as an empty string
+
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -26,6 +28,8 @@ const Author: FC<NextPage> = () => {
     PostsAuthorVariables
   >(PostOperations.Queries.queryPostsByAuthor, {
     variables: {
+      period: period !== "popular" ? period : "today",
+      popular: period === "popular", // Set the popular variable based on the selected period
       authorId: id,
       skip: 0,
       take: 3,
@@ -74,7 +78,13 @@ const Author: FC<NextPage> = () => {
 
   return (
     <>
-      <AuthorInfo />
+      <AuthorInfo
+        type="author"
+        id={id}
+        session={session}
+        period={period}
+        setPeriod={setPeriod}
+      />
       {/* <MoreAuthor /> */}
       <div className="posts-container container">
         {loading ? (

@@ -44,6 +44,9 @@ export interface SearchedUser {
 export interface SearchedUserById {
   id: string;
   username: string;
+  aboutMe: string;
+  image: string;
+  banner: string;
   subscribedCategoryIDs: [string];
 }
 
@@ -212,9 +215,7 @@ export interface TagData {
   queryTag: TagPopulated;
 }
 
-export interface TagDataById {
-  title: string;
-}
+export interface TagDataById {}
 
 export interface TagsData {
   tags: Array<TagPopulated>;
@@ -255,4 +256,21 @@ export interface CategoryDataById {
   title: string;
   desc: string;
   subscriberCount: number;
+}
+
+/**
+ * Author-info.tsx types
+ */
+
+export interface AuthorInfoTypes {
+  id: string;
+  banner?: string;
+  icon?: string;
+  title?: string;
+  desc?: string;
+  subscriberCount?: number;
+  username?: string;
+  aboutMe?: string;
+  image?: string;
+  subscribedCategoryIDs?: [string];
 }
