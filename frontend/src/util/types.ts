@@ -246,7 +246,13 @@ export interface CategoryData {
 }
 
 export interface CategoriesData {
-  queryCategories: Array<CategoryPopulated>;
+  queryCategoriesByUser: Array<CategoryPopulated>;
+}
+
+export interface CategoryDataByUser {
+  id: string;
+  icon: string;
+  title: string;
 }
 
 export interface CategoryDataById {

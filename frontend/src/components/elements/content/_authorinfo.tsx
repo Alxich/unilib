@@ -34,6 +34,8 @@ interface AuthorInfoProps {
   session: Session | null;
   period: String;
   setPeriod: Dispatch<SetStateAction<string>>;
+  showMore?: boolean;
+  setShowMore?: Dispatch<SetStateAction<boolean>>;
 }
 
 const AuthorInfo: FC<AuthorInfoProps> = ({
@@ -42,6 +44,8 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
   id,
   period,
   setPeriod,
+  showMore,
+  setShowMore,
 }: AuthorInfoProps) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [userSubscribed, setUserSubscribed] = useState(false);
@@ -337,7 +341,12 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
         )}
         <div className="actions">
           <div className="list-of-actions">
-            <div className="item active">
+            <div
+              className={classNames("item", {
+                active: showMore !== true,
+              })}
+              onClick={() => setShowMore && setShowMore(false)}
+            >
               <p>Записів</p>
             </div>
             {currentUser && type !== "author" && (
@@ -357,43 +366,54 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
                 <div className="item">
                   <p>Коментарі</p>
                 </div>
-                <div className="item">
+
+                <div
+                  className={classNames("item", {
+                    active: showMore !== false,
+                  })}
+                  onClick={() => setShowMore && setShowMore(true)}
+                >
                   <p>Більше</p>
                 </div>
               </>
             )}
           </div>
-          <div className="changer filter open-more">
-            <div className="fafont-icon interactive">
-              <FontAwesomeIcon
-                onClick={() => setOpenFilter(openFilter ? false : true)}
-                icon={faAlignCenter}
-                style={{ width: "100%", height: "100%", color: "inherit" }}
-              />
-            </div>
-            <div
-              className={classNames("wrapper container flex-right width-auto", {
-                active: openFilter,
-              })}
-            >
-              <div className="triangle"></div>
-              <div className="list container flex-left width-auto">
-                {filterOptions.map(
-                  (item: { key: string; text: string }, i: number) => (
-                    <p
-                      key={`${item}__${i}`}
-                      className={classNames({ active: period === item.key })}
-                      onClick={() => {
-                        period !== item.key && setPeriod(item.key);
-                      }}
-                    >
-                      {item.text}
-                    </p>
-                  )
+          {showMore !== true && (
+            <div className="changer filter open-more">
+              <div className="fafont-icon interactive">
+                <FontAwesomeIcon
+                  onClick={() => setOpenFilter(openFilter ? false : true)}
+                  icon={faAlignCenter}
+                  style={{ width: "100%", height: "100%", color: "inherit" }}
+                />
+              </div>
+              <div
+                className={classNames(
+                  "wrapper container flex-right width-auto",
+                  {
+                    active: openFilter,
+                  }
                 )}
+              >
+                <div className="triangle"></div>
+                <div className="list container flex-left width-auto">
+                  {filterOptions.map(
+                    (item: { key: string; text: string }, i: number) => (
+                      <p
+                        key={`${item}__${i}`}
+                        className={classNames({ active: period === item.key })}
+                        onClick={() => {
+                          period !== item.key && setPeriod(item.key);
+                        }}
+                      >
+                        {item.text}
+                      </p>
+                    )
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

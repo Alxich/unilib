@@ -60,6 +60,37 @@ const resolvers = {
         throw new GraphQLError(error?.message);
       }
     },
+    queryCategoriesByUser: async function (
+      _: any,
+      args: { id: string },
+      context: GraphQLContext
+    ): Promise<Array<CategoryPopulated>> {
+      const { prisma } = context;
+      const { id } = args;
+  
+      try {
+        const categories = await prisma.category.findMany({
+          where: {
+            subscriberIDs: {
+              equals: id
+            }
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: categoryPopulated,
+        });
+  
+        if (!categories) {
+          throw new Error("Categories is not exist");
+        }
+  
+        return categories;
+      } catch (error: any) {
+        console.log("Categories error", error);
+        throw new GraphQLError(error?.message);
+      }
+    },
   },
   Mutation: {
     createCategory: async function (

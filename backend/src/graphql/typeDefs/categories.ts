@@ -16,6 +16,7 @@ const typeDefs = gql`
   type Query {
     queryCategory(id: String): Category
     queryCategories(id: String): [Category]
+    queryCategoriesByUser(id: String): [Category]
   }
 
   type Mutation {

@@ -15,6 +15,7 @@ import { PostPopulated } from "../../../../backend/src/util/types";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const Author: FC<NextPage> = () => {
+  const [showMore, setShowMore] = useState<boolean>(false);
   const [period, setPeriod] = useState<string>("popular"); // Initialize period as an empty string
 
   const router = useRouter();
@@ -84,29 +85,34 @@ const Author: FC<NextPage> = () => {
         session={session}
         period={period}
         setPeriod={setPeriod}
+        showMore={showMore}
+        setShowMore={setShowMore}
       />
-      {/* <MoreAuthor /> */}
-      <div className="posts-container container">
-        {loading ? (
-          <h3> Loading...</h3>
-        ) : (
-          posts && (
-            <InfiniteScroll
-              dataLength={posts.length}
-              next={getMorePost}
-              hasMore={hasMore}
-              loader={<h3> Loading...</h3>}
-              endMessage={<h4>Nothing more to show</h4>}
-            >
-              {posts.map((item: PostPopulated, i: number) => {
-                return (
-                  <Post session={session} data={item} key={`${item}__${i}`} />
-                );
-              })}
-            </InfiniteScroll>
-          )
-        )}
-      </div>
+      {showMore !== false ? (
+        <MoreAuthor id={id} session={session} />
+      ) : (
+        <div className="posts-container container">
+          {loading ? (
+            <h3> Loading...</h3>
+          ) : (
+            posts && (
+              <InfiniteScroll
+                dataLength={posts.length}
+                next={getMorePost}
+                hasMore={hasMore}
+                loader={<h3> Loading...</h3>}
+                endMessage={<h4>Nothing more to show</h4>}
+              >
+                {posts.map((item: PostPopulated, i: number) => {
+                  return (
+                    <Post session={session} data={item} key={`${item}__${i}`} />
+                  );
+                })}
+              </InfiniteScroll>
+            )
+          )}
+        </div>
+      )}
     </>
   );
 };

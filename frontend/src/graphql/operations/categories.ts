@@ -28,6 +28,16 @@ export default {
         }
       }
     `,
+
+    queryCategoriesByUser: gql`
+      query queryCategoriesByUser($id: String) {
+        queryCategoriesByUser(id: $id) {
+          id
+          icon
+          title
+        }
+      }
+    `,
   },
   Mutations: {
     createCategory: gql`

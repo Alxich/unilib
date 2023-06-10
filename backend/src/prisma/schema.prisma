@@ -57,6 +57,18 @@ model User {
   updatedAt             DateTime                  @updatedAt
   subscribedCategoryIDs String[]                  @db.ObjectId
   subscribedCategories  Category[]                @relation("categorySubscribers", fields: [subscribedCategoryIDs], references: [id])
+  following             Follows[]                 @relation("follower")
+  followedBy            Follows[]                 @relation("following")
+}
+
+model Follows {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  follower    User   @relation("follower", fields: [followerId], references: [id])
+  followerId  String @db.ObjectId
+  following   User   @relation("following", fields: [followingId], references: [id])
+  followingId String @db.ObjectId
+
+  @@unique([followerId, followingId])
 }
 
 model VerificationToken {
