@@ -15,11 +15,12 @@ import {
   AuthorInfoTypes,
   CategoriesVariables,
   CategoryData,
+  DeleteItemResoponse,
+  FollowUserArguments,
   SearchUserData,
   SearchUserVariables,
   SubscribeCategoryArguments,
   TagData,
-  TagDataById,
   TagsVariables,
 } from "../../../util/types";
 
@@ -139,7 +140,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
     ...(type !== "author" && { skip: !session || type !== "group" }),
     onError: (error) => {
       toast.error(`Error loading user: ${error}`);
-      console.log("Error in queryCategory func", error);
+      console.log("Error in searchUser func", error);
     },
   });
 
@@ -155,8 +156,96 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
 
         setUserSubscribed(isSubscribed ? true : false);
       }
+    } else if (type === "author") {
+      if (currentUser && currentUserLoading != true) {
+        const subscribedUsers = currentUser.searchUser.followedBy;
+
+        if (subscribedUsers) {
+          console.log(subscribedUsers);
+          const isSubscribed = subscribedUsers.find(
+            (follow) => follow.follower.id === id
+          );
+
+          setUserSubscribed(isSubscribed ? true : false);
+        } else {
+          setUserSubscribed(false);
+        }
+      }
     }
   }, [currentUserLoading, currentUser, id, session, type]);
+
+  const [followUser] = useMutation<
+    { followUser: FollowUserArguments },
+    FollowUserArguments
+  >(UserOperations.Mutations.followUser);
+
+  const [unfollowUser] = useMutation<
+    { unfollowUser: DeleteItemResoponse },
+    FollowUserArguments
+  >(UserOperations.Mutations.unfollowUser);
+
+  const onFollowUser = async (type: boolean) => {
+    try {
+      if (!session) {
+        throw new Error("Not authorized Session");
+      }
+
+      const { username, id: userId } = session.user;
+
+      // Check if user exist to make post secure
+      if (!username) {
+        throw new Error("Not authorized user");
+      }
+
+      if (!currentUser) {
+        throw new Error("Not authorized user");
+      }
+
+      const subscribeData: FollowUserArguments = {
+        followerId: userId,
+        followingId: currentUser.searchUser.id,
+      };
+
+      if (type === true) {
+        const { data, errors } = await followUser({
+          variables: {
+            ...subscribeData,
+          },
+        });
+
+        if (!data?.followUser || errors) {
+          throw new Error("Error follow user");
+        }
+
+        if (!errors) {
+          toast.success("User was followed!");
+          setUserSubscribed(true);
+        }
+
+        console.log(data);
+      } else {
+        const { data, errors } = await unfollowUser({
+          variables: {
+            ...subscribeData,
+          },
+        });
+
+        if (!data?.unfollowUser.success || errors) {
+          throw new Error("Error follow user");
+        }
+
+        if (!errors) {
+          toast.success("User was followed!");
+          setUserSubscribed(false);
+        }
+
+        console.log(data);
+      }
+    } catch (error: any) {
+      console.log("onFollowUser error", error);
+      toast.error(error?.message);
+    }
+  };
 
   const { data: categoryData, loading: categoryLoading } = useQuery<
     CategoryData,
@@ -356,6 +445,18 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
                   userSubscribed != true
                     ? onSubscribeCategory(true)
                     : onSubscribeCategory(false);
+                }}
+              >
+                <p>{userSubscribed != true ? "Відстежувати" : "Відписатися"}</p>
+              </div>
+            )}
+            {currentUser && type === "author" && (
+              <div
+                className="item"
+                onClick={() => {
+                  userSubscribed != true
+                    ? onFollowUser(true)
+                    : onFollowUser(false);
                 }}
               >
                 <p>{userSubscribed != true ? "Відстежувати" : "Відписатися"}</p>

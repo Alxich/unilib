@@ -26,7 +26,7 @@ const resolvers = {
           orderBy:
             popular !== true
               ? {
-                  createdAt: "desc",
+                  createdAt: "asc",
                 }
               : {
                   views: "desc",
@@ -68,7 +68,7 @@ const resolvers = {
           orderBy:
             popular !== true
               ? {
-                  createdAt: "desc",
+                  createdAt: "asc",
                 }
               : {
                   views: "desc",
@@ -118,7 +118,7 @@ const resolvers = {
           orderBy:
             popular !== true
               ? {
-                  createdAt: "desc",
+                  createdAt: "asc",
                 }
               : {
                   views: "desc",
@@ -165,7 +165,7 @@ const resolvers = {
           orderBy:
             popular !== true
               ? {
-                  createdAt: "desc",
+                  createdAt: "asc",
                 }
               : {
                   views: "desc",

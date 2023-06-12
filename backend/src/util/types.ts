@@ -34,6 +34,11 @@ export interface CreateItemResoponse {
   error?: string;
 }
 
+export interface DeleteItemResoponse {
+  success?: boolean;
+  error?: string;
+}
+
 /**
  * Users
  */
@@ -44,6 +49,11 @@ export interface User {
 
 export interface SearchUsersResponse {
   users: Array<User>;
+}
+
+export interface FollowUserResponse {
+  followerId: string;
+  followingId: string;
 }
 
 /**

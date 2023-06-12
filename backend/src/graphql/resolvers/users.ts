@@ -1,7 +1,12 @@
 import { User } from "@prisma/client";
 import { GraphQLError } from "graphql";
 import { verifyAndCreateUsername } from "../../util/functions";
-import { CreateItemResoponse, GraphQLContext } from "../../util/types";
+import {
+  CreateItemResoponse,
+  DeleteItemResoponse,
+  FollowUserResponse,
+  GraphQLContext,
+} from "../../util/types";
 
 const resolvers = {
   Query: {
@@ -87,6 +92,62 @@ const resolvers = {
       const { username } = args;
 
       return await verifyAndCreateUsername({ userId: id, username }, prisma);
+    },
+
+    followUser: async function name(
+      _: any,
+      args: { followerId: string; followingId: string },
+      context: GraphQLContext
+    ): Promise<FollowUserResponse> {
+      const { followerId, followingId } = args;
+      const { session, prisma } = context;
+
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      const follow = await prisma.follows.create({
+        data: {
+          followerId: followerId,
+          followingId: followingId,
+        },
+      });
+
+      return follow;
+    },
+
+    unfollowUser: async function name(
+      _: any,
+      args: { followerId: string; followingId: string },
+      context: GraphQLContext
+    ): Promise<DeleteItemResoponse> {
+      const { followerId, followingId } = args;
+      const { session, prisma } = context;
+
+      if (!session?.user) {
+        return {
+          error: "Not authorized",
+        };
+      }
+
+      const follow = await prisma.follows.delete({
+        where: {
+          followerId_followingId: {
+            followerId: followerId,
+            followingId: followingId,
+          },
+        },
+      });
+
+      if (follow) {
+        return {
+          success: true,
+        };
+      } else {
+        return {
+          error: "Something went wrong",
+        };
+      }
     },
   },
 };

@@ -10,6 +10,13 @@ const typeDefs = gql`
     banner: String
     aboutMe: String
     subscribedCategoryIDs: [String]
+    followedBy: [Follow]
+  }
+
+  type Follow {
+    id: ID!
+    follower: User!
+    following: User!
   }
 
   type Query {
@@ -19,6 +26,21 @@ const typeDefs = gql`
 
   type Mutation {
     createUsername(username: String!): CreateItemResoponse
+    followUser(followerId: String!, followingId: String!): FollowUserResoponse
+    unfollowUser(
+      followerId: String!
+      followingId: String!
+    ): UnfollowUserResoponse
+  }
+
+  type FollowUserResoponse {
+    followerId: String
+    followingId: String!
+  }
+
+  type UnfollowUserResoponse {
+    success: Boolean
+    error: String
   }
 
   type CreateItemResoponse {

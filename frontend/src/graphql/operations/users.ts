@@ -20,6 +20,18 @@ export default {
           banner
           aboutMe
           subscribedCategoryIDs
+          followedBy {
+            follower {
+              id
+              username
+              image
+            }
+            following {
+              id
+              username
+              image
+            }
+          }
         }
       }
     `,
@@ -28,6 +40,22 @@ export default {
     createUsername: gql`
       mutation CreateUsername($username: String!) {
         createUsername(username: $username) {
+          success
+          error
+        }
+      }
+    `,
+    followUser: gql`
+      mutation followUser($followerId: String!, $followingId: String!) {
+        followUser(followerId: $followerId, followingId: $followingId) {
+          followerId
+          followingId
+        }
+      }
+    `,
+    unfollowUser: gql`
+      mutation unfollowUser($followerId: String!, $followingId: String!) {
+        unfollowUser(followerId: $followerId, followingId: $followingId) {
           success
           error
         }

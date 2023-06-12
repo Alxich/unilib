@@ -7,6 +7,14 @@ import {
 } from "../../../backend/src/util/types";
 
 /**
+ * Client configuration
+ */
+export interface DeleteItemResoponse {
+  success?: boolean;
+  error?: string;
+}
+
+/**
  * Users
  */
 export interface CreateUsernameVariables {
@@ -48,12 +56,31 @@ export interface SearchedUserById {
   image: string;
   banner: string;
   subscribedCategoryIDs: [string];
+  followedBy?: Array<Followers>;
 }
 
 export interface UserArguments {
   id: string;
   username: string;
   subscribedCategoryIDs: [string];
+}
+
+export interface Followers {
+  follower: {
+    id: string;
+    username: string;
+    image: string;
+  };
+  following: {
+    id: string;
+    username: string;
+    image: string;
+  };
+}
+
+export interface FollowUserArguments {
+  followerId: string;
+  followingId: string;
 }
 
 /**
@@ -267,7 +294,6 @@ export interface CategoryDataById {
 /**
  * Author-info.tsx types
  */
-
 export interface AuthorInfoTypes {
   id: string;
   banner?: string;
