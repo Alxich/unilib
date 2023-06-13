@@ -88,7 +88,7 @@ const Author: FC<NextPage> = () => {
         showMore={showMore}
         setShowMore={setShowMore}
       />
-      {showMore !== false ? (
+      {showMore !== false && session ? (
         <MoreAuthor id={id} session={session} />
       ) : (
         <div className="posts-container container">

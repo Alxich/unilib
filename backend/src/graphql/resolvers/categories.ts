@@ -71,9 +71,11 @@ const resolvers = {
       try {
         const categories = await prisma.category.findMany({
           where: {
-            subscriberIDs: {
-              equals: id
-            }
+            subscribers: {
+              some: {
+                id: id,
+              },
+            },
           },
           orderBy: {
             createdAt: "desc",
@@ -84,6 +86,8 @@ const resolvers = {
         if (!categories) {
           throw new Error("Categories is not exist");
         }
+
+        console.log(categories);
   
         return categories;
       } catch (error: any) {

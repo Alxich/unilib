@@ -66,16 +66,14 @@ export interface UserArguments {
 }
 
 export interface Followers {
-  follower: {
-    id: string;
-    username: string;
-    image: string;
-  };
-  following: {
-    id: string;
-    username: string;
-    image: string;
-  };
+  follower: FollowItem;
+  following: FollowItem;
+}
+
+export interface FollowItem {
+  id: string;
+  username: string;
+  image: string;
 }
 
 export interface FollowUserArguments {

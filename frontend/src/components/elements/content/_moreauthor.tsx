@@ -5,9 +5,15 @@ import { toast } from "react-hot-toast";
 
 import { useMutation, useQuery } from "@apollo/client";
 import CategoriesOperations from "../../../graphql/operations/categories";
+import UserOperations from "../../../graphql/operations/users";
+
 import {
   CategoriesData,
   CategoryDataByUser,
+  FollowUserArguments,
+  Followers,
+  SearchUserData,
+  SearchUserVariables,
   SubscribeCategoryArguments,
 } from "../../../util/types";
 import { CategoryPopulated } from "../../../../../backend/src/util/types";
@@ -16,13 +22,17 @@ import { ItemMore } from "./moreauthor";
 
 interface MoreAuthorProps {
   id: string;
-  session: Session | null;
+  session: Session;
 }
 
 const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
   const [userSubscribed, setUserSubscribed] = useState(false);
+  const [userFollowed, setUserFollowed] = useState(false);
   const [categories, setCategories] = useState<CategoriesData>();
+  const [users, setUsers] = useState<Followers[]>();
   const [loading, setLoading] = useState(true);
+
+  const itemInfo = [1, 2];
 
   const { data: categoriesData, loading: categoriesLoading } =
     useQuery<CategoriesData>(
@@ -44,16 +54,6 @@ const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
       setLoading(false);
     }
   }, [categoriesData, categoriesLoading]);
-
-  const itemsArray: CategoryDataByUser[] = [
-    {
-      id: "1",
-      icon: null,
-      title: "Andrey Noice",
-    },
-  ];
-
-  const itemInfo = [1, 2];
 
   const [subscribeToCategory] = useMutation<
     { subscribeToCategory: CategoryPopulated },
@@ -86,7 +86,7 @@ const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
         userId,
       };
 
-      if (type === true) {
+      if (type === false) {
         const { data, errors } = await subscribeToCategory({
           variables: {
             ...subscribeData,
@@ -123,6 +123,85 @@ const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
     }
   };
 
+  const { data: currentUser, loading: currentUserLoading } = useQuery<
+    SearchUserData,
+    SearchUserVariables
+  >(UserOperations.Queries.searchUser, {
+    variables: {
+      id: session?.user.id || "",
+    },
+    skip: !session,
+    onError: (error) => {
+      toast.error(`Error loading user: ${error}`);
+      console.error("Error in searchUser func", error);
+    },
+  });
+
+  useEffect(() => {
+    if (currentUser && currentUserLoading != true) {
+      if (session) {
+        const subscribedUsers = currentUser.searchUser.followedBy;
+        if (subscribedUsers) {
+          setUsers(subscribedUsers);
+        }
+      } else {
+        console.error("Not authorized Session");
+        setUserFollowed(false);
+      }
+    }
+  }, [currentUserLoading, currentUser, id, session]);
+
+  const [followUser] = useMutation<
+    { followUser: FollowUserArguments },
+    FollowUserArguments
+  >(UserOperations.Mutations.followUser);
+
+  const onFollowUser = async (type: boolean, followingId: string) => {
+    try {
+      if (type != false) {
+        throw new Error("You already assigned");
+      }
+
+      if (!session) {
+        throw new Error("Not authorized Session");
+      }
+
+      const { username, id: userId } = session.user;
+
+      // Check if user exist to make post secure
+      if (!username) {
+        throw new Error("Not authorized user");
+      }
+
+      if (!currentUser) {
+        throw new Error("Not authorized user");
+      }
+
+      const subscribeData: FollowUserArguments = {
+        followerId: userId,
+        followingId,
+      };
+
+      const { data, errors } = await followUser({
+        variables: {
+          ...subscribeData,
+        },
+      });
+
+      if (!data?.followUser || errors) {
+        throw new Error("Error follow user");
+      }
+
+      if (!errors) {
+        toast.success("User was followed!");
+        setUserFollowed(true);
+      }
+    } catch (error: any) {
+      console.error("onFollowUser error", error);
+      toast.error(error?.message);
+    }
+  };
+
   return loading ? (
     <div>Loading</div>
   ) : (
@@ -136,25 +215,18 @@ const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
                   <p className="count">72</p>
                 </div>
                 <div className="list container flex-row flex-stretch flex-wrap flex-space full-width">
-                  {item != 2
-                    ? categories.queryCategoriesByUser.map(
-                        (item: CategoryDataByUser, i: number) => (
-                          <ItemMore
-                            item={item}
-                            onSubscribe={onSubscribeCategory}
-                            subscribed={userSubscribed}
-                            key={`${item.id}__${i}`}
-                          />
-                        )
-                      )
-                    : itemsArray.map((item, i: number) => (
-                        <ItemMore
-                          item={item}
-                          onSubscribe={onSubscribeCategory}
-                          subscribed={userSubscribed}
-                          key={`${item.id}__${i}`}
-                        />
-                      ))}
+                  {categories.queryCategoriesByUser.map(
+                    (item: CategoryDataByUser, i: number) => (
+                      <ItemMore
+                        session={session}
+                        type={true}
+                        item={item as CategoryDataByUser}
+                        onSubscribe={onSubscribeCategory}
+                        subscribed={userSubscribed}
+                        key={`${item.id}__${i}`}
+                      />
+                    )
+                  )}
                 </div>
                 <div className="actions">
                   <p>Дізнатися більше</p>
@@ -162,19 +234,21 @@ const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
                 </div>
               </div>
             )
-          : itemsArray && itemsArray.length > 0 && (
+          : users && users.length > 0 && (
               <div className="info-item post-wrapper" key={`${item}__${i}`}>
                 <div className="title">
                   <h3>{item != 2 ? "Стежує" : "Стежувачі"}</h3>
                   <p className="count">72</p>
                 </div>
                 <div className="list container flex-row flex-stretch flex-wrap flex-space full-width">
-                  {itemsArray.map((item, i: number) => (
+                  {users.map((item: Followers, i: number) => (
                     <ItemMore
-                      item={item}
-                      onSubscribe={onSubscribeCategory}
-                      subscribed={userSubscribed}
-                      key={`${item.id}__${i}`}
+                      session={session}
+                      type={false}
+                      item={item as Followers}
+                      onSubscribe={onFollowUser}
+                      subscribed={userFollowed}
+                      key={`${item.follower.id}__${i}`}
                     />
                   ))}
                 </div>
