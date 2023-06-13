@@ -38,7 +38,7 @@ const resolvers = {
 
         return tag;
       } catch (error: any) {
-        console.log("Tags error", error);
+        console.error("Tags error", error);
         throw new GraphQLError(error?.message);
       }
     },
@@ -68,7 +68,7 @@ const resolvers = {
 
         return tags;
       } catch (error: any) {
-        console.log("Tags error", error);
+        console.error("Tags error", error);
         throw new GraphQLError(error?.message);
       }
     },
@@ -102,7 +102,7 @@ const resolvers = {
 
         return true;
       } catch (error) {
-        console.log("createTag error", error);
+        console.error("createTag error", error);
         throw new GraphQLError("Error creating tag");
       }
     },

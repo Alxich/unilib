@@ -34,13 +34,13 @@ const UsernameCreate: FC<IUsernameCreateProps> = ({
        */
       await createUsername({ variables: { username } });
     } catch (error) {
-      console.log("Submiting username caused an error", error);
+      console.error("Submiting username caused an error", error);
     }
   };
 
   useEffect(() => {
     if (error) {
-      console.log("The error pop-ups from creating your username", error);
+      console.error("The error pop-ups from creating your username", error);
 
       return;
     }

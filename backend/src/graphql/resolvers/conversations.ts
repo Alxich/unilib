@@ -56,7 +56,7 @@ const resolvers = {
             !!conversation.participants.find((p) => p.userId === id)
         );
       } catch (error: any) {
-        console.log("error", error);
+        console.error("Error", error);
         throw new GraphQLError(error?.message);
       }
     },
@@ -100,7 +100,7 @@ const resolvers = {
 
         return { conversationId: conversation.id };
       } catch (error) {
-        console.log("createConversation error", error);
+        console.error("createConversation error", error);
         throw new GraphQLError("Error creating conversation");
       }
     },
@@ -129,7 +129,7 @@ const resolvers = {
 
         return true;
       } catch (error: any) {
-        console.log("markConversationAsRead error", error);
+        console.error("markConversationAsRead error", error);
         throw new GraphQLError(error.message);
       }
     },
@@ -174,7 +174,7 @@ const resolvers = {
 
         return true;
       } catch (error: any) {
-        console.log("deleteConversation error", error);
+        console.error("deleteConversation error", error);
         throw new GraphQLError(error?.message);
       }
     },
@@ -265,7 +265,7 @@ const resolvers = {
 
         return true;
       } catch (error: any) {
-        console.log("updateParticipants error", error);
+        console.error("updateParticipants error", error);
         throw new GraphQLError(error?.message);
       }
     },

@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import { GraphQLError } from "graphql";
 import { verifyAndCreateUsername } from "../../util/functions";
 import {
@@ -6,6 +6,7 @@ import {
   DeleteItemResoponse,
   FollowUserResponse,
   GraphQLContext,
+  UserPopulated,
 } from "../../util/types";
 
 const resolvers = {
@@ -39,7 +40,7 @@ const resolvers = {
 
         return users;
       } catch (error: any) {
-        console.log("error", error);
+        console.error("Error", error);
         throw new GraphQLError(error?.message);
       }
     },
@@ -48,7 +49,7 @@ const resolvers = {
       _: any,
       args: { id: string },
       context: GraphQLContext
-    ): Promise<User> {
+    ): Promise<UserPopulated> {
       const { id } = args;
       const { prisma, session } = context;
 
@@ -61,6 +62,7 @@ const resolvers = {
           where: {
             id: id,
           },
+          include: userPopulated,
         });
 
         if (!user) {
@@ -69,7 +71,7 @@ const resolvers = {
 
         return user;
       } catch (error: any) {
-        console.log("error", error);
+        console.error("Error", error);
         throw new GraphQLError(error?.message);
       }
     },
@@ -151,5 +153,46 @@ const resolvers = {
     },
   },
 };
+
+export const userPopulated = Prisma.validator<Prisma.UserInclude>()({
+  followedBy: {
+    select: {
+      id: true,
+      follower: {
+        select: {
+          id: true,
+          username: true,
+          image: true,
+        },
+      },
+      following: {
+        select: {
+          id: true,
+          username: true,
+          image: true,
+        },
+      },
+    },
+  },
+  following: {
+    select: {
+      id: true,
+      follower: {
+        select: {
+          id: true,
+          username: true,
+          image: true,
+        },
+      },
+      following: {
+        select: {
+          id: true,
+          username: true,
+          image: true,
+        },
+      },
+    },
+  },
+});
 
 export default resolvers;

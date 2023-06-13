@@ -165,7 +165,7 @@ const WritterPost: FC<IWritterPostProps> = ({
         toast.success("Post was created!");
       }
     } catch (error: any) {
-      console.log("onCreatePost error", error);
+      console.error("onCreatePost error", error);
       toast.error(error?.message);
     }
   };

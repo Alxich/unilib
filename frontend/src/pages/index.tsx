@@ -32,7 +32,6 @@ const Home: NextPage = () => {
   const [posts, setPosts] = useState<PostPopulated[] | undefined>();
 
   useEffect(() => {
-    console.log(data);
     if (onceLoaded != true && loading == false) {
       data?.queryPosts && setPosts(data.queryPosts);
       setOnceLoaded(true);

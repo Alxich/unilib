@@ -33,7 +33,7 @@ const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
         },
         onError: (error) => {
           toast.error(`Error loading categories: ${error}`);
-          console.log("Error in queryCategoriesByUser func", error);
+          console.error("Error in queryCategoriesByUser func", error);
         },
       }
     );
@@ -53,10 +53,6 @@ const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
     },
   ];
 
-  useEffect(() => {
-    console.log(categories, categoriesLoading);
-  }, [categories, categoriesLoading]);
-
   const itemInfo = [1, 2];
 
   const [subscribeToCategory] = useMutation<
@@ -73,9 +69,6 @@ const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
     /**
      * When user smash the button we asign or remove from folowing the category
      */
-
-    console.log(categoryId);
-
     try {
       if (!session) {
         throw new Error("Not authorized Session");
@@ -125,7 +118,7 @@ const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
         }
       }
     } catch (error: any) {
-      console.log("onSubscribeCategory error", error);
+      console.error("onSubscribeCategory error", error);
       toast.error(error?.message);
     }
   };

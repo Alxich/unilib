@@ -1,6 +1,59 @@
 import { PrismaClient } from "@prisma/client";
 import { CreateItemResoponse, ParticipantPopulated } from "./types";
 
+// Console output 
+import kleur from "kleur"
+
+export function helloServer(PORT: number) {
+  console.log(" ");
+  console.log(
+    " " +
+      kleur
+        .bold()
+        .yellow("|--------------------------------------------------------|")
+  );
+  console.log(
+    " " +
+      kleur
+        .bold()
+        .yellow(`| Server is now running on http://localhost:${PORT}/graphql |`)
+  );
+  console.log(
+    " " +
+      kleur
+        .bold()
+        .yellow("|--------------------------------------------------------|")
+  );
+  console.log(
+    " " +
+      kleur
+        .bold()
+        .yellow("|                      ＼(￣▽￣)／                       |")
+  );
+  console.log(kleur.bold().yellow(" |                                                        | "));
+  console.log(
+    " " +
+      kleur
+        .bold()
+        .yellow("|              Welcome to the GraphQL server!            |")
+  );
+  console.log(kleur.bold().yellow(" |                                                        | "));
+  console.log(
+    " " +
+      kleur
+        .bold()
+        .yellow("|    Feel free to explore and interact with the API.     |")
+  );
+  console.log(kleur.bold().yellow(" |                                                        | "));
+  console.log(
+    " " +
+      kleur
+        .bold()
+        .yellow("|                     Happy coding!                      |")
+  );
+  console.log(kleur.bold().yellow(" |--------------------------------------------------------| "));
+}
+
 export async function verifyAndCreateUsername(
   args: { userId: string; username: string },
   prisma: PrismaClient
@@ -37,7 +90,7 @@ export async function verifyAndCreateUsername(
 
     return { success: true };
   } catch (error: any) {
-    console.log("createUsername error", error);
+    console.error("createUsername error", error);
     return {
       error: error?.message as string,
     };

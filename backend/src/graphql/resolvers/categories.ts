@@ -31,7 +31,7 @@ const resolvers = {
 
         return category;
       } catch (error: any) {
-        console.log("Categories error", error);
+        console.error("Categories error", error);
         throw new GraphQLError(error?.message);
       }
     },
@@ -56,7 +56,7 @@ const resolvers = {
 
         return categories;
       } catch (error: any) {
-        console.log("Categories error", error);
+        console.error("Categories error", error);
         throw new GraphQLError(error?.message);
       }
     },
@@ -87,7 +87,7 @@ const resolvers = {
   
         return categories;
       } catch (error: any) {
-        console.log("Categories error", error);
+        console.error("Categories error", error);
         throw new GraphQLError(error?.message);
       }
     },
@@ -120,12 +120,10 @@ const resolvers = {
           },
           include: categoryPopulated,
         });
-
-        console.log(newCategory);
-
+        
         return true;
       } catch (error) {
-        console.log("createCategory error", error);
+        console.error("createCategory error", error);
         throw new GraphQLError("Error sending message");
       }
     },
@@ -174,7 +172,7 @@ const resolvers = {
 
         return updatedCategory;
       } catch (error) {
-        console.log("subscribeToCategory error", error);
+        console.error("subscribeToCategory error", error);
         throw new GraphQLError("Error to subscribe category");
       }
     },
@@ -223,7 +221,7 @@ const resolvers = {
 
         return updatedCategory;
       } catch (error) {
-        console.log("unsubscribeToCategory error", error);
+        console.error("unsubscribeToCategory error", error);
         throw new GraphQLError("Error to unsubscribe category");
       }
     },

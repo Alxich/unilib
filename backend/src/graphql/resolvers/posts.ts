@@ -41,7 +41,7 @@ const resolvers = {
 
         return posts;
       } catch (error: any) {
-        console.log("Posts error", error);
+        console.error("Posts error", error);
         throw new GraphQLError(error?.message);
       }
     },
@@ -88,10 +88,9 @@ const resolvers = {
           take, // First 10 posts
         });
 
-        console.log(posts);
         return posts;
       } catch (error: any) {
-        console.log("Posts error", error);
+        console.error("Posts error", error);
         throw new GraphQLError(error?.message);
       }
     },
@@ -138,7 +137,7 @@ const resolvers = {
 
         return posts;
       } catch (error: any) {
-        console.log("Posts error", error);
+        console.error("Posts error", error);
         throw new GraphQLError(error?.message);
       }
     },
@@ -185,7 +184,7 @@ const resolvers = {
 
         return posts;
       } catch (error: any) {
-        console.log("Posts error", error);
+        console.error("Posts error", error);
         throw new GraphQLError(error?.message);
       }
     },
@@ -226,7 +225,7 @@ const resolvers = {
 
         return updatedPost;
       } catch (error: any) {
-        console.log("Posts error", error);
+        console.error("Posts error", error);
         throw new GraphQLError(error?.message);
       }
     },
@@ -265,11 +264,9 @@ const resolvers = {
           },
         });
 
-        console.log(newPost);
-
         return true;
       } catch (error) {
-        console.log("createPost error", error);
+        console.error("createPost error", error);
         throw new GraphQLError("Error creating message");
       }
     },
@@ -319,11 +316,9 @@ const resolvers = {
           include: postPopulated,
         });
 
-        console.log(updatedPost);
-
         return updatedPost;
       } catch (error) {
-        console.log("addLikeToPost error", error);
+        console.error("addLikeToPost error", error);
         throw new GraphQLError("Error to like the post");
       }
     },
@@ -369,11 +364,9 @@ const resolvers = {
           include: postPopulated,
         });
 
-        console.log(updatedPost);
-
         return updatedPost;
       } catch (error) {
-        console.log("addDislikeToPost error", error);
+        console.error("addDislikeToPost error", error);
         throw new GraphQLError("Error to dislike the post");
       }
     },

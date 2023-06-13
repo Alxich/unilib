@@ -93,7 +93,7 @@ const Header: FC<HeaderProps> = ({
 
   const onCreateCategory = async () => {
     if (session == null) {
-      console.log("onCreateCategory error: Not Authorized Session");
+      console.error("onCreateCategory error: Not Authorized Session");
 
       return null;
     }
@@ -109,7 +109,8 @@ const Header: FC<HeaderProps> = ({
 
       const category = {
         id: newId,
-        banner: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.w3villa.com%2Fservices%2F39%2Foriginal%2Fgame-development-new.jpg&f=1&nofb=1&ipt=371746079e99f40125da9a4df347a7959b3769c8b4df9031e4fbfcd98a74f555&ipo=images",
+        banner:
+          "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.w3villa.com%2Fservices%2F39%2Foriginal%2Fgame-development-new.jpg&f=1&nofb=1&ipt=371746079e99f40125da9a4df347a7959b3769c8b4df9031e4fbfcd98a74f555&ipo=images",
         icon: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fthumbs.dreamstime.com%2Fb%2Fgame-development-isolated-icon-simple-element-illustration-programming-concept-icons-editable-logo-sign-symbol-design-142291415.jpg&f=1&nofb=1&ipt=b09c6e17fc39f7160fbb51b23d055c796ef971f69f26a64f7680b5f01d1f5827&ipo=images",
         title: "Gamedev",
         desc: "It is a Gamedev cateogory bla bla bla welcome",
@@ -129,7 +130,7 @@ const Header: FC<HeaderProps> = ({
         toast.success("Category was created!");
       }
     } catch (error: any) {
-      console.log("onCreateCategory error", error);
+      console.error("onCreateCategory error", error);
       toast.error(error?.message);
     }
   };
@@ -140,7 +141,7 @@ const Header: FC<HeaderProps> = ({
 
   const onCreateTag = async () => {
     if (session == null) {
-      console.log("onCreateCategory error: Not Authorized Session");
+      console.error("onCreateCategory error: Not Authorized Session");
 
       return false;
     }
@@ -173,7 +174,7 @@ const Header: FC<HeaderProps> = ({
         toast.success("Tag was created!");
       }
     } catch (error: any) {
-      console.log("onCreateTag error", error);
+      console.error("onCreateTag error", error);
       toast.error(error?.message);
     }
   };

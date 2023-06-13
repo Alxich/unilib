@@ -17,6 +17,7 @@ import { GraphQLContext, Session, SubscriptionContext } from "./util/types";
 import * as dotenv from "dotenv";
 import cors from "cors";
 import { json } from "body-parser";
+import { helloServer } from "./util/functions";
 
 const main = async () => {
   dotenv.config();
@@ -116,7 +117,8 @@ const main = async () => {
   await new Promise<void>((resolve) =>
     httpServer.listen({ port: PORT }, resolve)
   );
-  console.log(`Server is now running on http://localhost:${PORT}/graphql`);
+
+  helloServer(PORT);
 };
 
-main().catch((err) => console.log(err));
+main().catch((err) => console.error(err));

@@ -118,7 +118,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
         }
       }
     } catch (error: any) {
-      console.log("onSubscribeCategory error", error);
+      console.error("onSubscribeCategory error", error);
       toast.error(error?.message);
     }
   };
@@ -140,7 +140,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
     ...(type !== "author" && { skip: !session || type !== "group" }),
     onError: (error) => {
       toast.error(`Error loading user: ${error}`);
-      console.log("Error in searchUser func", error);
+      console.error("Error in searchUser func", error);
     },
   });
 
@@ -158,16 +158,20 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
       }
     } else if (type === "author") {
       if (currentUser && currentUserLoading != true) {
-        const subscribedUsers = currentUser.searchUser.followedBy;
+        if (session) {
+          const subscribedUsers = currentUser.searchUser.followedBy;
+          const { id } = session.user;
 
-        if (subscribedUsers) {
-          console.log(subscribedUsers);
-          const isSubscribed = subscribedUsers.find(
-            (follow) => follow.follower.id === id
-          );
-
-          setUserSubscribed(isSubscribed ? true : false);
+          if (subscribedUsers) {
+            const isSubscribed = subscribedUsers.find(
+              (follow) => follow.follower.id === id
+            );
+            setUserSubscribed(isSubscribed ? true : false);
+          } else {
+            setUserSubscribed(true);
+          }
         } else {
+          console.error("Not authorized Session");
           setUserSubscribed(false);
         }
       }
@@ -221,8 +225,6 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
           toast.success("User was followed!");
           setUserSubscribed(true);
         }
-
-        console.log(data);
       } else {
         const { data, errors } = await unfollowUser({
           variables: {
@@ -238,11 +240,9 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
           toast.success("User was followed!");
           setUserSubscribed(false);
         }
-
-        console.log(data);
       }
     } catch (error: any) {
-      console.log("onFollowUser error", error);
+      console.error("onFollowUser error", error);
       toast.error(error?.message);
     }
   };
@@ -257,7 +257,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
     skip: type !== "group", // Skip the query if the type is not "group"
     onError: (error) => {
       toast.error(`Error on loading category ${error}`);
-      console.log("Error queryCategory func", error);
+      console.error("Error queryCategory func", error);
     },
   });
 
@@ -271,7 +271,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
     skip: type !== "tag", // Skip the query if the type is not "group"
     onError: (error) => {
       toast.error(`Error on loading category ${error}`);
-      console.log("Error queryCategory func", error);
+      console.error("Error queryCategory func", error);
     },
   });
 
@@ -289,8 +289,6 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
         currentUserLoading !== true &&
           currentUser &&
           setBlockContent(currentUser.searchUser);
-
-        console.log(currentUser);
         break;
       default:
         break;
@@ -450,7 +448,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
                 <p>{userSubscribed != true ? "Відстежувати" : "Відписатися"}</p>
               </div>
             )}
-            {currentUser && type === "author" && (
+            {currentUser && type === "author" && session && (
               <div
                 className="item"
                 onClick={() => {

@@ -37,7 +37,7 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
     useQuery<CategoriesData>(CategoriesOperations.Queries.queryCategories, {
       onError: (error) => {
         toast.error(`Error loading categories: ${error}`);
-        console.log("Error in queryCategory func", error);
+        console.error("Error in queryCategory func", error);
       },
     });
 

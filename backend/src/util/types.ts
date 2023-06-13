@@ -9,6 +9,7 @@ import { messagePopulated } from "../graphql/resolvers/messages";
 import { postPopulated } from "../graphql/resolvers/posts";
 import { tagPopulated } from "../graphql/resolvers/tags";
 import { categoryPopulated } from "../graphql/resolvers/categories";
+import { userPopulated } from "../graphql/resolvers/users";
 
 /**
  * Server Configuration
@@ -55,6 +56,10 @@ export interface FollowUserResponse {
   followerId: string;
   followingId: string;
 }
+
+export type UserPopulated = Prisma.UserGetPayload<{
+  include: typeof userPopulated;
+}>;
 
 /**
  * Messages

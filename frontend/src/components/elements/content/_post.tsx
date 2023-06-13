@@ -48,7 +48,7 @@ const Post: FC<PostPageProps> = ({
     PostInteractionArguments
   >(PostsOperations.Mutations.addLikeToPost, {
     onError: (error) => {
-      console.log("addLikeToPost error", error);
+      console.error("addLikeToPost error", error);
       toast.error("Error occurred while liking the post");
     },
     onCompleted: (data) => {
@@ -68,7 +68,7 @@ const Post: FC<PostPageProps> = ({
     PostInteractionArguments
   >(PostsOperations.Mutations.addDislikeToPost, {
     onError: (error) => {
-      console.log("addDislikeToPost error", error);
+      console.error("addDislikeToPost error", error);
       toast.error("Error occurred while disliking the post");
     },
     onCompleted: (data) => {
@@ -146,7 +146,7 @@ const Post: FC<PostPageProps> = ({
         }
       }
     } catch (error: any) {
-      console.log("onPostInteraction error", error);
+      console.error("onPostInteraction error", error);
       toast.error(error?.message);
     }
   };
