@@ -10,6 +10,7 @@ import { postPopulated } from "../graphql/resolvers/posts";
 import { tagPopulated } from "../graphql/resolvers/tags";
 import { categoryPopulated } from "../graphql/resolvers/categories";
 import { userPopulated } from "../graphql/resolvers/users";
+import { commentPopulated } from "../graphql/resolvers/comments";
 
 /**
  * Server Configuration
@@ -125,6 +126,36 @@ export interface PostInteractionArguments {
 export type PostPopulated = Prisma.PostGetPayload<{
   include: typeof postPopulated;
 }>;
+
+/**
+ * Comments
+ */
+export type CommentPopulated = Prisma.CommentGetPayload<{
+  include: typeof commentPopulated;
+}>;
+
+export interface CommentCreateArguments {
+  authorId: string;
+  postId: string;
+  parentId?: string;
+  text: string;
+}
+
+export interface QueryPostCommentsArgs {
+  postId: string;
+  take: number;
+  skip: number;
+}
+
+export interface QueryUserCommentsArgs {
+  userId: string;
+  take: number;
+  skip: number;
+}
+
+export interface CommentInteractionArguments {
+  id: string;
+}
 
 /**
  * Tags

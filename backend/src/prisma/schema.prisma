@@ -45,10 +45,15 @@ model User {
   username              String?                   @unique
   aboutMe               String?
   posts                 Post[]                    @relation("postAuthor")
+  comments              Comment[]
   likedPostIDs          String[]                  @db.ObjectId
   likedPosts            Post[]                    @relation("userLikedPosts", fields: [likedPostIDs], references: [id])
   dislikedPostIDs       String[]                  @db.ObjectId
   dislikedPosts         Post[]                    @relation("userDislikedPosts", fields: [dislikedPostIDs], references: [id])
+  likedCommentIDs       String[]                  @db.ObjectId
+  likedComments         Comment[]                 @relation("userLikedComments", fields: [likedCommentIDs], references: [id])
+  dislikedCommentIDs    String[]                  @db.ObjectId
+  dislikedComments      Comment[]                 @relation("userDislikedComments", fields: [dislikedCommentIDs], references: [id])
   messages              Message[]
   conversations         ConversationParticipant[]
   accounts              Account[]
@@ -81,24 +86,46 @@ model VerificationToken {
 }
 
 model Post {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  title             String   @unique
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  title             String    @unique
   content           String
-  author            User     @relation("postAuthor", fields: [authorId], references: [id])
-  authorId          String   @db.ObjectId
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  likes             Int?     @default(0)
-  likedByUserIDs    String[] @db.ObjectId
-  likedBy           User[]   @relation("userLikedPosts", fields: [likedByUserIDs], references: [id])
-  dislikes          Int?     @default(0)
-  dislikedByUserIDs String[] @db.ObjectId
-  dislikedBy        User[]   @relation("userDislikedPosts", fields: [dislikedByUserIDs], references: [id])
-  views             Int      @default(0)
-  category          Category @relation(fields: [categoryId], references: [id])
-  categoryId        String   @db.ObjectId
-  tagIDs            String[] @db.ObjectId
-  tags              Tag[]    @relation("postTags", fields: [tagIDs], references: [id])
+  author            User      @relation("postAuthor", fields: [authorId], references: [id])
+  authorId          String    @db.ObjectId
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  likes             Int?      @default(0)
+  likedByUserIDs    String[]  @db.ObjectId
+  likedBy           User[]    @relation("userLikedPosts", fields: [likedByUserIDs], references: [id])
+  dislikes          Int?      @default(0)
+  dislikedByUserIDs String[]  @db.ObjectId
+  dislikedBy        User[]    @relation("userDislikedPosts", fields: [dislikedByUserIDs], references: [id])
+  views             Int       @default(0)
+  comments          Comment[]
+  category          Category  @relation(fields: [categoryId], references: [id])
+  categoryId        String    @db.ObjectId
+  tagIDs            String[]  @db.ObjectId
+  tags              Tag[]     @relation("postTags", fields: [tagIDs], references: [id])
+}
+
+model Comment {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  author            User      @relation(fields: [authorId], references: [id])
+  authorId          String    @db.ObjectId
+  post              Post      @relation(fields: [postId], references: [id])
+  postId            String    @db.ObjectId
+  parent            Comment?  @relation("Replies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId          String?   @db.ObjectId
+  text              String
+  likes             Int?      @default(0)
+  likedByUserIDs    String[]  @db.ObjectId
+  likedBy           User[]    @relation("userLikedComments", fields: [likedByUserIDs], references: [id])
+  dislikes          Int?      @default(0)
+  dislikedByUserIDs String[]  @db.ObjectId
+  dislikedBy        User[]    @relation("userDislikedComments", fields: [dislikedByUserIDs], references: [id])
+  createdAt         DateTime  @default(now())
+  replies           Comment[] @relation("Replies")
+
+  @@index([authorId])
 }
 
 model Tag {

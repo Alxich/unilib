@@ -5,6 +5,7 @@ import userResolvers from "./users";
 import postResolvers from "./posts";
 import categoryResolvers from "./categories";
 import tagResolvers from "./tags";
+import commentResolvers from "./comments";
 import scalarResolvers from "./scalars";
 
 const resolvers = merge(
@@ -15,7 +16,8 @@ const resolvers = merge(
   messageResolvers,
   postResolvers,
   categoryResolvers,
-  tagResolvers
+  tagResolvers,
+  commentResolvers
 );
 
 export default resolvers;

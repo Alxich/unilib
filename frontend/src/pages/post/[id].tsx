@@ -53,7 +53,7 @@ const Post: FC<NextPage> = () => {
       {postData ? (
         <>
           <PostPage data={postData} session={session} />
-          {/* <Comments commentArray={postData.comments} /> */}
+          <Comments commentArray={[]} />
         </>
       ) : (
         <FourOhFour />

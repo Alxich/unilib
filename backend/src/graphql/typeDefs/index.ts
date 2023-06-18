@@ -4,6 +4,7 @@ import messageTypeDefs from "./messages";
 import postTypeDefs from "./posts";
 import categoryTypeDefs from "./categories";
 import tagTypeDefs from "./tags";
+import commentTypeDefs from "./comments";
 
 const typeDefs = [
   userTypeDefs,
@@ -12,6 +13,7 @@ const typeDefs = [
   tagTypeDefs,
   postTypeDefs,
   categoryTypeDefs,
+  commentTypeDefs,
 ];
 
 export default typeDefs;
