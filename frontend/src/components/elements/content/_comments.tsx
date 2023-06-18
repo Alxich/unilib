@@ -1,21 +1,20 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 import { CommentItem, CommentInput } from "./comments";
 
+import { useQuery } from "@apollo/client";
 import { Session } from "next-auth";
-import { CommentsItemProps } from "../../../util/types";
+import CommentOperations from "../../../graphql/operations/comments";
+import { CommentsByPostData, QueryPostCommentsArgs } from "../../../util/types";
+import { CommentPopulated } from "../../../../../backend/src/util/types";
 
 interface CommentsProps {
   session: Session;
   postId: string;
-  commentArray?: CommentsItemProps[];
 }
 
-const Comments: FC<CommentsProps> = ({
-  commentArray,
-  session,
-  postId,
-}: CommentsProps) => {
+const Comments: FC<CommentsProps> = ({ session, postId }: CommentsProps) => {
   const complainItems = [
     {
       title: "Скарга за копірайт",
@@ -35,37 +34,91 @@ const Comments: FC<CommentsProps> = ({
     },
   ];
 
-  return (
+  const {
+    data: commentArray,
+    loading,
+    fetchMore,
+  } = useQuery<CommentsByPostData, QueryPostCommentsArgs>(
+    CommentOperations.Queries.queryPostComments,
+    {
+      variables: { postId, take: 3, skip: 0 },
+      onError: ({ message }) => {
+        console.error(message);
+      },
+    }
+  );
+
+  const [onceLoaded, setOnceLoaded] = useState(false);
+  const [comments, setComments] = useState<CommentPopulated[] | undefined>();
+
+  useEffect(() => {
+    if (onceLoaded != true && loading == false) {
+      commentArray?.queryPostComments &&
+        setComments(commentArray.queryPostComments);
+      setOnceLoaded(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, onceLoaded, setOnceLoaded]);
+
+  const [hasMore, setHasMore] = useState(true);
+
+  const getMoreComments = async () => {
+    if (comments) {
+      const newComments = await fetchMore({
+        variables: {
+          skip: comments.length,
+          take: 1,
+        },
+      });
+
+      if (newComments.data.queryPostComments.length === 0) {
+        setHasMore(false);
+        return null;
+      }
+
+      setComments((comment) => {
+        return (
+          comment &&
+          newComments && [...comment, ...newComments.data.queryPostComments]
+        );
+      });
+    }
+
+    return [];
+  };
+
+  return loading ? (
+    <div>Loading</div>
+  ) : (
     <div id="comments" className="post-wrapper container">
       {commentArray && (
         <div className="title">
           <h3>Коментарів</h3>
           <div className="count">
-            <p>{commentArray.length}</p>
+            <p>{commentArray.queryPostComments.length}</p>
           </div>
         </div>
       )}
       <CommentInput session={session} postId={postId} />
-      {commentArray && (
+      {commentArray && comments && (
+        // <InfiniteScroll
+        //   dataLength={comments.length}
+        //   next={getMoreComments}
+        //   hasMore={hasMore}
+        //   loader={<h3> Loading...</h3>}
+        //   endMessage={<h4>Nothing more to show</h4>}
+        // >
         <div className="container comments-flow">
-          {commentArray.map((item: CommentsItemProps, i: number) => {
-            const { id, author, likes, dislikes, createdAt, content, replies } =
-              item;
-            return (
-              <CommentItem
-                key={`${id}__secondary__${i}`}
-                id={id}
-                author={author}
-                likes={likes}
-                dislikes={dislikes}
-                createdAt={createdAt}
-                content={content}
-                replies={replies}
-                complainItems={complainItems}
-              />
-            );
-          })}
+          {commentArray.queryPostComments.map((item, i: number) => (
+            <CommentItem
+              key={`${item.id}__secondary__${i}`}
+              session={session}
+              commentsData={item}
+              complainItems={complainItems}
+            />
+          ))}
         </div>
+        // </InfiniteScroll>
       )}
     </div>
   );

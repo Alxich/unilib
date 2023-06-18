@@ -1,5 +1,7 @@
+import { Session } from "next-auth";
 import {
   CategoryPopulated,
+  CommentPopulated,
   ConversationPopulated,
   MessagePopulated,
   PostPopulated,
@@ -230,13 +232,17 @@ export interface CommentCreateArguments {
 }
 
 export interface CommentCreateVariables {
-  input: CommentCreateArguments
+  input: CommentCreateArguments;
 }
 
 export interface QueryPostCommentsArgs {
   postId: string;
   take: number;
   skip: number;
+}
+
+export interface CommentsByPostData {
+  queryPostComments: Array<CommentPopulated>;
 }
 
 export interface QueryUserCommentsArgs {
@@ -250,16 +256,22 @@ export interface CommentInteractionArguments {
 }
 
 export interface CommentsItemProps {
-  id: string
+  id: string;
   author: {
-    username: string;
-    image?: string;
+    username: string | null;
+    image: string | null;
   };
-  createdAt: string;
-  content: string;
-  likes: number;
-  dislikes: number;
-  replies: Array<CommentsItemProps>;
+  createdAt: Date;
+  text: string;
+  likes: number | null;
+  dislikes: number | null;
+  parentId?: string | null;
+  complainItems: { title: string; text: string }[];
+}
+
+export interface CommentItemProps {
+  session?: Session | null;
+  commentsData: CommentPopulated;
   complainItems: { title: string; text: string }[];
 }
 

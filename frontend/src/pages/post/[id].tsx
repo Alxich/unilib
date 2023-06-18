@@ -54,11 +54,7 @@ const Post: FC<NextPage> = () => {
         <>
           <PostPage data={postData} session={session} />
           {session && (
-            <Comments
-              session={session}
-              postId={postData.queryPost.id}
-              commentArray={[]}
-            />
+            <Comments session={session} postId={postData.queryPost.id} />
           )}
         </>
       ) : (

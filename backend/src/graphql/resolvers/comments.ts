@@ -80,7 +80,7 @@ const resolvers = {
         const comments = await prisma.comment.findMany({
           include: commentPopulated,
           where: {
-            id,
+            postId: id,
           },
           orderBy: {
             createdAt: "asc",

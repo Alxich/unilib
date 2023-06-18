@@ -25,7 +25,9 @@
   }
 
   .item {
-    padding-top: $comm_item_pad;
+    background: $elem_over_bg;
+    width: 100%;
+    padding: $comm_item_pad $comm_item_pad $comm_item_pad $comm_item_pad;
     margin-bottom: $post_inn_pad;
 
     & > div:not(:last-child) {
@@ -86,6 +88,22 @@
           &:not(:last-child) {
             margin-bottom: $comm_item_pad;
           }
+        }
+
+        img {
+          background: $overhigh_bg;
+          display: flex;
+          border-top: $post_image_hold_pad_vt $overhigh_bg;
+          border-bottom: $post_image_hold_pad_vt $overhigh_bg;
+          border-left: $post_image_hold_pad_hr $overhigh_bg;
+          border-right: $post_image_hold_pad_hr $overhigh_bg;
+          height: auto;
+          width: 100%;
+          min-width: 50%;
+          object-fit: contain;
+          object-position: center;
+          padding: $post_image_hold_pad_vt $post_image_hold_pad_hr;
+          margin-bottom: 15px;
         }
       }
 
