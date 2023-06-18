@@ -1,23 +1,21 @@
 import { FC } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImages } from "@fortawesome/free-solid-svg-icons";
 
-import { CommentItem } from "./comments";
+import { CommentItem, CommentInput } from "./comments";
 
-type CommentsTypes = {
-  author: {
-    name: string;
-    time: string;
-  };
-  likes: number;
-  content: any;
-  answers: string;
-};
+import { Session } from "next-auth";
+import { CommentsItemProps } from "../../../util/types";
+
 interface CommentsProps {
-  commentArray: CommentsTypes[];
+  session: Session;
+  postId: string;
+  commentArray?: CommentsItemProps[];
 }
 
-const Comments: FC<CommentsProps> = ({ commentArray }: CommentsProps) => {
+const Comments: FC<CommentsProps> = ({
+  commentArray,
+  session,
+  postId,
+}: CommentsProps) => {
   const complainItems = [
     {
       title: "Скарга за копірайт",
@@ -39,36 +37,36 @@ const Comments: FC<CommentsProps> = ({ commentArray }: CommentsProps) => {
 
   return (
     <div id="comments" className="post-wrapper container">
-      <div className="title">
-        <h3>Коментарів</h3>
-        <div className="count">
-          <p>62</p>
+      {commentArray && (
+        <div className="title">
+          <h3>Коментарів</h3>
+          <div className="count">
+            <p>{commentArray.length}</p>
+          </div>
         </div>
-      </div>
-      <form className="comment">
-        <textarea placeholder="Написати свій коментар ..." />
-        <button className="fafont-icon image post-image">
-          <FontAwesomeIcon
-            icon={faImages}
-            style={{ width: "100%", height: "100%", color: "inherit" }}
-          />
-        </button>
-      </form>
-      <div className="container comments-flow">
-        {commentArray.map((item: CommentsTypes, i: Number) => {
-          const { author, likes, content, answers } = item;
-          return (
-            <CommentItem
-              key={`${item}__main__${i}`}
-              author={author}
-              likes={likes}
-              content={content}
-              answers={answers}
-              complainItems={complainItems}
-            />
-          );
-        })}
-      </div>
+      )}
+      <CommentInput session={session} postId={postId} />
+      {commentArray && (
+        <div className="container comments-flow">
+          {commentArray.map((item: CommentsItemProps, i: number) => {
+            const { id, author, likes, dislikes, createdAt, content, replies } =
+              item;
+            return (
+              <CommentItem
+                key={`${id}__secondary__${i}`}
+                id={id}
+                author={author}
+                likes={likes}
+                dislikes={dislikes}
+                createdAt={createdAt}
+                content={content}
+                replies={replies}
+                complainItems={complainItems}
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

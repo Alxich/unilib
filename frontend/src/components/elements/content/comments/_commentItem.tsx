@@ -1,4 +1,5 @@
 import { FC, useState } from "react";
+import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faThumbsDown,
@@ -9,22 +10,16 @@ import {
 import Notification from "../../_notification";
 import UsualItem from "./_usualItem";
 
-interface CommentsItemProps {
-  author: {
-    name: string;
-    time: string;
-  };
-  likes: number;
-  content: any;
-  answers: any;
-  complainItems: { title: string; text: string }[];
-}
+import { CommentsItemProps } from "../../../../util/types";
 
 const CommentItem: FC<CommentsItemProps> = ({
+  id,
   author,
   likes,
+  dislikes,
   content,
-  answers,
+  createdAt,
+  replies,
   complainItems,
 }: CommentsItemProps) => {
   const [activeElem, setActiveElem] = useState(false);
@@ -34,13 +29,22 @@ const CommentItem: FC<CommentsItemProps> = ({
       <div className="main-content">
         <div className="user-author">
           <div className="author">
-            <div className="user-icon"></div>
+            {author?.image && (
+              <div className="user-icon">
+                <Image
+                  src={author.image}
+                  height={1080}
+                  width={1920}
+                  alt="author-background"
+                />
+              </div>
+            )}
             <div className="author-names">
               <div className="name">
-                <p>{author.name}</p>
+                <p>{author.username}</p>
               </div>
               <div className="time">
-                <p>{author.time}</p>
+                <p>{createdAt}</p>
               </div>
             </div>
           </div>
@@ -72,9 +76,9 @@ const CommentItem: FC<CommentsItemProps> = ({
                 activeElem={activeElem}
               />
             </div>
-            {answers && (
+            {replies && (
               <div className="answer-count">
-                <p>{answers.length} Відповідь</p>
+                <p>{replies.length} Відповідь</p>
               </div>
             )}
           </div>
@@ -107,17 +111,21 @@ const CommentItem: FC<CommentsItemProps> = ({
           </div>
         </div>
       </div>
-      {answers.length > 0 && (
+      {replies.length > 0 && (
         <div className="comments-to-item">
-          {answers.map((item: CommentsItemProps, i: any) => {
-            const { author, likes, content, answers } = item;
+          {replies.map((item: CommentsItemProps, i: any) => {
+            const { id, author, likes, dislikes, createdAt, content, replies } =
+              item;
             return (
               <UsualItem
-                key={`${item}__secondary__${i}`}
+                key={`${id}__secondary__${i}`}
+                id={id}
                 author={author}
                 likes={likes}
+                dislikes={dislikes}
+                createdAt={createdAt}
                 content={content}
-                answers={answers}
+                replies={replies}
                 complainItems={complainItems}
               />
             );

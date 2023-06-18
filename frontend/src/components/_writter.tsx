@@ -255,7 +255,7 @@ const WritterPost: FC<IWritterPostProps> = ({
         </div>
         <div className="content">
           <form
-            className="form container full-width"
+            className="form container full-width tiptap"
             onSubmit={(e) => e.preventDefault()}
           >
             <input

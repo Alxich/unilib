@@ -165,7 +165,7 @@ $post_action_btn_gap: 4px;
 $post_action_vote_gap: 12px;
 $post_text_height: 1.75;
 $post_image_hold_pad_vt: 12px;
-$post_image_hold_pad_hr:  20px;
+$post_image_hold_pad_hr: 20px;
 $post_interact_pad_top: 18px;
 
 // Comments
@@ -209,3 +209,27 @@ $banner_log_items_gap: 16px;
 $banner_log_item_ico: 24px;
 $banner_log_title_gap: 11px;
 $banner_other_log_mrg: 3px;
+
+// There is @mixin for other staff of website
+
+@mixin placeholder($color, $size: "") {
+  &[data-placeholder] {
+    position: relative;
+    display: flex;
+    color: $color !important;
+
+    &::before {
+      position: relative;
+      display: block;
+      content: attr(data-placeholder);
+    }
+
+    // br {
+    //   display: none;
+    // }
+
+    @if $size != "" {
+      font-size: $size;
+    }
+  }
+}

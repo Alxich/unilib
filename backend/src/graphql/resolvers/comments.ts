@@ -4,11 +4,12 @@ import { GraphQLError } from "graphql";
 import {
   GraphQLContext,
   CommentPopulated,
-  CommentCreateArguments,
   CommentInteractionArguments,
   DeleteItemResoponse,
   QueryPostCommentsArgs,
   QueryUserCommentsArgs,
+  CreateItemResoponse,
+  CommentCreateVariables,
 } from "../../util/types";
 
 const resolvers = {
@@ -134,16 +135,16 @@ const resolvers = {
   Mutation: {
     createComment: async function (
       _: any,
-      args: CommentCreateArguments,
+      args: CommentCreateVariables,
       context: GraphQLContext
-    ): Promise<CommentPopulated> {
+    ): Promise<CreateItemResoponse> {
       const { session, prisma } = context;
 
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
 
-      const { authorId, postId, text, parentId } = args;
+      const { authorId, postId, text, parentId } = args.input;
 
       try {
         /**
@@ -161,7 +162,17 @@ const resolvers = {
           },
         });
 
-        return newComment;
+        console.log(newComment);
+
+        if (newComment) {
+          return {
+            success: true,
+          };
+        } else {
+          return {
+            error: "Something went wrong",
+          };
+        }
       } catch (error) {
         console.error("createComment error", error);
         throw new GraphQLError("Error creating message");
@@ -330,6 +341,12 @@ export const commentPopulated = Prisma.validator<Prisma.CommentInclude>()({
       id: true,
       image: true,
       username: true,
+    },
+  },
+  post: {
+    select: {
+      id: true,
+      title: true,
     },
   },
 });

@@ -220,6 +220,50 @@ export interface PostFail {
 }
 
 /**
+ * Comments
+ */
+export interface CommentCreateArguments {
+  authorId: string;
+  postId: string;
+  parentId?: string;
+  text: string;
+}
+
+export interface CommentCreateVariables {
+  input: CommentCreateArguments
+}
+
+export interface QueryPostCommentsArgs {
+  postId: string;
+  take: number;
+  skip: number;
+}
+
+export interface QueryUserCommentsArgs {
+  userId: string;
+  take: number;
+  skip: number;
+}
+
+export interface CommentInteractionArguments {
+  id: string;
+}
+
+export interface CommentsItemProps {
+  id: string
+  author: {
+    username: string;
+    image?: string;
+  };
+  createdAt: string;
+  content: string;
+  likes: number;
+  dislikes: number;
+  replies: Array<CommentsItemProps>;
+  complainItems: { title: string; text: string }[];
+}
+
+/**
  * Tags
  */
 export interface TagArguments {

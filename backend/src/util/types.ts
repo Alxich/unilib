@@ -130,15 +130,15 @@ export type PostPopulated = Prisma.PostGetPayload<{
 /**
  * Comments
  */
-export type CommentPopulated = Prisma.CommentGetPayload<{
-  include: typeof commentPopulated;
-}>;
-
 export interface CommentCreateArguments {
   authorId: string;
   postId: string;
   parentId?: string;
   text: string;
+}
+
+export interface CommentCreateVariables {
+  input: CommentCreateArguments;
 }
 
 export interface QueryPostCommentsArgs {
@@ -157,6 +157,10 @@ export interface CommentInteractionArguments {
   id: string;
 }
 
+export type CommentPopulated = Prisma.CommentGetPayload<{
+  include: typeof commentPopulated;
+}>;
+
 /**
  * Tags
  */
@@ -164,6 +168,7 @@ export interface TagPostCreateArguments {
   id: string;
   title: string;
 }
+
 export interface CreateTagArguments {
   id: string;
   title: string;
