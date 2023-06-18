@@ -155,32 +155,33 @@ const resolvers = {
     ): Promise<Array<PostPopulated>> {
       const { prisma } = context;
       const { popular, period, authorId, skip, take } = args;
-
+    
       const { startDate, endDate } = getDateQueryRange(period);
 
       try {
+        const where = {
+          author: {
+            id: authorId,
+          },
+        };
+
+        if (period) {
+          Object.assign(where, {
+            createdAt: { gte: startDate, lt: endDate },
+          });
+        }
+
+        console.log(where);
+
         const posts = await prisma.post.findMany({
           include: postPopulated,
-          orderBy:
-            popular !== true
-              ? {
-                  createdAt: "asc",
-                }
-              : {
-                  views: "desc",
-                },
-          ...(popular !== true &&
-            period && {
-              where: {
-                author: {
-                  id: authorId,
-                },
-                createdAt: { gte: startDate, lt: endDate },
-              },
-            }),
+          orderBy: popular !== true ? { createdAt: "asc" } : { views: "desc" },
+          where,
           skip, // Skip post to query (not copy the result)
-          take, // First 10 posts
+          take, // First 3 posts
         });
+
+        console.log(posts);
 
         return posts;
       } catch (error: any) {

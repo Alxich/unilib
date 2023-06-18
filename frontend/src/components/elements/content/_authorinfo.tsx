@@ -233,11 +233,11 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
         });
 
         if (!data?.unfollowUser.success || errors) {
-          throw new Error("Error follow user");
+          throw new Error("Error unfolow user");
         }
 
         if (!errors) {
-          toast.success("User was followed!");
+          toast.success("User was unfolowed!");
           setUserSubscribed(false);
         }
       }
@@ -448,18 +448,22 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
                 <p>{userSubscribed != true ? "Відстежувати" : "Відписатися"}</p>
               </div>
             )}
-            {currentUser && type === "author" && session && (
-              <div
-                className="item"
-                onClick={() => {
-                  userSubscribed != true
-                    ? onFollowUser(true)
-                    : onFollowUser(false);
-                }}
-              >
-                <p>{userSubscribed != true ? "Відстежувати" : "Відписатися"}</p>
-              </div>
-            )}
+            {currentUser?.searchUser.id !== session?.user.id &&
+              type === "author" &&
+              session && (
+                <div
+                  className="item"
+                  onClick={() => {
+                    userSubscribed != true
+                      ? onFollowUser(true)
+                      : onFollowUser(false);
+                  }}
+                >
+                  <p>
+                    {userSubscribed != true ? "Відстежувати" : "Відписатися"}
+                  </p>
+                </div>
+              )}
             {type === "author" && (
               <>
                 <div className="item">

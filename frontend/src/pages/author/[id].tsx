@@ -29,7 +29,7 @@ const Author: FC<NextPage> = () => {
     PostsAuthorVariables
   >(PostOperations.Queries.queryPostsByAuthor, {
     variables: {
-      period: period !== "popular" ? period : "today",
+      period: period !== "popular" ? period : "year",
       popular: period === "popular", // Set the popular variable based on the selected period
       authorId: id,
       skip: 0,
