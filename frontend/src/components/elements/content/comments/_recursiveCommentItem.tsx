@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 
@@ -19,29 +19,33 @@ import Notification from "../../_notification";
 
 import { useMutation } from "@apollo/client";
 import CommentOperations from "../../../../graphql/operations/comments";
-import {
-  Comment,
-  CommentInteractionArguments,
-  CommentItemProps,
-} from "../../../../util/types";
+import { CommentInteractionArguments } from "../../../../util/types";
 import { formatTimeToPost } from "../../../../util/functions";
-import { CommentPopulated } from "../../../../../../backend/src/util/types";
-import RecursiveCommentItem from "./_recursiveCommentItem";
+import { Comment } from "../../../../util/types";
 import CommentInput from "./_commentInput";
 
-const CommentItem: FC<CommentItemProps> = ({
+interface RecursiveCommentItemProps {
+  session: any;
+  commentsData: Comment;
+  complainItems: { title: string; text: string }[];
+  postId?: string;
+}
+
+const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
   session,
   commentsData,
   complainItems,
   postId,
-}: CommentItemProps) => {
+}) => {
   const [activeElem, setActiveElem] = useState(false);
   const [answerActive, setAnswerActive] = useState(false);
-  const [commentData, setCommentData] =
-    useState<CommentPopulated>(commentsData);
+
+  const [commentData, setCommentData] = useState<Comment>(commentsData);
 
   const { id, author, likes, text, createdAt, isDeleted, replies } =
     commentData;
+
+  console.log(commentData);
 
   const returnMeContent = (str: string) => {
     const html = generateHTML(JSON.parse(str), [StarterKit, TiptapImage]);
@@ -52,7 +56,7 @@ const CommentItem: FC<CommentItemProps> = ({
   };
 
   const [addLikeToComment] = useMutation<
-    { addLikeToComment: CommentPopulated },
+    { addLikeToComment: Comment },
     CommentInteractionArguments
   >(CommentOperations.Mutations.addLikeToComment, {
     onError: (error) => {
@@ -72,7 +76,7 @@ const CommentItem: FC<CommentItemProps> = ({
   });
 
   const [addDislikeToComment] = useMutation<
-    { addDislikeToComment: CommentPopulated },
+    { addDislikeToComment: Comment },
     CommentInteractionArguments
   >(CommentOperations.Mutations.addDislikeToComment, {
     onError: (error) => {
@@ -92,7 +96,7 @@ const CommentItem: FC<CommentItemProps> = ({
   });
 
   const [deleteComment] = useMutation<
-    { deleteComment: CommentPopulated },
+    { deleteComment: Comment },
     CommentInteractionArguments
   >(CommentOperations.Mutations.deleteComment, {
     onError: (error) => {
@@ -327,21 +331,19 @@ const CommentItem: FC<CommentItemProps> = ({
       </div>
       {replies != undefined && replies.length > 0 && (
         <div className="comments-to-item">
-          {replies.map((item, i: any) => {
-            return (
-              <RecursiveCommentItem
-                key={`${item.id}__first__${i}`}
-                session={session}
-                commentsData={item}
-                complainItems={complainItems}
-                postId={postId}
-              />
-            );
-          })}
+          {replies.map((item, i: any) => (
+            <RecursiveCommentItem
+              key={`${item.id}__recursive__${i}`}
+              session={session}
+              commentsData={item}
+              complainItems={complainItems}
+              postId={postId}
+            />
+          ))}
         </div>
       )}
     </div>
   );
 };
 
-export default CommentItem;
+export default RecursiveCommentItem;

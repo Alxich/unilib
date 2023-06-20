@@ -171,8 +171,6 @@ const resolvers = {
           });
         }
 
-        console.log(where);
-
         const posts = await prisma.post.findMany({
           include: postPopulated,
           orderBy: popular !== true ? { createdAt: "asc" } : { views: "desc" },
@@ -180,8 +178,6 @@ const resolvers = {
           skip, // Skip post to query (not copy the result)
           take, // First 3 posts
         });
-
-        console.log(posts);
 
         return posts;
       } catch (error: any) {
@@ -385,6 +381,7 @@ export const postPopulated = Prisma.validator<Prisma.PostInclude>()({
     select: {
       id: true,
       title: true,
+      subscriberIDs: true,
     },
   },
   tags: {

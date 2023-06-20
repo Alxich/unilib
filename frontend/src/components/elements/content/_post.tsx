@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Link from "next/link";
 import classNames from "classnames";
 
@@ -22,9 +22,17 @@ import { toast } from "react-hot-toast";
 import { Session } from "next-auth";
 
 import { useMutation } from "@apollo/client";
+import CategoryOperations from "../../../graphql/operations/categories";
 import PostsOperations from "../../../graphql/operations/posts";
-import { PostFail, PostInteractionArguments } from "../../../util/types";
-import { PostPopulated } from "../../../../../backend/src/util/types";
+import {
+  PostFail,
+  PostInteractionArguments,
+  SubscribeCategoryArguments,
+} from "../../../util/types";
+import {
+  CategoryPopulated,
+  PostPopulated,
+} from "../../../../../backend/src/util/types";
 
 interface PostPageProps {
   session: Session | null;
@@ -39,6 +47,8 @@ const Post: FC<PostPageProps> = ({
   isFailPage,
   children,
 }: PostPageProps) => {
+  const [userSubscribed, setUserSubscribed] = useState(false);
+
   const [postData, setPostData] = useState<PostPopulated>(
     data as PostPopulated
   );
@@ -151,6 +161,70 @@ const Post: FC<PostPageProps> = ({
     }
   };
 
+  const [subscribeToCategory] = useMutation<
+    { subscribeToCategory: CategoryPopulated },
+    SubscribeCategoryArguments
+  >(CategoryOperations.Mutations.subscribeToCategory);
+
+  useEffect(() => {
+    if (session && category.id !== undefined && userSubscribed != true) {
+      const subscribedCategoryIDs = category.subscriberIDs;
+      const isSubscribed = subscribedCategoryIDs.find(
+        (item) => item === session.user.id
+      );
+      setUserSubscribed(isSubscribed ? true : false);
+    } else {
+      setUserSubscribed(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
+
+  const onSubscribeCategory = async () => {
+    /**
+     * When user smash the button we asign or remove from folowing the category
+     */
+
+    try {
+      if (!session) {
+        throw new Error("Not authorized Session");
+      }
+
+      const { username, id: userId } = session.user;
+
+      // Check if user exist to make post secure
+      if (!username) {
+        throw new Error("Not authorized user");
+      }
+
+      if (userSubscribed) {
+        throw new Error("You have already subscribed!");
+      }
+
+      const subscribeData = {
+        categoryId: category.id,
+        userId,
+      };
+
+      const { data, errors } = await subscribeToCategory({
+        variables: {
+          ...subscribeData,
+        },
+      });
+
+      if (!data?.subscribeToCategory || errors) {
+        throw new Error("Error subscribe category");
+      }
+
+      if (!errors) {
+        toast.success("Category was subscribed!");
+        setUserSubscribed(true);
+      }
+    } catch (error: any) {
+      console.error("onSubscribeCategory error", error);
+      toast.error(error?.message);
+    }
+  };
+
   if (isFailPage) {
     const { title } = data as PostFail;
 
@@ -191,9 +265,11 @@ const Post: FC<PostPageProps> = ({
             </Link>
           </div>
         </div>
-        <Button small filled>
-          Підписатися
-        </Button>
+        {userSubscribed !== true && (
+          <Button small filled onClick={() => onSubscribeCategory()}>
+            Підписатися
+          </Button>
+        )}
       </div>
 
       <div className="content">

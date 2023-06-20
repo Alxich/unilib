@@ -36,9 +36,9 @@ import {
 } from "../../../../util/types";
 
 interface CommentInputProps {
-  session: Session;
-  postId: string;
-  parentId?: string;
+  session?: Session | null;
+  postId?: string;
+  parentId?: string | null;
 }
 
 const CommentInput: FC<CommentInputProps> = ({
@@ -101,6 +101,10 @@ const CommentInput: FC<CommentInputProps> = ({
       // Check if string not empty
       if (editor === null || editor.isEmpty) {
         throw new Error("Trying to send an empty comment");
+      }
+
+      if (!postId) {
+        throw new Error("Post is undefined");
       }
 
       const variable: CommentCreateArguments = {

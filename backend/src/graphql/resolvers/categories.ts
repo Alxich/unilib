@@ -86,8 +86,6 @@ const resolvers = {
         if (!categories) {
           throw new Error("Categories is not exist");
         }
-
-        console.log(categories);
   
         return categories;
       } catch (error: any) {

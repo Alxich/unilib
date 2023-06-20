@@ -193,8 +193,6 @@ const ItemMore: FC<ItemProps> = ({
     itemType
       ? itemType && "id" in item && onSubscribe(subscribed, item.id)
       : subscribed != true && onSubscribe(subscribed, session.user.id);
-
-    console.log(subscribed);
   };
 
   return (

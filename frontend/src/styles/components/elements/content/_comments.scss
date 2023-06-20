@@ -30,13 +30,33 @@
     padding: $comm_item_pad $comm_item_pad $comm_item_pad $comm_item_pad;
     margin-bottom: $post_inn_pad;
 
+    &:hover {
+      & > .main-content {
+        & > .delete {
+          visibility: visible;
+          opacity: 1;
+        }
+      }
+    }
+
     & > div:not(:last-child) {
       margin-bottom: $post_inn_pad;
     }
 
     .main-content {
+      position: relative;
+
       & > div:not(:last-child) {
         margin-bottom: $comm_item_pad;
+      }
+
+      .delete {
+        position: absolute;
+        top: 6px;
+        right: 0;
+        visibility: hidden;
+        opacity: 0;
+        transition: $transition_normal;
       }
 
       .user-author {
@@ -213,7 +233,8 @@
         }
 
         &:not(:last-child) {
-          padding-bottom: $post_inn_pad;
+          padding-bottom: $notif_item_mrg;
+          margin-bottom: 20px;
         }
 
         &:last-child {

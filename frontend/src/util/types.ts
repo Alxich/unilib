@@ -255,24 +255,32 @@ export interface CommentInteractionArguments {
   id: string;
 }
 
-export interface CommentsItemProps {
+export interface Comment {
   id: string;
   author: {
-    username: string | null;
+    id: string;
     image: string | null;
+    username: string | null;
   };
-  createdAt: Date;
+  post: {
+    id: string;
+    title: string;
+  };
+  parent: Comment | null;
+  parentId: string | null;
   text: string;
-  likes: number | null;
-  dislikes: number | null;
-  parentId?: string | null;
-  complainItems: { title: string; text: string }[];
+  likes: number;
+  dislikes: number;
+  createdAt: Date;
+  replies: Comment[] | null;
+  isDeleted: boolean;
 }
 
 export interface CommentItemProps {
   session?: Session | null;
   commentsData: CommentPopulated;
   complainItems: { title: string; text: string }[];
+  postId?: string;
 }
 
 /**

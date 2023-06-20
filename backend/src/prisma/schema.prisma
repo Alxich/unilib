@@ -123,9 +123,9 @@ model Comment {
   dislikedByUserIDs String[]  @db.ObjectId
   dislikedBy        User[]    @relation("userDislikedComments", fields: [dislikedByUserIDs], references: [id])
   createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
   replies           Comment[] @relation("Replies")
-
-  @@index([authorId])
+  isDeleted         Boolean   @default(false)
 }
 
 model Tag {

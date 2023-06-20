@@ -41,7 +41,7 @@ const Comments: FC<CommentsProps> = ({ session, postId }: CommentsProps) => {
   } = useQuery<CommentsByPostData, QueryPostCommentsArgs>(
     CommentOperations.Queries.queryPostComments,
     {
-      variables: { postId, take: 3, skip: 0 },
+      variables: { postId, take: 4, skip: 0 },
       onError: ({ message }) => {
         console.error(message);
       },
@@ -101,24 +101,25 @@ const Comments: FC<CommentsProps> = ({ session, postId }: CommentsProps) => {
       )}
       <CommentInput session={session} postId={postId} />
       {commentArray && comments && (
-        // <InfiniteScroll
-        //   dataLength={comments.length}
-        //   next={getMoreComments}
-        //   hasMore={hasMore}
-        //   loader={<h3> Loading...</h3>}
-        //   endMessage={<h4>Nothing more to show</h4>}
-        // >
-        <div className="container comments-flow">
-          {commentArray.queryPostComments.map((item, i: number) => (
-            <CommentItem
-              key={`${item.id}__secondary__${i}`}
-              session={session}
-              commentsData={item}
-              complainItems={complainItems}
-            />
-          ))}
-        </div>
-        // </InfiniteScroll>
+        <InfiniteScroll
+          dataLength={comments.length}
+          next={getMoreComments}
+          hasMore={hasMore}
+          loader={<h3> Loading...</h3>}
+          endMessage={<h4>Nothing more to show</h4>}
+        >
+          <div className="container comments-flow">
+            {commentArray.queryPostComments.map((item, i: number) => (
+              <CommentItem
+                key={`${item.id}__first__${i}`}
+                session={session}
+                commentsData={item}
+                complainItems={complainItems}
+                postId={postId}
+              />
+            ))}
+          </div>
+        </InfiniteScroll>
       )}
     </div>
   );

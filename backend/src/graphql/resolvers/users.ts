@@ -65,8 +65,6 @@ const resolvers = {
           include: userPopulated,
         });
 
-        console.log(user);
-
         if (!user) {
           throw new GraphQLError("No user found");
         }

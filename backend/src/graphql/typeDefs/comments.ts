@@ -13,7 +13,9 @@ const typeDefs = gql`
     likes: Int
     dislikes: Int
     createdAt: Date
+    updatedAt: Date
     replies: [Comment]
+    isDeleted: Boolean
   }
 
   type Query {
@@ -25,7 +27,7 @@ const typeDefs = gql`
 
   type Mutation {
     createComment(input: CreateCommentInput!): Comment
-    deleteComment(id: String!): DeleteItemResoponse
+    deleteComment(id: String!): Comment
     addLikeToComment(id: String!): Comment
     addDislikeToComment(id: String!): Comment
   }

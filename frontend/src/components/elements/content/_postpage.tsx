@@ -1,19 +1,15 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Link from "next/link";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faComments,
-  faThumbsDown,
-  faThumbsUp,
-} from "@fortawesome/free-solid-svg-icons";
+import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 
 import { generateHTML } from "@tiptap/html";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 
 import { formatTimeToPost } from "../../../util/functions";
-import { PostData } from "../../../util/types";
+import { PostData, SubscribeCategoryArguments } from "../../../util/types";
 
 import Button from "../_button";
 
@@ -21,9 +17,13 @@ import { toast } from "react-hot-toast";
 import { Session } from "next-auth";
 
 import { useMutation } from "@apollo/client";
+import CategoryOperations from "../../../graphql/operations/categories";
 import PostsOperations from "../../../graphql/operations/posts";
 import { PostInteractionArguments } from "../../../util/types";
-import { PostPopulated } from "../../../../../backend/src/util/types";
+import {
+  CategoryPopulated,
+  PostPopulated,
+} from "../../../../../backend/src/util/types";
 
 interface PostPageProps {
   data: PostData;
@@ -31,6 +31,7 @@ interface PostPageProps {
 }
 
 const PostPage: FC<PostPageProps> = ({ data, session }) => {
+  const [userSubscribed, setUserSubscribed] = useState(false);
   const [postData, setPostData] = useState<PostPopulated>(data.queryPost);
 
   const {
@@ -146,6 +147,70 @@ const PostPage: FC<PostPageProps> = ({ data, session }) => {
     }
   };
 
+  const [subscribeToCategory] = useMutation<
+    { subscribeToCategory: CategoryPopulated },
+    SubscribeCategoryArguments
+  >(CategoryOperations.Mutations.subscribeToCategory);
+
+  useEffect(() => {
+    if (session && category.id !== undefined && userSubscribed != true) {
+      const subscribedCategoryIDs = category.subscriberIDs;
+      const isSubscribed = subscribedCategoryIDs.find(
+        (item) => item === session.user.id
+      );
+      setUserSubscribed(isSubscribed ? true : false);
+    } else {
+      userSubscribed !== true && setUserSubscribed(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
+
+  const onSubscribeCategory = async () => {
+    /**
+     * When user smash the button we asign or remove from folowing the category
+     */
+
+    try {
+      if (!session) {
+        throw new Error("Not authorized Session");
+      }
+
+      const { username, id: userId } = session.user;
+
+      // Check if user exist to make post secure
+      if (!username) {
+        throw new Error("Not authorized user");
+      }
+
+      if (userSubscribed) {
+        throw new Error("You have already subscribed!");
+      }
+
+      const subscribeData = {
+        categoryId: category.id,
+        userId,
+      };
+
+      const { data, errors } = await subscribeToCategory({
+        variables: {
+          ...subscribeData,
+        },
+      });
+
+      if (!data?.subscribeToCategory || errors) {
+        throw new Error("Error subscribe category");
+      }
+
+      if (!errors) {
+        toast.success("Category was subscribed!");
+        setUserSubscribed(true);
+      }
+    } catch (error: any) {
+      console.error("onSubscribeCategory error", error);
+      toast.error(error?.message);
+    }
+  };
+
   return (
     <div className="post post-wrapper">
       <div className="user-author">
@@ -163,9 +228,11 @@ const PostPage: FC<PostPageProps> = ({ data, session }) => {
             </div>
           </div>
         </div>
-        <Button small filled>
-          Підписатися
-        </Button>
+        {userSubscribed !== true && (
+          <Button small filled onClick={() => onSubscribeCategory()}>
+            Підписатися
+          </Button>
+        )}
       </div>
       <div className="content">
         <div className="title">

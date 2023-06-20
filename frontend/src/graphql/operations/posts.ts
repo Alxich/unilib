@@ -11,6 +11,7 @@ const PostFields = `
   category {
     id
     title
+    subscriberIDs
   }
   tags {
     id

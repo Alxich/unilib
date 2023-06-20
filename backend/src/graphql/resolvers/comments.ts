@@ -81,6 +81,7 @@ const resolvers = {
           include: commentPopulated,
           where: {
             postId: id,
+            parent: null,
           },
           orderBy: {
             createdAt: "asc",
@@ -157,12 +158,8 @@ const resolvers = {
             text,
             ...(parentId && { parentId }),
           },
-          include: {
-            ...commentPopulated,
-          },
+          include: commentPopulated,
         });
-
-        console.log(newComment);
 
         if (newComment) {
           return {
@@ -183,7 +180,7 @@ const resolvers = {
       _: any,
       args: { id: string },
       context: GraphQLContext
-    ): Promise<DeleteItemResoponse> {
+    ): Promise<CommentPopulated> {
       const { session, prisma } = context;
 
       if (!session?.user) {
@@ -193,29 +190,30 @@ const resolvers = {
       const { id } = args;
 
       if (!session?.user) {
-        return {
-          error: "Not authorized",
-        };
+        throw new Error("Not authorized");
       }
 
       try {
         /**
          * Create new comment entity
          */
-        const comment = await prisma.comment.delete({
+        const comment = await prisma.comment.update({
           where: {
             id: id,
+          },
+          data: {
+            text: '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Хіба ти забув про золоте правило Інтернету? Видаляючи свій коментар, автор залишає нас всіх у незнанні і збудженні, мовчазно кажучи: \\""},{"type":"text","marks":[{"type":"italic"}],"text":"Та якесь смішне було, але тепер це моє маленьке таємницею"},{"type":"text","text":"\\". "},{"type":"text","marks":[{"type":"bold"}],"text":"Ох, цей автор, такий загадковий"},{"type":"text","text":"!"}]}]}',
+            isDeleted: true,
+          },
+          include: {
+            ...commentPopulated,
           },
         });
 
         if (comment) {
-          return {
-            success: true,
-          };
+          return comment;
         } else {
-          return {
-            error: "Something went wrong",
-          };
+          throw new Error("Something went wrong");
         }
       } catch (error) {
         console.error("createComment error", error);
@@ -347,6 +345,20 @@ export const commentPopulated = Prisma.validator<Prisma.CommentInclude>()({
     select: {
       id: true,
       title: true,
+    },
+  },
+  parent: {
+    select: {
+      id: true,
+      text: true,
+    },
+  },
+  replies: {
+    include: {
+      author: true,
+      post: true,
+      parent: true,
+      replies: true,
     },
   },
 });

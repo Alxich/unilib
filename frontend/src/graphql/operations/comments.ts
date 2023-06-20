@@ -15,9 +15,7 @@ const CommentFields = `
   likes
   dislikes
   createdAt
-  replies {
-    id
-  }
+  isDeleted
 `;
 
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -46,6 +44,23 @@ export default {
       query QueryPostComments($postId: String!, $skip: Int!, $take: Int!) {
         queryPostComments(postId: $postId, skip: $skip, take: $take) {
           ${CommentFields}
+          replies {
+            id
+            author {
+              id
+              image
+              username
+            }
+            parent {
+              id
+            }
+            parentId
+            text
+            likes
+            dislikes
+            createdAt
+            isDeleted
+          }
         }
       }
     `,
@@ -70,8 +85,7 @@ export default {
     deleteComment: gql`
       mutation DeleteComment($id: String!) {
         deleteComment(id: $id) {
-          success
-          error
+          ${CommentFields}
         }
       }
     `,
