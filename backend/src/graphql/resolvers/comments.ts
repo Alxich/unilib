@@ -10,6 +10,7 @@ import {
   QueryUserCommentsArgs,
   CreateItemResoponse,
   CommentCreateVariables,
+  QueryCommentsByCommentArgs,
 } from "../../util/types";
 
 const resolvers = {
@@ -132,6 +133,38 @@ const resolvers = {
         throw new GraphQLError(error?.message);
       }
     },
+
+    queryCommentsByComment: async function (
+      _: any,
+      args: QueryCommentsByCommentArgs,
+      context: GraphQLContext
+    ): Promise<Array<CommentPopulated>> {
+      const { prisma } = context;
+      const { commentId: id, skip, take } = args;
+
+      try {
+        const comments = await prisma.comment.findMany({
+          include: commentPopulated,
+          where: {
+            parentId: id,
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+          skip,
+          take,
+        });
+
+        if (!comments) {
+          throw new Error("There is no much comments");
+        }
+
+        return comments;
+      } catch (error: any) {
+        console.error("queryUserComments error", error);
+        throw new GraphQLError(error?.message);
+      }
+    },
   },
   Mutation: {
     createComment: async function (
@@ -204,6 +237,50 @@ const resolvers = {
           data: {
             text: '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Хіба ти забув про золоте правило Інтернету? Видаляючи свій коментар, автор залишає нас всіх у незнанні і збудженні, мовчазно кажучи: \\""},{"type":"text","marks":[{"type":"italic"}],"text":"Та якесь смішне було, але тепер це моє маленьке таємницею"},{"type":"text","text":"\\". "},{"type":"text","marks":[{"type":"bold"}],"text":"Ох, цей автор, такий загадковий"},{"type":"text","text":"!"}]}]}',
             isDeleted: true,
+          },
+          include: {
+            ...commentPopulated,
+          },
+        });
+
+        if (comment) {
+          return comment;
+        } else {
+          throw new Error("Something went wrong");
+        }
+      } catch (error) {
+        console.error("createComment error", error);
+        throw new GraphQLError("Error creating message");
+      }
+    },
+
+    editComment: async function (
+      _: any,
+      args: { id: string; text: string },
+      context: GraphQLContext
+    ): Promise<CommentPopulated> {
+      const { session, prisma } = context;
+
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      const { id, text } = args;
+
+      if (!session?.user) {
+        throw new Error("Not authorized");
+      }
+
+      try {
+        /**
+         * Create new comment entity
+         */
+        const comment = await prisma.comment.update({
+          where: {
+            id: id,
+          },
+          data: {
+            text: text,
           },
           include: {
             ...commentPopulated,

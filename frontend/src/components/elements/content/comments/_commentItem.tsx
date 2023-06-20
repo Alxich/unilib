@@ -13,6 +13,7 @@ import {
   faChevronDown,
   faTrashCan,
   faChevronUp,
+  faPencil,
 } from "@fortawesome/free-solid-svg-icons";
 
 import Notification from "../../_notification";
@@ -28,6 +29,7 @@ import { formatTimeToPost } from "../../../../util/functions";
 import { CommentPopulated } from "../../../../../../backend/src/util/types";
 import RecursiveCommentItem from "./_recursiveCommentItem";
 import CommentInput from "./_commentInput";
+import CommentInputEdit from "./_commentInputEdit";
 
 const CommentItem: FC<CommentItemProps> = ({
   session,
@@ -37,6 +39,10 @@ const CommentItem: FC<CommentItemProps> = ({
 }: CommentItemProps) => {
   const [activeElem, setActiveElem] = useState(false);
   const [answerActive, setAnswerActive] = useState(false);
+
+  const [editActive, setEditActive] = useState(false);
+  const [contentEdit, setContentEdit] = useState("");
+
   const [commentData, setCommentData] =
     useState<CommentPopulated>(commentsData);
 
@@ -87,26 +93,6 @@ const CommentItem: FC<CommentItemProps> = ({
         toast.success("Comment was disliked!");
       } else {
         toast.error("Failed to dislike the comment");
-      }
-    },
-  });
-
-  const [deleteComment] = useMutation<
-    { deleteComment: CommentPopulated },
-    CommentInteractionArguments
-  >(CommentOperations.Mutations.deleteComment, {
-    onError: (error) => {
-      console.error("deleteComment error", error);
-      toast.error("Error occurred while deleting the comment");
-    },
-    onCompleted: (data) => {
-      if (data.deleteComment) {
-        // Update the component's state or trigger a refetch to update the data
-        setCommentData(data.deleteComment);
-
-        toast.success("Comment was deleted!");
-      } else {
-        toast.error("Failed to delete the comment");
       }
     },
   });
@@ -162,6 +148,26 @@ const CommentItem: FC<CommentItemProps> = ({
       toast.error(error?.message);
     }
   };
+
+  const [deleteComment] = useMutation<
+    { deleteComment: CommentPopulated },
+    CommentInteractionArguments
+  >(CommentOperations.Mutations.deleteComment, {
+    onError: (error) => {
+      console.error("deleteComment error", error);
+      toast.error("Error occurred while deleting the comment");
+    },
+    onCompleted: (data) => {
+      if (data.deleteComment) {
+        // Update the component's state or trigger a refetch to update the data
+        setCommentData(data.deleteComment);
+
+        toast.success("Comment was deleted!");
+      } else {
+        toast.error("Failed to delete the comment");
+      }
+    },
+  });
 
   const onDeleteComment = async () => {
     /**
@@ -223,6 +229,23 @@ const CommentItem: FC<CommentItemProps> = ({
             />
           </div>
         )}
+        {session && author?.id === session.user.id && isDeleted !== true && (
+          <div className="fafont-icon interactive edit">
+            <FontAwesomeIcon
+              icon={faPencil}
+              style={{
+                width: "100%",
+                height: "100%",
+                color: "inherit",
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                setContentEdit(JSON.parse(text));
+                setEditActive(true);
+              }}
+            />
+          </div>
+        )}
         <div className="user-author">
           <div className="author">
             <div className="user-icon">
@@ -246,7 +269,19 @@ const CommentItem: FC<CommentItemProps> = ({
             </div>
           </div>
         </div>
-        {text && returnMeContent(text)}
+        {text && editActive ? (
+          <CommentInputEdit
+            session={session}
+            id={id}
+            authorId={author.id}
+            content={contentEdit}
+            setContent={setContentEdit}
+            setCommentData={setCommentData}
+            setEditActive={setEditActive}
+          />
+        ) : (
+          returnMeContent(text)
+        )}
         <div className="interactions">
           <div className="lt-side">
             <div
@@ -321,7 +356,7 @@ const CommentItem: FC<CommentItemProps> = ({
             </div>
           </div>
         </div>
-        {answerActive && (
+        {answerActive && editActive != true && (
           <CommentInput postId={postId} session={session} parentId={id} />
         )}
       </div>
@@ -332,7 +367,7 @@ const CommentItem: FC<CommentItemProps> = ({
               <RecursiveCommentItem
                 key={`${item.id}__first__${i}`}
                 session={session}
-                commentsData={item}
+                commentsData={item as unknown as Comment}
                 complainItems={complainItems}
                 postId={postId}
               />

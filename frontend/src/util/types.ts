@@ -245,14 +245,29 @@ export interface CommentsByPostData {
   queryPostComments: Array<CommentPopulated>;
 }
 
+export interface CommentsByCommentData {
+  queryCommentsByComment: Array<CommentPopulated>;
+}
+
 export interface QueryUserCommentsArgs {
   userId: string;
   take: number;
   skip: number;
 }
 
+export interface QueryCommentsByCommentArgs {
+  commentId: string;
+  take: number;
+  skip: number;
+}
+
 export interface CommentInteractionArguments {
   id: string;
+}
+
+export interface CommentEditInteractionArguments {
+  id: string;
+  text: string;
 }
 
 export interface Comment {

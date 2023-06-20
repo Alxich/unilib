@@ -72,6 +72,31 @@ export default {
         }
       }
     `,
+
+    queryCommentsByComment: gql`
+      query QueryCommentsByComment($commentId: String!, $skip: Int!, $take: Int!) {
+        queryCommentsByComment(commentId: $commentId, skip: $skip, take: $take) {
+          ${CommentFields}
+          replies {
+            id
+            author {
+              id
+              image
+              username
+            }
+            parent {
+              id
+            }
+            parentId
+            text
+            likes
+            dislikes
+            createdAt
+            isDeleted
+          }
+        }
+      }
+    `,
   },
   Mutations: {
     createComment: gql`
@@ -86,8 +111,50 @@ export default {
       mutation DeleteComment($id: String!) {
         deleteComment(id: $id) {
           ${CommentFields}
+          replies {
+            id
+            author {
+              id
+              image
+              username
+            }
+            parent {
+              id
+            }
+            parentId
+            text
+            likes
+            dislikes
+            createdAt
+            isDeleted
+          }
         }
       }
+    `,
+
+    editComment: gql`
+    mutation EditComment($id: String!, $text: String!) {
+      editComment(id: $id, text: $text) {
+        ${CommentFields}
+        replies {
+          id
+          author {
+            id
+            image
+            username
+          }
+          parent {
+            id
+          }
+          parentId
+          text
+          likes
+          dislikes
+          createdAt
+          isDeleted
+        }
+      }
+    }
     `,
 
     addLikeToComment: gql`

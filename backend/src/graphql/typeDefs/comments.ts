@@ -23,11 +23,17 @@ const typeDefs = gql`
     queryComments: [Comment]
     queryPostComments(postId: String!, take: Int!, skip: Int!): [Comment]
     queryUserComments(userId: String!, take: Int!, skip: Int!): [Comment]
+    queryCommentsByComment(
+      commentId: String!
+      take: Int!
+      skip: Int!
+    ): [Comment]
   }
 
   type Mutation {
     createComment(input: CreateCommentInput!): Comment
     deleteComment(id: String!): Comment
+    editComment(id: String!, text: String!): Comment
     addLikeToComment(id: String!): Comment
     addDislikeToComment(id: String!): Comment
   }

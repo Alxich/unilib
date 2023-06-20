@@ -153,6 +153,12 @@ export interface QueryUserCommentsArgs {
   skip: number;
 }
 
+export interface QueryCommentsByCommentArgs {
+  commentId: string;
+  take: number;
+  skip: number;
+}
+
 export interface CommentInteractionArguments {
   id: string;
 }

@@ -13,20 +13,27 @@ import {
   faChevronDown,
   faTrashCan,
   faChevronUp,
+  faPencil,
 } from "@fortawesome/free-solid-svg-icons";
 
 import Notification from "../../_notification";
+import CommentInput from "./_commentInput";
 
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import CommentOperations from "../../../../graphql/operations/comments";
-import { CommentInteractionArguments } from "../../../../util/types";
+import {
+  CommentInteractionArguments,
+  CommentsByCommentData,
+  QueryCommentsByCommentArgs,
+} from "../../../../util/types";
 import { formatTimeToPost } from "../../../../util/functions";
 import { Comment } from "../../../../util/types";
-import CommentInput from "./_commentInput";
+import { CommentPopulated } from "../../../../../../backend/src/util/types";
+import CommentInputEdit from "./_commentInputEdit";
 
 interface RecursiveCommentItemProps {
   session: any;
-  commentsData: Comment;
+  commentsData: Comment | CommentPopulated;
   complainItems: { title: string; text: string }[];
   postId?: string;
 }
@@ -39,13 +46,19 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
 }) => {
   const [activeElem, setActiveElem] = useState(false);
   const [answerActive, setAnswerActive] = useState(false);
+  const [answerShowActive, setAnswerShowActive] = useState(false);
 
-  const [commentData, setCommentData] = useState<Comment>(commentsData);
+  const [editActive, setEditActive] = useState(false);
+  const [contentEdit, setContentEdit] = useState("");
 
-  const { id, author, likes, text, createdAt, isDeleted, replies } =
-    commentData;
+  const [commentData, setCommentData] = useState<CommentPopulated>(
+    commentsData as CommentPopulated
+  );
+  const [commentRepliesData, setCommentReplies] = useState<
+    CommentPopulated[] | undefined
+  >();
 
-  console.log(commentData);
+  const { id, author, likes, text, createdAt, isDeleted } = commentData;
 
   const returnMeContent = (str: string) => {
     const html = generateHTML(JSON.parse(str), [StarterKit, TiptapImage]);
@@ -55,8 +68,27 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
     );
   };
 
+  const { data: commentArray, loading } = useQuery<
+    CommentsByCommentData,
+    QueryCommentsByCommentArgs
+  >(CommentOperations.Queries.queryCommentsByComment, {
+    variables: { commentId: id, take: 4, skip: 0 },
+    // skip: answerShowActive !== true,
+    onCompleted: (commentArray) => {
+      if (commentArray.queryCommentsByComment) {
+        // Update the component's state or trigger a refetch to update the data
+        setCommentReplies(commentArray.queryCommentsByComment);
+      } else {
+        setCommentReplies([]);
+      }
+    },
+    onError: ({ message }) => {
+      console.error(message);
+    },
+  });
+
   const [addLikeToComment] = useMutation<
-    { addLikeToComment: Comment },
+    { addLikeToComment: CommentPopulated },
     CommentInteractionArguments
   >(CommentOperations.Mutations.addLikeToComment, {
     onError: (error) => {
@@ -76,7 +108,7 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
   });
 
   const [addDislikeToComment] = useMutation<
-    { addDislikeToComment: Comment },
+    { addDislikeToComment: CommentPopulated },
     CommentInteractionArguments
   >(CommentOperations.Mutations.addDislikeToComment, {
     onError: (error) => {
@@ -96,7 +128,7 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
   });
 
   const [deleteComment] = useMutation<
-    { deleteComment: Comment },
+    { deleteComment: CommentPopulated },
     CommentInteractionArguments
   >(CommentOperations.Mutations.deleteComment, {
     onError: (error) => {
@@ -227,6 +259,23 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
             />
           </div>
         )}
+        {session && author?.id === session.user.id && isDeleted !== true && (
+          <div className="fafont-icon interactive edit">
+            <FontAwesomeIcon
+              icon={faPencil}
+              style={{
+                width: "100%",
+                height: "100%",
+                color: "inherit",
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                setContentEdit(JSON.parse(text));
+                setEditActive(true);
+              }}
+            />
+          </div>
+        )}
         <div className="user-author">
           <div className="author">
             <div className="user-icon">
@@ -250,7 +299,19 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
             </div>
           </div>
         </div>
-        {text && returnMeContent(text)}
+        {text && editActive ? (
+          <CommentInputEdit
+            session={session}
+            id={id}
+            authorId={author.id}
+            content={contentEdit}
+            setContent={setContentEdit}
+            setCommentData={setCommentData}
+            setEditActive={setEditActive}
+          />
+        ) : (
+          returnMeContent(text)
+        )}
         <div className="interactions">
           <div className="lt-side">
             <div
@@ -283,9 +344,14 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
                 activeElem={activeElem}
               />
             </div>
-            {replies != undefined && replies && (
-              <div className="answer-count">
-                <p>{replies.length} Відповідь</p>
+            {commentRepliesData != undefined && commentRepliesData && (
+              <div
+                className="answer-count"
+                onClick={() =>
+                  setAnswerShowActive(answerShowActive ? false : true)
+                }
+              >
+                <p>{commentRepliesData.length} Відповідь</p>
               </div>
             )}
           </div>
@@ -329,19 +395,23 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
           <CommentInput postId={postId} session={session} parentId={id} />
         )}
       </div>
-      {replies != undefined && replies.length > 0 && (
-        <div className="comments-to-item">
-          {replies.map((item, i: any) => (
-            <RecursiveCommentItem
-              key={`${item.id}__recursive__${i}`}
-              session={session}
-              commentsData={item}
-              complainItems={complainItems}
-              postId={postId}
-            />
-          ))}
-        </div>
-      )}
+
+      {loading != true &&
+        commentRepliesData != undefined &&
+        commentRepliesData.length > 0 &&
+        answerShowActive && (
+          <div className="comments-to-item">
+            {commentRepliesData.map((item, i: any) => (
+              <RecursiveCommentItem
+                key={`${item.id}__recursive__${i}`}
+                session={session}
+                commentsData={item}
+                complainItems={complainItems}
+                postId={postId}
+              />
+            ))}
+          </div>
+        )}
     </div>
   );
 };

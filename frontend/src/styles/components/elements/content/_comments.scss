@@ -32,6 +32,7 @@
 
     &:hover {
       & > .main-content {
+        & .edit,
         & > .delete {
           visibility: visible;
           opacity: 1;
@@ -46,10 +47,12 @@
     .main-content {
       position: relative;
 
-      & > div:not(:last-child) {
+      & > div:not(:last-child),
+      & > form:not(:last-child) {
         margin-bottom: $comm_item_pad;
       }
 
+      .edit,
       .delete {
         position: absolute;
         top: 6px;
@@ -57,6 +60,10 @@
         visibility: hidden;
         opacity: 0;
         transition: $transition_normal;
+      }
+
+      .edit {
+        right: 35px;
       }
 
       .user-author {
@@ -228,9 +235,9 @@
       .item {
         margin-bottom: 0;
 
-        .main-content {
-          margin-bottom: 0;
-        }
+        // .main-content {
+        //   margin-bottom: 0;
+        // }
 
         &:not(:last-child) {
           padding-bottom: $notif_item_mrg;
