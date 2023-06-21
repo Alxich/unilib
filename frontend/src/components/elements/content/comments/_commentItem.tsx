@@ -36,6 +36,7 @@ const CommentItem: FC<CommentItemProps> = ({
   commentsData,
   complainItems,
   postId,
+  isUser,
 }: CommentItemProps) => {
   const [activeElem, setActiveElem] = useState(false);
   const [answerActive, setAnswerActive] = useState(false);
@@ -284,37 +285,41 @@ const CommentItem: FC<CommentItemProps> = ({
         )}
         <div className="interactions">
           <div className="lt-side">
-            <div
-              className="answer"
-              onClick={(e) => {
-                e.preventDefault();
-                setAnswerActive(answerActive ? false : true);
-              }}
-            >
-              <p>Відповісти</p>
-              <div className="fafont-icon arrow-down">
-                <FontAwesomeIcon
-                  icon={answerActive ? faChevronUp : faChevronDown}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    color: "inherit",
-                  }}
+            {isUser !== true && (
+              <div
+                className="answer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setAnswerActive(answerActive ? false : true);
+                }}
+              >
+                <p>Відповісти</p>
+                <div className="fafont-icon arrow-down">
+                  <FontAwesomeIcon
+                    icon={answerActive ? faChevronUp : faChevronDown}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      color: "inherit",
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+            {session && author?.id !== session.user.id && (
+              <div
+                className="complain"
+                onClick={() => setActiveElem(activeElem ? false : true)}
+              >
+                <p>Поскаржитися</p>
+                <Notification
+                  items={complainItems}
+                  type={"complain"}
+                  activeElem={activeElem}
                 />
               </div>
-            </div>
-            <div
-              className="complain"
-              onClick={() => setActiveElem(activeElem ? false : true)}
-            >
-              <p>Поскаржитися</p>
-              <Notification
-                items={complainItems}
-                type={"complain"}
-                activeElem={activeElem}
-              />
-            </div>
-            {replies != undefined && replies && (
+            )}
+            {isUser !== true && replies != undefined && replies && (
               <div className="answer-count">
                 <p>{replies.length} Відповідь</p>
               </div>
@@ -356,11 +361,11 @@ const CommentItem: FC<CommentItemProps> = ({
             </div>
           </div>
         </div>
-        {answerActive && editActive != true && (
+        {isUser !== true && answerActive && editActive != true && (
           <CommentInput postId={postId} session={session} parentId={id} />
         )}
       </div>
-      {replies != undefined && replies.length > 0 && (
+      {isUser !== true && replies != undefined && replies.length > 0 && (
         <div className="comments-to-item">
           {replies.map((item, i: any) => {
             return (

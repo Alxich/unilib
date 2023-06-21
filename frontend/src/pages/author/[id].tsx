@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 
 import { useSession } from "next-auth/react";
 
-import { AuthorInfo, MoreAuthor, Post } from "../../components";
+import { AuthorInfo, Comments, MoreAuthor, Post } from "../../components";
 
 import { useQuery } from "@apollo/client";
 import PostOperations from "../../graphql/operations/posts";
@@ -16,6 +16,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 const Author: FC<NextPage> = () => {
   const [showMore, setShowMore] = useState<boolean>(false);
+  const [showComments, setShowComments] = useState<boolean>(false);
   const [period, setPeriod] = useState<string>("popular"); // Initialize period as an empty string
 
   const router = useRouter();
@@ -87,8 +88,12 @@ const Author: FC<NextPage> = () => {
         setPeriod={setPeriod}
         showMore={showMore}
         setShowMore={setShowMore}
+        showComments={showComments}
+        setShowComments={setShowComments}
       />
-      {showMore !== false && session ? (
+      {showComments !== false && session ? (
+        <Comments session={session} userId={id} />
+      ) : showMore !== false && session ? (
         <MoreAuthor id={id} session={session} />
       ) : (
         <div className="posts-container container">

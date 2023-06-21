@@ -6,18 +6,25 @@ import { CommentItem, CommentInput } from "./comments";
 import { useQuery } from "@apollo/client";
 import { Session } from "next-auth";
 import CommentOperations from "../../../graphql/operations/comments";
-import { CommentsByPostData, QueryPostCommentsArgs } from "../../../util/types";
+import {
+  CommentsByPostData,
+  CommentsByUserData,
+  QueryPostCommentsArgs,
+  QueryUserCommentsArgs,
+} from "../../../util/types";
 import { CommentPopulated } from "../../../../../backend/src/util/types";
 
 interface CommentsProps {
   session: Session;
-  postId: string;
-  setPostCommentsCount: Dispatch<SetStateAction<number | undefined>>;
+  postId?: string;
+  userId: string;
+  setPostCommentsCount?: Dispatch<SetStateAction<number | undefined>>;
 }
 
 const Comments: FC<CommentsProps> = ({
   session,
   postId,
+  userId,
   setPostCommentsCount,
 }: CommentsProps) => {
   const complainItems = [
@@ -46,7 +53,23 @@ const Comments: FC<CommentsProps> = ({
   } = useQuery<CommentsByPostData, QueryPostCommentsArgs>(
     CommentOperations.Queries.queryPostComments,
     {
-      variables: { postId, take: 4, skip: 0 },
+      variables: { postId: postId ? postId : "", take: 4, skip: 0 },
+      skip: userId !== undefined || postId === undefined,
+      onError: ({ message }) => {
+        console.error(message);
+      },
+    }
+  );
+
+  const {
+    data: commentArrayUser,
+    loading: loadingUserComments,
+    fetchMore: fetchMoreUserComments,
+  } = useQuery<CommentsByUserData, QueryUserCommentsArgs>(
+    CommentOperations.Queries.queryUserComments,
+    {
+      variables: { userId: userId ? userId : "", take: 4, skip: 0 },
+      skip: userId === undefined || postId !== undefined,
       onError: ({ message }) => {
         console.error(message);
       },
@@ -58,9 +81,22 @@ const Comments: FC<CommentsProps> = ({
 
   useEffect(() => {
     if (onceLoaded != true && loading == false) {
-      if (commentArray?.queryPostComments) {
+      if (
+        userId === undefined &&
+        postId !== undefined &&
+        commentArray?.queryPostComments
+      ) {
         setComments(commentArray.queryPostComments);
-        setPostCommentsCount(commentArray.queryPostComments.length);
+        setPostCommentsCount &&
+          setPostCommentsCount(commentArray.queryPostComments.length);
+      } else if (
+        userId !== undefined &&
+        postId === undefined &&
+        commentArrayUser?.queryUserComments
+      ) {
+        setComments(commentArrayUser.queryUserComments);
+      } else {
+        setComments([]);
       }
       setOnceLoaded(true);
     }
@@ -71,34 +107,53 @@ const Comments: FC<CommentsProps> = ({
 
   const getMoreComments = async () => {
     if (comments) {
-      const newComments = await fetchMore({
-        variables: {
-          skip: comments.length,
-          take: 1,
-        },
-      });
+      if (userId === undefined && postId !== undefined) {
+        const newComments = await fetchMore({
+          variables: {
+            skip: comments.length,
+            take: 3,
+          },
+        });
 
-      if (newComments.data.queryPostComments.length === 0) {
-        setHasMore(false);
-        return null;
+        if (newComments.data.queryPostComments.length === 0) {
+          setHasMore(false);
+          return null;
+        }
+
+        setComments((prevComments) => {
+          return prevComments
+            ? [...prevComments, ...newComments.data.queryPostComments]
+            : newComments.data.queryPostComments;
+        });
+      } else if (userId !== undefined && postId === undefined) {
+        const newComments = await fetchMoreUserComments({
+          variables: {
+            skip: comments.length,
+            take: 3,
+          },
+        });
+
+        if (newComments.data.queryUserComments.length === 0) {
+          setHasMore(false);
+          return null;
+        }
+
+        setComments((prevComments) => {
+          return prevComments
+            ? [...prevComments, ...newComments.data.queryUserComments]
+            : newComments.data.queryUserComments;
+        });
       }
-
-      setComments((comment) => {
-        return (
-          comment &&
-          newComments && [...comment, ...newComments.data.queryPostComments]
-        );
-      });
     }
 
     return [];
   };
 
-  return loading ? (
+  return loading || loadingUserComments ? (
     <div>Loading</div>
   ) : (
     <div id="comments" className="post-wrapper container">
-      {commentArray && (
+      {userId === undefined && postId !== undefined && commentArray && (
         <div className="title">
           <h3>Коментарів</h3>
           <div className="count">
@@ -106,23 +161,25 @@ const Comments: FC<CommentsProps> = ({
           </div>
         </div>
       )}
-      <CommentInput session={session} postId={postId} />
-      {commentArray && comments && (
+      {userId === undefined && postId !== undefined && (
+        <CommentInput session={session} postId={postId} />
+      )}
+      {comments && (
         <InfiniteScroll
           dataLength={comments.length}
           next={getMoreComments}
           hasMore={hasMore}
-          loader={<h3> Loading...</h3>}
-          endMessage={<h4>Nothing more to show</h4>}
+          loader={<p> Loading...</p>}
         >
           <div className="container comments-flow">
-            {commentArray.queryPostComments.map((item, i: number) => (
+            {comments.map((item, i: number) => (
               <CommentItem
                 key={`${item.id}__first__${i}`}
                 session={session}
                 commentsData={item}
                 complainItems={complainItems}
                 postId={postId}
+                isUser={userId !== undefined && postId === undefined}
               />
             ))}
           </div>

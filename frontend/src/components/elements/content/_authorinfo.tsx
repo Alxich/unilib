@@ -37,6 +37,8 @@ interface AuthorInfoProps {
   setPeriod: Dispatch<SetStateAction<string>>;
   showMore?: boolean;
   setShowMore?: Dispatch<SetStateAction<boolean>>;
+  showComments?: boolean;
+  setShowComments?: Dispatch<SetStateAction<boolean>>;
 }
 
 const AuthorInfo: FC<AuthorInfoProps> = ({
@@ -47,6 +49,8 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
   setPeriod,
   showMore,
   setShowMore,
+  showComments,
+  setShowComments,
 }: AuthorInfoProps) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [userSubscribed, setUserSubscribed] = useState(false);
@@ -432,7 +436,12 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
               className={classNames("item", {
                 active: showMore !== true,
               })}
-              onClick={() => setShowMore && setShowMore(false)}
+              onClick={() => {
+                if (setShowMore && setShowComments) {
+                  setShowMore(false);
+                  setShowComments(false);
+                }
+              }}
             >
               <p>Записів</p>
             </div>
@@ -466,7 +475,12 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
               )}
             {type === "author" && (
               <>
-                <div className="item">
+                <div
+                  className={classNames("item", {
+                    active: showComments !== false,
+                  })}
+                  onClick={() => setShowComments && setShowComments(true)}
+                >
                   <p>Коментарі</p>
                 </div>
 
@@ -474,7 +488,12 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
                   className={classNames("item", {
                     active: showMore !== false,
                   })}
-                  onClick={() => setShowMore && setShowMore(true)}
+                  onClick={() => {
+                    if (setShowMore && setShowComments) {
+                      setShowMore(true);
+                      setShowComments(false);
+                    }
+                  }}
                 >
                   <p>Більше</p>
                 </div>

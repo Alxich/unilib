@@ -241,8 +241,18 @@ export interface QueryPostCommentsArgs {
   skip: number;
 }
 
+export interface QueryUserCommentsArgs {
+  userId: string;
+  take: number;
+  skip: number;
+}
+
 export interface CommentsByPostData {
   queryPostComments: Array<CommentPopulated>;
+}
+
+export interface CommentsByUserData {
+  queryUserComments: Array<CommentPopulated>;
 }
 
 export interface CommentsData {
@@ -300,6 +310,7 @@ export interface CommentItemProps {
   commentsData: CommentPopulated;
   complainItems: { title: string; text: string }[];
   postId?: string;
+  isUser: boolean;
 }
 
 export interface CommentsSubscriptionData {
