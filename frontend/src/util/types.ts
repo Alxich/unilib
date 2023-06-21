@@ -245,6 +245,10 @@ export interface CommentsByPostData {
   queryPostComments: Array<CommentPopulated>;
 }
 
+export interface CommentsData {
+  queryComments: Array<CommentPopulated>;
+}
+
 export interface CommentsByCommentData {
   queryCommentsByComment: Array<CommentPopulated>;
 }
@@ -296,6 +300,11 @@ export interface CommentItemProps {
   commentsData: CommentPopulated;
   complainItems: { title: string; text: string }[];
   postId?: string;
+}
+
+export interface CommentsSubscriptionData {
+  commentSent: CommentPopulated;
+  commentsUpdated: CommentPopulated;
 }
 
 /**

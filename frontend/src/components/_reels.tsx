@@ -1,74 +1,146 @@
+import { FC, useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
-const Reels = () => {
+import { generateHTML } from "@tiptap/react";
+import TiptapImage from "@tiptap/extension-image";
+import StarterKit from "@tiptap/starter-kit";
+
+import { useQuery, useSubscription } from "@apollo/client";
+import CommentOperations from "../graphql/operations/comments";
+import { CommentPopulated } from "../../../backend/src/util/types";
+import { CommentsData, CommentsSubscriptionData } from "../util/types";
+import { Session } from "inspector";
+
+interface ReelsProps {
+  session: Session | null;
+}
+
+const Reels: FC = () => {
+  const [commentsData, setCommentsData] = useState<
+    CommentPopulated[] | undefined
+  >();
+
+  const {
+    data: reelsArray,
+    loading,
+    subscribeToMore,
+  } = useQuery<CommentsData>(CommentOperations.Queries.queryComments, {
+    onCompleted: (commentArray) => {
+      if (commentArray.queryComments) {
+        // Update the component's state or trigger a refetch to update the data
+        setCommentsData(commentArray.queryComments);
+      } else {
+        setCommentsData([]);
+      }
+    },
+    onError: ({ message }) => {
+      console.error(message);
+    },
+  });
+
+  // const subscribeToMoreComments = (postId: string) => {
+  //   return subscribeToMore({
+  //     document: CommentOperations.Subscriptions.commentSent,
+  //     variables: {
+  //       postId,
+  //     },
+  //     updateQuery: (prev, { subscriptionData }: CommentsSubscriptionData) => {
+  //       if (!subscriptionData.data) return prev;
+
+  //       const newComment = subscriptionData.data.commentSent;
+
+  //       return Object.assign({}, prev, {
+  //         queryComments: [newComment, ...prev.queryComments],
+  //       });
+  //     },
+  //   });
+  // };
+
+  const { data: newCommentData } = useSubscription<CommentsSubscriptionData>(
+    CommentOperations.Subscriptions.commentsUpdated
+  );
+
+  useEffect(() => {
+    const newComment = newCommentData?.commentsUpdated;
+
+    if (newComment) {
+      setCommentsData((prevCommentReplies) => {
+        if (prevCommentReplies) {
+          return [newComment, ...prevCommentReplies];
+        } else {
+          return [newComment];
+        }
+      });
+    }
+  }, [newCommentData]);
+
   interface types {
-    nickname: string;
-    thematic: string;
-    content: string;
+    author: {
+      image: string | null;
+      id: string;
+      username: string | null;
+    };
+    post: {
+      id: string;
+      title: string;
+    };
+    text: string;
   }
 
-  const reelsArray = [
-    {
-      nickname: "SonyToxicBoyDea…",
-      thematic: "Покупка Resident evi…",
-      content:
-        "Це ніяк не змінює того факту, що про це не згадано навіть. Терпіти не можу подібне маркеті ...",
-    },
-    {
-      nickname: "SonyToxicBoyDea…",
-      thematic: "Покупка Resident evi…",
-      content:
-        "Це ніяк не змінює того факту, що про це не згадано навіть. Терпіти не можу подібне маркеті ...",
-    },
-    {
-      nickname: "SonyToxicBoyDea…",
-      thematic: "Покупка Resident evi…",
-      content:
-        "Це ніяк не змінює того факту, що про це не згадано навіть. Терпіти не можу подібне маркеті ...",
-    },
-    {
-      nickname: "SonyToxicBoyDea…",
-      thematic: "Покупка Resident evi…",
-      content:
-        "Це ніяк не змінює того факту, що про це не згадано навіть. Терпіти не можу подібне маркеті ...",
-    },
-  ];
+  const returnMeContent = (str: string) => {
+    const html = generateHTML(JSON.parse(str), [StarterKit, TiptapImage]);
 
-  const ReturnReel = ({ nickname, thematic, content }: types) => {
     return (
-      <Link href="post/1" className="item container flex-left">
+      <div className="text-block" dangerouslySetInnerHTML={{ __html: html }} />
+    );
+  };
+
+  const ReturnReel = ({ author, post, text }: types) => {
+    return (
+      <Link href={`/post/${post.id}`} className="item container flex-left">
         <div className="author-thread container flex-left flex-row">
-          <div className="icon"></div>
+          <div className="icon">
+            {author?.image && (
+              <Image
+                src={author.image}
+                height={1080}
+                width={1920}
+                alt="author-background"
+              />
+            )}
+          </div>
           <div className="info container flex-left">
             <div className="nickname">
-              <p>{nickname}</p>
+              <p>{author.username}</p>
             </div>
             <div className="thematic">
-              <p>{thematic}</p>
+              <p>{post.title}</p>
             </div>
           </div>
         </div>
-        <div className="text-block">
-          <p>{content}</p>
-        </div>
+        {returnMeContent(text)}
       </Link>
     );
   };
 
-  return (
+  return loading ? (
+    <div>Loading</div>
+  ) : (
     <div id="reels" className="container flex-left to-right full-height">
       <div className="title">
         <p>Наразі обговорюють</p>
       </div>
       <div className="container flex-left">
-        {reelsArray.map((item, i) => {
-          const { nickname, thematic, content } = item;
+        {commentsData?.map((item: CommentPopulated, i: number) => {
+          const { author, post, text } = item;
+          console.log(post.title);
           return (
             <ReturnReel
-              key={`${item}__${i}`}
-              nickname={nickname}
-              thematic={thematic}
-              content={content}
+              key={`${item.id}__${i}`}
+              author={author}
+              post={post}
+              text={text}
             />
           );
         })}

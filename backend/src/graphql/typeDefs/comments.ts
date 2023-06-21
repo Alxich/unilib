@@ -49,6 +49,11 @@ const typeDefs = gql`
     success: Boolean
     error: String
   }
+
+  type Subscription {
+    commentSent(postId: String): Comment
+    commentsUpdated: Comment
+  }
 `;
 
 export default typeDefs;

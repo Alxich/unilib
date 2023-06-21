@@ -11,7 +11,9 @@ import {
   CreateItemResoponse,
   CommentCreateVariables,
   QueryCommentsByCommentArgs,
+  SendCommentSubscriptionPayload,
 } from "../../util/types";
+import { withFilter } from "graphql-subscriptions";
 
 const resolvers = {
   Query: {
@@ -52,10 +54,13 @@ const resolvers = {
       try {
         const comments = await prisma.comment.findMany({
           include: commentPopulated,
-          orderBy: {
-            createdAt: "asc",
+          where: {
+            isDeleted: false,
           },
-          take: 4,
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 5,
         });
 
         if (!comments) {
@@ -172,7 +177,7 @@ const resolvers = {
       args: CommentCreateVariables,
       context: GraphQLContext
     ): Promise<CreateItemResoponse> {
-      const { session, prisma } = context;
+      const { session, prisma, pubsub } = context;
 
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
@@ -195,6 +200,16 @@ const resolvers = {
         });
 
         if (newComment) {
+          // Publish the new comment to the corresponding postId channel
+          pubsub.publish("COMMENT_SENT", {
+            commentSent: newComment,
+          });
+
+          // Publish the new comment to the сommentsUpdated channel
+          pubsub.publish("ALL_COMMENTS_SENT", {
+            commentsUpdated: newComment,
+          });
+
           return {
             success: true,
           };
@@ -408,6 +423,35 @@ const resolvers = {
       }
     },
   },
+  Subscription: {
+    commentSent: {
+      subscribe: withFilter(
+        (_: any, __: any, context: GraphQLContext) => {
+          const { pubsub } = context;
+
+          return pubsub.asyncIterator("COMMENT_SENT");
+        },
+        (
+          payload: SendCommentSubscriptionPayload,
+          args: { postId: string },
+          context: GraphQLContext
+        ): boolean => {
+          return payload.commentSent.postId === args.postId;
+        }
+      ),
+      // Resolve the subscription payload
+      resolve: (payload: { commentSent: CommentPopulated }): CommentPopulated => {
+        return payload.commentSent;
+      },
+    },
+    commentsUpdated: {
+      subscribe: (_: any, __: any, context: GraphQLContext) => {
+        const { pubsub } = context;
+
+        return pubsub.asyncIterator("ALL_COMMENTS_SENT");
+      },
+    },
+  },
 };
 
 export const commentPopulated = Prisma.validator<Prisma.CommentInclude>()({
@@ -433,7 +477,12 @@ export const commentPopulated = Prisma.validator<Prisma.CommentInclude>()({
   replies: {
     include: {
       author: true,
-      post: true,
+      post: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
       parent: true,
       replies: true,
     },

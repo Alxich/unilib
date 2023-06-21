@@ -16,6 +16,7 @@ import PostOperations from "../../graphql/operations/posts";
 const Post: FC<NextPage> = () => {
   const router = useRouter();
   const { data: session } = useSession();
+  const [postCommentsCount,  setPostCommentsCount] = useState<number>()
 
   // Used as sting because knew that it will only be variable not array
   const id = router.query.id as string;
@@ -52,9 +53,9 @@ const Post: FC<NextPage> = () => {
     <div className="posts-container container">
       {postData ? (
         <>
-          <PostPage data={postData} session={session} />
+          <PostPage data={postData} session={session} postCommentsCount={postCommentsCount} />
           {session && (
-            <Comments session={session} postId={postData.queryPost.id} />
+            <Comments session={session} postId={postData.queryPost.id} setPostCommentsCount={setPostCommentsCount} />
           )}
         </>
       ) : (

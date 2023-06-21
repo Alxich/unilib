@@ -2,6 +2,10 @@ import { gql } from "@apollo/client";
 
 const CommentFields = `
   id
+  post {
+    id
+    title
+  }
   author {
     id
     image
@@ -173,5 +177,19 @@ export default {
       }
     `,
   },
-  Subscriptions: {},
+  Subscriptions: {
+    commentSent: gql`
+      subscription CommentSent($postId: String!) {
+        commentSent(postId: $postId) {
+          ${CommentFields}
+        }
+      }
+    `,
+    commentsUpdated: gql`
+    subscription CommentsUpdated {
+      commentsUpdated {
+        ${CommentFields}
+      }
+    }`,
+  },
 };

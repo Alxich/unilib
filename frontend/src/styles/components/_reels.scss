@@ -33,8 +33,13 @@
 
         .thematic {
           p {
+            max-width: 200px;
+            width: 100%;
             font-size: $p_font_size_small;
             font-weight: 300;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
         }
       }
@@ -43,9 +48,27 @@
     }
 
     .text-block {
+      display: block;
+      width: 100%;
+
       & > * {
         font-weight: 300;
         line-height: 1.2;
+      }
+
+      p {
+        display: none;
+
+        &:nth-child(1) {
+          display: block;
+          display: -webkit-box;
+          max-height: 4.5rem;
+          text-overflow: ellipsis;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 3;
+          overflow:hidden;
+
+        }
       }
     }
   }

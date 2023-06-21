@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import { CommentItem, CommentInput } from "./comments";
@@ -12,9 +12,14 @@ import { CommentPopulated } from "../../../../../backend/src/util/types";
 interface CommentsProps {
   session: Session;
   postId: string;
+  setPostCommentsCount: Dispatch<SetStateAction<number | undefined>>;
 }
 
-const Comments: FC<CommentsProps> = ({ session, postId }: CommentsProps) => {
+const Comments: FC<CommentsProps> = ({
+  session,
+  postId,
+  setPostCommentsCount,
+}: CommentsProps) => {
   const complainItems = [
     {
       title: "Скарга за копірайт",
@@ -53,8 +58,10 @@ const Comments: FC<CommentsProps> = ({ session, postId }: CommentsProps) => {
 
   useEffect(() => {
     if (onceLoaded != true && loading == false) {
-      commentArray?.queryPostComments &&
+      if (commentArray?.queryPostComments) {
         setComments(commentArray.queryPostComments);
+        setPostCommentsCount(commentArray.queryPostComments.length);
+      }
       setOnceLoaded(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

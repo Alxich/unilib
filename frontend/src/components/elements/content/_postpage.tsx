@@ -28,9 +28,10 @@ import {
 interface PostPageProps {
   data: PostData;
   session: Session | null;
+  postCommentsCount?: number | null;
 }
 
-const PostPage: FC<PostPageProps> = ({ data, session }) => {
+const PostPage: FC<PostPageProps> = ({ data, session, postCommentsCount }) => {
   const [userSubscribed, setUserSubscribed] = useState(false);
   const [postData, setPostData] = useState<PostPopulated>(data.queryPost);
 
@@ -260,10 +261,7 @@ const PostPage: FC<PostPageProps> = ({ data, session }) => {
               <p>{views} Переглядів</p>
             </div>
             <div className="comments">
-              {/**
-               * Leave here a comments count later
-               */}
-              <p>{views} Коментарів</p>
+              {postCommentsCount && <p>{postCommentsCount} Коментарів</p>}
             </div>
           </div>
         </div>

@@ -167,6 +167,10 @@ export type CommentPopulated = Prisma.CommentGetPayload<{
   include: typeof commentPopulated;
 }>;
 
+export interface SendCommentSubscriptionPayload {
+  commentSent: CommentPopulated;
+}
+
 /**
  * Tags
  */
