@@ -27,8 +27,8 @@ const PostFields = `
 export default {
   Queries: {
     queryPosts: gql`
-      query queryPosts($period: String,  $popular: Boolean, $skip: Int!, $take: Int!) {
-        queryPosts(period: $period, popular: $popular, skip: $skip, take: $take) {
+      query queryPosts($period: String,  $popular: Boolean, $skip: Int!, $take: Int!, $subscribedCategories: [String]) {
+        queryPosts(period: $period, popular: $popular, skip: $skip, take: $take, subscribedCategories: $subscribedCategories) {
          ${PostFields}
         }
       }

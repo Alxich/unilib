@@ -1,32 +1,54 @@
-import React, { FC } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { NavElement } from "./elements";
 import { CategoryPopulated } from "../../../backend/src/util/types";
+import { ContentViewChanger, ContentViews } from "../util/types";
 
 interface SidebarProps {
-  categories?: Array<CategoryPopulated>;
+  categories?: Array<ContentViewChanger>;
   fandoms?: Array<CategoryPopulated>;
+  userSigned: boolean;
+  setPeriod: Dispatch<SetStateAction<ContentViews>>;
 }
 
-const Sidebar: FC<SidebarProps> = ({ categories, fandoms }: SidebarProps) => {
+const Sidebar: FC<SidebarProps> = ({
+  categories,
+  fandoms,
+  userSigned,
+  setPeriod,
+}: SidebarProps) => {
   const fandomsLengthBefore = 5;
-  const [openAllFandom, setOpenAllFandom] = React.useState(false);
-  const [openAllThemes, setOpenAllThemes] = React.useState(false);
+  const [openAllFandom, setOpenAllFandom] = useState(false);
+  const [openAllThemes, setOpenAllThemes] = useState(false);
 
   return (
     <div id="sidebar" className="container full-height flex-left to-left">
       <div className="nav-user nav">
-        {categories?.map((item: any, i: number) => (
-          <NavElement
-            key={`${item}__${i}`}
-            iconTypeFaFont
-            icon={item.icon}
-            title={item.title}
-            link={item.link}
-          />
-        ))}
+        {categories?.map((item: any, i: number) =>
+          item.link !== "follow" ? (
+            <NavElement
+              key={`${item}__${i}`}
+              iconTypeFaFont
+              icon={item.icon}
+              title={item.title}
+              link={item.link}
+              setPeriod={setPeriod}
+            />
+          ) : (
+            userSigned !== false && (
+              <NavElement
+                key={`${item}__${i}`}
+                iconTypeFaFont
+                icon={item.icon}
+                title={item.title}
+                link={item.link}
+                setPeriod={setPeriod}
+              />
+            )
+          )
+        )}
       </div>
       <div className="nav-usual nav">
         {fandoms?.map((item: CategoryPopulated, i: number) =>

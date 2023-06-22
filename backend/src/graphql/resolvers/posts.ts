@@ -12,32 +12,47 @@ const resolvers = {
   Query: {
     queryPosts: async function (
       _: any,
-      args: { period: string; popular: boolean; skip: number; take: number },
+      args: {
+        period: string;
+        popular: boolean;
+        skip: number;
+        take: number;
+        subscribedCategories?: [string];
+      },
       context: GraphQLContext
     ): Promise<Array<PostPopulated>> {
       const { prisma } = context;
-      const { popular, period, skip, take } = args;
+      const { popular, period, skip, take, subscribedCategories } = args;
 
       const { startDate, endDate } = getDateQueryRange(period);
 
       try {
+        if (subscribedCategories && subscribedCategories?.length > 0) {
+          return [];
+        }
+
         const posts = await prisma.post.findMany({
           include: postPopulated,
-          orderBy:
-            popular !== true
-              ? {
-                  createdAt: "asc",
-                }
-              : {
-                  views: "desc",
-                },
+          orderBy: popular !== true ? { createdAt: "asc" } : { views: "desc" },
           ...(popular !== true &&
             period && {
-              where: { createdAt: { gte: startDate, lt: endDate } },
+              where: {
+                createdAt: { gte: startDate, lt: endDate },
+                ...(subscribedCategories &&
+                  subscribedCategories?.length > 0 && {
+                    category: {
+                      id: {
+                        in: subscribedCategories,
+                      },
+                    },
+                  }),
+              },
             }),
           skip,
           take,
         });
+
+        console.log(posts);
 
         return posts;
       } catch (error: any) {
@@ -155,7 +170,7 @@ const resolvers = {
     ): Promise<Array<PostPopulated>> {
       const { prisma } = context;
       const { popular, period, authorId, skip, take } = args;
-    
+
       const { startDate, endDate } = getDateQueryRange(period);
 
       try {

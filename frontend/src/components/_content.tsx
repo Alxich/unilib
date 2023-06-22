@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, createContext, useEffect, useState, useReducer } from "react";
 import type { NextPageContext } from "next";
 import Head from "next/head";
 import classNames from "classnames";
@@ -11,15 +11,44 @@ import { Header, Banner, Sidebar, Reels, WritterPost } from "../components";
 
 import { useQuery } from "@apollo/client";
 import CategoriesOperations from "../graphql/operations/categories";
-import { CategoriesData } from "../util/types";
+import UsersOperations from "../graphql/operations/users";
+import {
+  CategoriesData,
+  ContentViewChanger,
+  ContentViews,
+  SearchUserData,
+  SearchUserVariables,
+} from "../util/types";
 
 interface ContentProps {
   children: any;
 }
 
+type ContentContextValue = [
+  ContentViews,
+  React.Dispatch<React.SetStateAction<ContentViews>>
+];
+
+export const ContentContext = createContext<ContentContextValue>([
+  "popular",
+  () => {},
+]);
+
+export const UserContext = createContext<
+  [
+    [string] | never[] | undefined,
+    React.Dispatch<React.SetStateAction<never[] | [string] | undefined>>
+  ]
+>([[], () => {}]);
+
 const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   const [bannerActive, setBannerActive] = useState(false);
   const [writterActive, setWritterActive] = useState(false);
+  const [userSigned, setUserSigned] = useState(false);
+  const [period, setPeriod] = useState<ContentViews>("popular"); // Initialize period as an empty string
+  const [userSubscribed, setUserSubscribed] = useState<
+    [string] | never[] | undefined
+  >(); // Initialize subscribed as an empty array
 
   const { data: session } = useSession();
 
@@ -33,6 +62,27 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
     setBannerActive(session?.user ? false : true);
   }, [session]);
 
+  const changeView: ContentViewChanger[] = [
+    {
+      icon: "faFire",
+      iconTypeFaFont: true,
+      link: "popular",
+      title: "Популярне",
+    },
+    {
+      icon: "faClock",
+      iconTypeFaFont: true,
+      link: "today",
+      title: "Нове у треді",
+    },
+    {
+      icon: "faNewspaper",
+      iconTypeFaFont: true,
+      link: "follow",
+      title: "Моя стрічка",
+    },
+  ];
+
   const { data: categories, loading: categoriesLoading } =
     useQuery<CategoriesData>(CategoriesOperations.Queries.queryCategories, {
       onError: (error) => {
@@ -40,6 +90,24 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
         console.error("Error in queryCategory func", error);
       },
     });
+
+  const { data: userFetch, loading: userLoading } = useQuery<
+    SearchUserData,
+    SearchUserVariables
+  >(UsersOperations.Queries.searchUser, {
+    variables: {
+      id: session ? session.user.id : "",
+    },
+    skip: !session,
+    onCompleted(data) {
+      setUserSigned(true);
+      setUserSubscribed(data.searchUser.subscribedCategoryIDs);
+    },
+    onError: (error) => {
+      toast.error(`Error loading categories: ${error}`);
+      console.error("Error in queryCategory func", error);
+    },
+  });
 
   return (
     <>
@@ -62,20 +130,30 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
               "writter-active": writterActive,
             })}
           >
-            <div className="container main-content flex-row flex-space">
-              {categoriesLoading ? (
-                "loading"
-              ) : (
-                <Sidebar
-                  categories={[]}
-                  fandoms={categories?.queryCategories}
-                />
-              )}
-              <div id="content" className="container">
-                {children}
+            {userLoading !== true && (
+              <div className="container main-content flex-row flex-space">
+                {categoriesLoading ? (
+                  "loading"
+                ) : (
+                  <Sidebar
+                    categories={changeView}
+                    fandoms={categories?.queryCategories}
+                    setPeriod={setPeriod}
+                    userSigned={userSigned}
+                  />
+                )}
+                <div id="content" className="container">
+                  <ContentContext.Provider value={[period, setPeriod]}>
+                    <UserContext.Provider
+                      value={[userSubscribed, setUserSubscribed]}
+                    >
+                      {children}
+                    </UserContext.Provider>
+                  </ContentContext.Provider>
+                </div>
+                <Reels />
               </div>
-              <Reels />
-            </div>
+            )}
           </main>
         </>
       )}

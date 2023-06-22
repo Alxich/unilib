@@ -8,7 +8,7 @@ import CategoriesOperations from "../../../graphql/operations/categories";
 import UserOperations from "../../../graphql/operations/users";
 
 import {
-  CategoriesData,
+  CategoriesByUserData,
   CategoryDataByUser,
   Followers,
   SearchUserData,
@@ -23,14 +23,14 @@ interface MoreAuthorProps {
 }
 
 const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
-  const [categories, setCategories] = useState<CategoriesData>();
+  const [categories, setCategories] = useState<CategoriesByUserData>();
   const [users, setUsers] = useState<Followers[]>();
   const [loading, setLoading] = useState(true);
 
   const itemInfo = [1, 2];
 
-  const { data: categoriesData, loading: categoriesLoading } =
-    useQuery<CategoriesData>(
+  const { data: CategoriesByUserData, loading: categoriesLoading } =
+    useQuery<CategoriesByUserData>(
       CategoriesOperations.Queries.queryCategoriesByUser,
       {
         variables: {
@@ -44,11 +44,11 @@ const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
     );
 
   useEffect(() => {
-    if (categoriesLoading !== true && categoriesData) {
-      setCategories(categoriesData);
+    if (categoriesLoading !== true && CategoriesByUserData) {
+      setCategories(CategoriesByUserData);
       setLoading(false);
     }
-  }, [categoriesData, categoriesLoading]);
+  }, [CategoriesByUserData, categoriesLoading]);
 
   const { data: currentUser, loading: currentUserLoading } = useQuery<
     SearchUserData,

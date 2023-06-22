@@ -1,4 +1,4 @@
-import { FC, MouseEvent, useCallback, useState } from "react";
+import { FC, MouseEvent, useCallback, useEffect, useState } from "react";
 import classNames from "classnames";
 import {
   useEditor,
@@ -39,12 +39,14 @@ interface CommentInputProps {
   session?: Session | null;
   postId?: string;
   parentId?: string | null;
+  subscribeToMoreComments?: (postId: string) => void;
 }
 
 const CommentInput: FC<CommentInputProps> = ({
   session,
   postId,
   parentId,
+  subscribeToMoreComments,
 }: CommentInputProps) => {
   const [content, setContent] = useState("");
 
@@ -127,6 +129,11 @@ const CommentInput: FC<CommentInputProps> = ({
       if (!errors) {
         setContent("");
         editor?.commands.setContent(``);
+
+        if (postId && subscribeToMoreComments) {
+          subscribeToMoreComments(postId);
+        }
+
         toast.success("Comment was created!");
       }
     } catch (error: any) {
@@ -134,6 +141,12 @@ const CommentInput: FC<CommentInputProps> = ({
       toast.error(error?.message);
     }
   };
+
+  useEffect(() => {
+    if (postId && subscribeToMoreComments) {
+      subscribeToMoreComments(postId);
+    }
+  }, [postId, subscribeToMoreComments]);
 
   if (!editor) {
     return null;

@@ -110,7 +110,11 @@ const Author: FC<NextPage> = () => {
               next={getMorePost}
               hasMore={hasMore}
               loader={<h3> Loading...</h3>}
-              endMessage={<h4>Nothing more to show</h4>}
+              endMessage={
+                <p>
+                  Вот і все. Ви переглянули весь інтернет і може відочити {":)"}
+                </p>
+              }
             >
               {posts.map((item: PostPopulated, i: number) => {
                 return (

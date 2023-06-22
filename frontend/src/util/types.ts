@@ -16,6 +16,15 @@ export interface DeleteItemResoponse {
   error?: string;
 }
 
+export interface ContentViewChanger {
+  icon: "faFire" | "faClock" | "faNewspaper";
+  title: string;
+  iconTypeFaFont: boolean;
+  link: string;
+}
+
+export type ContentViews = "popular" | "follow" | "today";
+
 /**
  * Users
  */
@@ -163,6 +172,7 @@ export interface PostsVariables {
   period?: string;
   skip: number;
   take: number;
+  subscribedCategories?: [string];
 }
 
 export interface PostsTagVariables {
@@ -311,11 +321,19 @@ export interface CommentItemProps {
   complainItems: { title: string; text: string }[];
   postId?: string;
   isUser: boolean;
+  subscribeToMoreComments?: (postId: string) => void;
 }
 
 export interface CommentsSubscriptionData {
-  commentSent: CommentPopulated;
   commentsUpdated: CommentPopulated;
+}
+
+export interface CommentsSentSubscriptionData {
+  subscriptionData: {
+    data: {
+      commentSent: CommentPopulated;
+    };
+  };
 }
 
 /**
@@ -369,8 +387,12 @@ export interface CategoryData {
   queryCategory: CategoryPopulated;
 }
 
-export interface CategoriesData {
+export interface CategoriesByUserData {
   queryCategoriesByUser: Array<CategoryPopulated>;
+}
+
+export interface CategoriesData {
+  queryCategories: Array<CategoryPopulated>;
 }
 
 export interface CategoryDataByUser {

@@ -20,7 +20,13 @@ const typeDefs = gql`
   }
 
   type Query {
-    queryPosts(period: String, popular: Boolean, take: Int!, skip: Int!): [Post]
+    queryPosts(
+      period: String
+      popular: Boolean
+      take: Int!
+      skip: Int!
+      subscribedCategories: [String]
+    ): [Post]
     queryPostsByTag(
       period: String
       popular: Boolean

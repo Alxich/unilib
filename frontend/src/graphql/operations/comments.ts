@@ -182,6 +182,23 @@ export default {
       subscription CommentSent($postId: String!) {
         commentSent(postId: $postId) {
           ${CommentFields}
+          replies {
+            id
+            author {
+              id
+              image
+              username
+            }
+            parent {
+              id
+            }
+            parentId
+            text
+            likes
+            dislikes
+            createdAt
+            isDeleted
+          }
         }
       }
     `,

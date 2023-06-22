@@ -24,6 +24,7 @@ import CommentOperations from "../../../../graphql/operations/comments";
 import {
   CommentInteractionArguments,
   CommentsByCommentData,
+  CommentsSentSubscriptionData,
   QueryCommentsByCommentArgs,
 } from "../../../../util/types";
 import { formatTimeToPost } from "../../../../util/functions";
@@ -86,6 +87,27 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
       console.error(message);
     },
   });
+
+  // const subscribeToMoreComments = (postId: string) => {
+  //   subscribeToMore({
+  //     document: CommentOperations.Subscriptions.commentSent,
+  //     variables: {
+  //       postId,
+  //     },
+  //     updateQuery: (
+  //       prev,
+  //       { subscriptionData }: CommentsSentSubscriptionData
+  //     ) => {
+  //       if (!subscriptionData.data) return prev;
+
+  //       const newComment = subscriptionData.data.commentSent;
+
+  //       return Object.assign({}, prev, {
+  //         queryCommentsByComment: [newComment, ...prev.queryCommentsByComment],
+  //       });
+  //     },
+  //   });
+  // };
 
   const [addLikeToComment] = useMutation<
     { addLikeToComment: CommentPopulated },
@@ -392,7 +414,12 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
           </div>
         </div>
         {answerActive && (
-          <CommentInput postId={postId} session={session} parentId={id} />
+          <CommentInput
+            postId={postId}
+            session={session}
+            parentId={id}
+            // subscribeToMoreComments={subscribeToMoreComments}
+          />
         )}
       </div>
 

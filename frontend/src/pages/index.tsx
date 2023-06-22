@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { toast } from "react-hot-toast";
 
@@ -8,12 +8,15 @@ import { Flowrange, Newestflow, Post } from "../components";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@apollo/client";
 
-import { PostsData, PostsVariables } from "../util/types";
+import { ContentViews, PostsData, PostsVariables } from "../util/types";
 import { PostPopulated } from "../../../backend/src/util/types";
 import PostOperations from "../graphql/operations/posts";
+import { ContentContext, UserContext } from "../components/_content";
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
+  const [period] = useContext(ContentContext);
+  const [userSubscribed] = useContext(UserContext);
 
   const { data, loading, fetchMore } = useQuery<PostsData, PostsVariables>(
     PostOperations.Queries.queryPosts,
@@ -22,22 +25,45 @@ const Home: NextPage = () => {
         skip: 0,
         take: 3,
       },
+      onCompleted(data) {
+        setPosts(data.queryPosts);
+      },
       onError: ({ message }) => {
         toast.error(message);
       },
     }
   );
 
-  const [onceLoaded, setOnceLoaded] = useState(false);
+  // const [onceLoaded, setOnceLoaded] = useState(false);
   const [posts, setPosts] = useState<PostPopulated[] | undefined>();
 
   useEffect(() => {
-    if (onceLoaded != true && loading == false) {
-      data?.queryPosts && setPosts(data.queryPosts);
-      setOnceLoaded(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, onceLoaded, setOnceLoaded]);
+    setPosts([]);
+    // Call the queryPostsByCat function whenever the period changes
+    const updatedPostsByQuery = async (
+      period: ContentViews,
+      userSubscribed: never[] | [string] | undefined
+    ) => {
+      const newData = await fetchMore({
+        variables: {
+          period:
+            period !== "popular" && period !== "follow" ? period : "follow",
+          popular: period === "popular",
+          ...(period === "follow" && {
+            subscribedCategories: userSubscribed,
+          }),
+          skip: 0,
+          take: 3,
+        },
+      });
+
+      if (newData.data.queryPosts) {
+        setPosts(newData.data.queryPosts);
+      }
+    };
+
+    updatedPostsByQuery(period, userSubscribed);
+  }, [fetchMore, period, userSubscribed]);
 
   const [hasMore, setHasMore] = useState(true);
 
@@ -45,6 +71,12 @@ const Home: NextPage = () => {
     if (posts) {
       const newPosts = await fetchMore({
         variables: {
+          period:
+            period !== "popular" && period !== "follow" ? period : "follow",
+          popular: period === "popular",
+          ...(period === "follow" && {
+            subscribedCategories: userSubscribed,
+          }),
           skip: posts.length,
           take: 1,
         },
@@ -55,8 +87,8 @@ const Home: NextPage = () => {
         return null;
       }
 
-      setPosts((post) => {
-        return post && newPosts && [...post, ...newPosts.data.queryPosts];
+      setPosts((prevPosts) => {
+        return prevPosts ? [...prevPosts, ...newPosts.data.queryPosts] : [];
       });
     }
 
@@ -77,7 +109,11 @@ const Home: NextPage = () => {
               next={getMorePost}
               hasMore={hasMore}
               loader={<h3> Loading...</h3>}
-              endMessage={<h4>Nothing more to show</h4>}
+              endMessage={
+                <p>
+                  Вот і все. Ви переглянули весь інтернет і може відочити {":)"}
+                </p>
+              }
             >
               {posts.map((item: PostPopulated, i: number) => {
                 return (

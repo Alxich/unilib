@@ -26,6 +26,7 @@
         width: $reels_user_logo;
         min-width: $reels_user_logo;
         margin-right: $reels_user_gap;
+        overflow: hidden;
       }
 
       .info {
@@ -52,6 +53,7 @@
       width: 100%;
 
       & > * {
+        display: none;
         font-weight: 300;
         line-height: 1.2;
       }
@@ -66,8 +68,7 @@
           text-overflow: ellipsis;
           -webkit-box-orient: vertical;
           -webkit-line-clamp: 3;
-          overflow:hidden;
-
+          overflow: hidden;
         }
       }
     }

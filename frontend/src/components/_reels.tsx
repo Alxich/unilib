@@ -39,24 +39,6 @@ const Reels: FC = () => {
     },
   });
 
-  // const subscribeToMoreComments = (postId: string) => {
-  //   return subscribeToMore({
-  //     document: CommentOperations.Subscriptions.commentSent,
-  //     variables: {
-  //       postId,
-  //     },
-  //     updateQuery: (prev, { subscriptionData }: CommentsSubscriptionData) => {
-  //       if (!subscriptionData.data) return prev;
-
-  //       const newComment = subscriptionData.data.commentSent;
-
-  //       return Object.assign({}, prev, {
-  //         queryComments: [newComment, ...prev.queryComments],
-  //       });
-  //     },
-  //   });
-  // };
-
   const { data: newCommentData } = useSubscription<CommentsSubscriptionData>(
     CommentOperations.Subscriptions.commentsUpdated
   );
@@ -134,7 +116,6 @@ const Reels: FC = () => {
       <div className="container flex-left">
         {commentsData?.map((item: CommentPopulated, i: number) => {
           const { author, post, text } = item;
-          console.log(post.title);
           return (
             <ReturnReel
               key={`${item.id}__${i}`}

@@ -90,7 +90,7 @@ const resolvers = {
             parent: null,
           },
           orderBy: {
-            createdAt: "asc",
+            createdAt: "desc",
           },
           skip,
           take,

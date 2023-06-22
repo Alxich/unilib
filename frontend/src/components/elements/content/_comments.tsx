@@ -9,6 +9,7 @@ import CommentOperations from "../../../graphql/operations/comments";
 import {
   CommentsByPostData,
   CommentsByUserData,
+  CommentsSentSubscriptionData,
   QueryPostCommentsArgs,
   QueryUserCommentsArgs,
 } from "../../../util/types";
@@ -50,6 +51,7 @@ const Comments: FC<CommentsProps> = ({
     data: commentArray,
     loading,
     fetchMore,
+    subscribeToMore,
   } = useQuery<CommentsByPostData, QueryPostCommentsArgs>(
     CommentOperations.Queries.queryPostComments,
     {
@@ -79,8 +81,32 @@ const Comments: FC<CommentsProps> = ({
   const [onceLoaded, setOnceLoaded] = useState(false);
   const [comments, setComments] = useState<CommentPopulated[] | undefined>();
 
+  // const subscribeToMoreComments = (postId: string) => {
+  //   subscribeToMore({
+  //     document: CommentOperations.Subscriptions.commentSent,
+  //     variables: {
+  //       postId,
+  //     },
+  //     updateQuery: (
+  //       prev,
+  //       { subscriptionData }: CommentsSentSubscriptionData
+  //     ) => {
+  //       if (!subscriptionData.data) return prev;
+
+  //       const newComment = subscriptionData.data.commentSent;
+
+  //       // Update the comments state with the new comment
+  //       setComments(
+  //         (prevComments) => prevComments && [newComment, ...prevComments]
+  //       );
+
+  //       return prev;
+  //     },
+  //   });
+  // };
+
   useEffect(() => {
-    if (onceLoaded != true && loading == false) {
+    if (onceLoaded !== true && loading === false) {
       if (
         userId === undefined &&
         postId !== undefined &&
@@ -153,6 +179,7 @@ const Comments: FC<CommentsProps> = ({
     <div>Loading</div>
   ) : (
     <div id="comments" className="post-wrapper container">
+      {/* Render comments from commentArray */}
       {userId === undefined && postId !== undefined && commentArray && (
         <div className="title">
           <h3>Коментарів</h3>
@@ -161,15 +188,31 @@ const Comments: FC<CommentsProps> = ({
           </div>
         </div>
       )}
-      {userId === undefined && postId !== undefined && (
-        <CommentInput session={session} postId={postId} />
+
+      {/* Render comments from commentArrayUser */}
+      {userId !== undefined && postId === undefined && commentArrayUser && (
+        <div className="title">
+          <h3>Коментарів</h3>
+          <div className="count">
+            <p>{commentArrayUser.queryUserComments.length}</p>
+          </div>
+        </div>
       )}
+
+      {userId === undefined && postId !== undefined && (
+        <CommentInput
+          session={session}
+          postId={postId}
+          // subscribeToMoreComments={subscribeToMoreComments}
+        />
+      )}
+
       {comments && (
         <InfiniteScroll
           dataLength={comments.length}
           next={getMoreComments}
           hasMore={hasMore}
-          loader={<p> Loading...</p>}
+          loader={<p>Loading...</p>}
         >
           <div className="container comments-flow">
             {comments.map((item, i: number) => (
@@ -180,6 +223,7 @@ const Comments: FC<CommentsProps> = ({
                 complainItems={complainItems}
                 postId={postId}
                 isUser={userId !== undefined && postId === undefined}
+                // subscribeToMoreComments={subscribeToMoreComments}
               />
             ))}
           </div>

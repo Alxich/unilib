@@ -86,6 +86,7 @@
             width: $user_icon_small;
             min-width: $user_icon_small;
             cursor: pointer;
+            overflow: hidden;
           }
 
           .author-names {
