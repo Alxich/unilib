@@ -18,6 +18,9 @@ const Home: NextPage = () => {
   const [period] = useContext(ContentContext);
   const [userSubscribed] = useContext(UserContext);
 
+  // const [onceLoaded, setOnceLoaded] = useState(false);
+  const [posts, setPosts] = useState<PostPopulated[] | undefined>();
+
   const { data, loading, fetchMore } = useQuery<PostsData, PostsVariables>(
     PostOperations.Queries.queryPosts,
     {
@@ -34,22 +37,19 @@ const Home: NextPage = () => {
     }
   );
 
-  // const [onceLoaded, setOnceLoaded] = useState(false);
-  const [posts, setPosts] = useState<PostPopulated[] | undefined>();
-
   useEffect(() => {
-    setPosts([]);
     // Call the queryPostsByCat function whenever the period changes
     const updatedPostsByQuery = async (
       period: ContentViews,
-      userSubscribed: never[] | [string] | undefined
+      userSubscribed: string[] | undefined
     ) => {
+      setPosts([]);
       const newData = await fetchMore({
         variables: {
           period:
-            period !== "popular" && period !== "follow" ? period : "follow",
+            period !== "popular" && period === "follow" ? "follow" : period,
           popular: period === "popular",
-          ...(period === "follow" && {
+          ...(userSubscribed && {
             subscribedCategories: userSubscribed,
           }),
           skip: 0,
@@ -62,8 +62,14 @@ const Home: NextPage = () => {
       }
     };
 
+    console.log(userSubscribed);
+
     updatedPostsByQuery(period, userSubscribed);
   }, [fetchMore, period, userSubscribed]);
+
+  useEffect(() => {
+    console.log(period);
+  }, [period]);
 
   const [hasMore, setHasMore] = useState(true);
 
@@ -72,9 +78,9 @@ const Home: NextPage = () => {
       const newPosts = await fetchMore({
         variables: {
           period:
-            period !== "popular" && period !== "follow" ? period : "follow",
+            period !== "popular" && period === "follow" ? "follow" : period,
           popular: period === "popular",
-          ...(period === "follow" && {
+          ...(userSubscribed && {
             subscribedCategories: userSubscribed,
           }),
           skip: posts.length,

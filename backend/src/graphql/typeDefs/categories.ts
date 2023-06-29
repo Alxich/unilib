@@ -31,6 +31,10 @@ const typeDefs = gql`
     subscribeToCategory(categoryId: String, userId: String): Category
     unsubscribeToCategory(categoryId: String, userId: String): Category
   }
+
+  type Subscription {
+    userUpdated: User
+  }
 `;
 
 export default typeDefs;

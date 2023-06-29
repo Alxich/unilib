@@ -67,7 +67,7 @@ const resolvers = {
     ): Promise<Array<CategoryPopulated>> {
       const { prisma } = context;
       const { id } = args;
-  
+
       try {
         const categories = await prisma.category.findMany({
           where: {
@@ -82,11 +82,11 @@ const resolvers = {
           },
           include: categoryPopulated,
         });
-  
+
         if (!categories) {
           throw new Error("Categories is not exist");
         }
-  
+
         return categories;
       } catch (error: any) {
         console.error("Categories error", error);
@@ -122,7 +122,11 @@ const resolvers = {
           },
           include: categoryPopulated,
         });
-        
+
+        if (!newCategory) {
+          throw new Error("Category is not created");
+        }
+
         return true;
       } catch (error) {
         console.error("createCategory error", error);
@@ -135,7 +139,7 @@ const resolvers = {
       args: SubscribeCategoryArguments,
       context: GraphQLContext
     ): Promise<CategoryPopulated> {
-      const { session, prisma } = context;
+      const { session, prisma, pubsub } = context;
 
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
@@ -172,6 +176,23 @@ const resolvers = {
           include: categoryPopulated,
         });
 
+        const userUpdated = await prisma.user.findUnique({
+          where: {
+            id: userId,
+          },
+        });
+
+        if (!userUpdated) {
+          if (!category) {
+            throw new Error("userUpdated went wrong while query");
+          }
+        }
+
+        // Publish the new user to the userUpdated channel
+        pubsub.publish("USER_FOLLOW_CATEGORY", {
+          userUpdated: userUpdated,
+        });
+
         return updatedCategory;
       } catch (error) {
         console.error("subscribeToCategory error", error);
@@ -184,7 +205,7 @@ const resolvers = {
       args: SubscribeCategoryArguments,
       context: GraphQLContext
     ): Promise<CategoryPopulated> {
-      const { session, prisma } = context;
+      const { session, prisma, pubsub } = context;
 
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
@@ -221,11 +242,37 @@ const resolvers = {
           include: categoryPopulated,
         });
 
+        const userUpdated = await prisma.user.findUnique({
+          where: {
+            id: userId,
+          },
+        });
+
+        if (!userUpdated) {
+          if (!category) {
+            throw new Error("userUpdated went wrong while query");
+          }
+        }
+
+        // Publish the new user to the userUpdated channel
+        pubsub.publish("USER_FOLLOW_CATEGORY", {
+          userUpdated: userUpdated,
+        });
+
         return updatedCategory;
       } catch (error) {
         console.error("unsubscribeToCategory error", error);
         throw new GraphQLError("Error to unsubscribe category");
       }
+    },
+  },
+  Subscription: {
+    userUpdated: {
+      subscribe: (_: any, __: any, context: GraphQLContext) => {
+        const { pubsub } = context;
+
+        return pubsub.asyncIterator("USER_FOLLOW_CATEGORY");
+      },
     },
   },
 };

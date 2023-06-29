@@ -27,8 +27,12 @@ const resolvers = {
       const { startDate, endDate } = getDateQueryRange(period);
 
       try {
-        if (subscribedCategories && subscribedCategories?.length > 0) {
-          return [];
+       
+        if (period === "follow") {
+          console.log(period);
+          if (!subscribedCategories || subscribedCategories.length <= 0) {
+            return [];
+          }
         }
 
         const posts = await prisma.post.findMany({
@@ -51,8 +55,6 @@ const resolvers = {
           skip,
           take,
         });
-
-        console.log(posts);
 
         return posts;
       } catch (error: any) {

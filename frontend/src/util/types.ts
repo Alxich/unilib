@@ -6,6 +6,7 @@ import {
   MessagePopulated,
   PostPopulated,
   TagPopulated,
+  UserPopulated,
 } from "../../../backend/src/util/types";
 
 /**
@@ -90,6 +91,10 @@ export interface FollowItem {
 export interface FollowUserArguments {
   followerId: string;
   followingId: string;
+}
+
+export interface UserSubscriptionData {
+  userUpdated: UserPopulated;
 }
 
 /**

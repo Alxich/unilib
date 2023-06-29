@@ -261,7 +261,7 @@ const PostPage: FC<PostPageProps> = ({ data, session, postCommentsCount }) => {
               <p>{views} Переглядів</p>
             </div>
             <div className="comments">
-              {postCommentsCount && <p>{postCommentsCount} Коментарів</p>}
+              <p>{postCommentsCount} Коментарів</p>
             </div>
           </div>
         </div>

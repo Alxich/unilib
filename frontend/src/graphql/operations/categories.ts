@@ -67,5 +67,13 @@ export default {
       }
     `,
   },
-  Subscriptions: {},
+  Subscriptions: {
+    userUpdated: gql`
+      subscription UserUpdated {
+        userUpdated {
+          subscribedCategoryIDs
+        }
+      }
+    `,
+  },
 };

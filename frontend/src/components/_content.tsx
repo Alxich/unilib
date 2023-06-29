@@ -1,4 +1,4 @@
-import { FC, createContext, useEffect, useState, useReducer } from "react";
+import { FC, createContext, useEffect, useState } from "react";
 import type { NextPageContext } from "next";
 import Head from "next/head";
 import classNames from "classnames";
@@ -9,7 +9,7 @@ import { getSession, useSession } from "next-auth/react";
 
 import { Header, Banner, Sidebar, Reels, WritterPost } from "../components";
 
-import { useQuery } from "@apollo/client";
+import { useQuery, useSubscription } from "@apollo/client";
 import CategoriesOperations from "../graphql/operations/categories";
 import UsersOperations from "../graphql/operations/users";
 import {
@@ -18,6 +18,7 @@ import {
   ContentViews,
   SearchUserData,
   SearchUserVariables,
+  UserSubscriptionData,
 } from "../util/types";
 
 interface ContentProps {
@@ -36,19 +37,18 @@ export const ContentContext = createContext<ContentContextValue>([
 
 export const UserContext = createContext<
   [
-    [string] | never[] | undefined,
-    React.Dispatch<React.SetStateAction<never[] | [string] | undefined>>
+    string[] | undefined,
+    React.Dispatch<React.SetStateAction<string[] | undefined>>
   ]
 >([[], () => {}]);
 
 const Content: FC<ContentProps> = ({ children }: ContentProps) => {
+  const [loadingStatus, setLoadingStatus] = useState(false);
   const [bannerActive, setBannerActive] = useState(false);
   const [writterActive, setWritterActive] = useState(false);
   const [userSigned, setUserSigned] = useState(false);
   const [period, setPeriod] = useState<ContentViews>("popular"); // Initialize period as an empty string
-  const [userSubscribed, setUserSubscribed] = useState<
-    [string] | never[] | undefined
-  >(); // Initialize subscribed as an empty array
+  const [userSubscribed, setUserSubscribed] = useState<string[] | undefined>(); // Initialize subscribed as an empty array
 
   const { data: session } = useSession();
 
@@ -91,23 +91,51 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
       },
     });
 
-  const { data: userFetch, loading: userLoading } = useQuery<
-    SearchUserData,
-    SearchUserVariables
-  >(UsersOperations.Queries.searchUser, {
-    variables: {
-      id: session ? session.user.id : "",
-    },
-    skip: !session,
-    onCompleted(data) {
-      setUserSigned(true);
-      setUserSubscribed(data.searchUser.subscribedCategoryIDs);
-    },
-    onError: (error) => {
-      toast.error(`Error loading categories: ${error}`);
-      console.error("Error in queryCategory func", error);
-    },
-  });
+  const {
+    data: userFetch,
+    loading: userLoading,
+    fetchMore: userFetchMore,
+  } = useQuery<SearchUserData, SearchUserVariables>(
+    UsersOperations.Queries.searchUser,
+    {
+      variables: {
+        id: session ? session.user.id : "",
+      },
+      skip: !session,
+      onCompleted(data) {
+        setUserSigned(true);
+        setUserSubscribed(data.searchUser.subscribedCategoryIDs);
+      },
+      onError: (error) => {
+        toast.error(`Error loading categories: ${error}`);
+        console.error("Error in queryCategory func", error);
+      },
+    }
+  );
+
+  const { data: newUserData, loading: userUpdatedLoading } =
+    useSubscription<UserSubscriptionData>(
+      CategoriesOperations.Subscriptions.userUpdated,
+    );
+
+  useEffect(() => {
+    const userSubscribed = newUserData?.userUpdated.subscribedCategoryIDs;
+    userSigned && loadingStatus !== true && setUserSubscribed(userSubscribed); // If userSigned it there is always session
+  }, [loadingStatus, newUserData, userSigned]);
+
+  useEffect(() => {
+    setLoadingStatus(userUpdatedLoading);
+  }, [userUpdatedLoading]);
+
+  useEffect(() => {
+    setLoadingStatus(categoriesLoading);
+  }, [categoriesLoading]);
+
+  useEffect(() => {
+    setLoadingStatus(userLoading);
+  }, [userLoading]);
+
+  console.log(loadingStatus);
 
   return (
     <>
@@ -130,30 +158,30 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
               "writter-active": writterActive,
             })}
           >
-            {userLoading !== true && (
-              <div className="container main-content flex-row flex-space">
-                {categoriesLoading ? (
-                  "loading"
-                ) : (
+            <div className="container main-content flex-row flex-space">
+              {loadingStatus ? (
+                "loading"
+              ) : (
+                <>
                   <Sidebar
                     categories={changeView}
                     fandoms={categories?.queryCategories}
                     setPeriod={setPeriod}
                     userSigned={userSigned}
                   />
-                )}
-                <div id="content" className="container">
-                  <ContentContext.Provider value={[period, setPeriod]}>
-                    <UserContext.Provider
-                      value={[userSubscribed, setUserSubscribed]}
-                    >
-                      {children}
-                    </UserContext.Provider>
-                  </ContentContext.Provider>
-                </div>
-                <Reels />
-              </div>
-            )}
+                  <div id="content" className="container">
+                    <ContentContext.Provider value={[period, setPeriod]}>
+                      <UserContext.Provider
+                        value={[userSubscribed, setUserSubscribed]}
+                      >
+                        {children}
+                      </UserContext.Provider>
+                    </ContentContext.Provider>
+                  </div>
+                  <Reels />
+                </>
+              )}
+            </div>
           </main>
         </>
       )}
