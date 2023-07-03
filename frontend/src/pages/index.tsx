@@ -67,10 +67,6 @@ const Home: NextPage = () => {
     updatedPostsByQuery(period, userSubscribed);
   }, [fetchMore, period, userSubscribed]);
 
-  useEffect(() => {
-    console.log(period);
-  }, [period]);
-
   const [hasMore, setHasMore] = useState(true);
 
   const getMorePost = async () => {

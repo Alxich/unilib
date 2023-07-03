@@ -120,8 +120,14 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
 
   useEffect(() => {
     const userSubscribed = newUserData?.userUpdated.subscribedCategoryIDs;
-    userSigned && loadingStatus !== true && setUserSubscribed(userSubscribed); // If userSigned it there is always session
-  }, [loadingStatus, newUserData, userSigned]);
+
+    console.log(userSubscribed);
+
+    userSubscribed &&
+      userUpdatedLoading !== true &&
+      setUserSubscribed(userSubscribed); // If userSigned it there is always session
+    userSubscribed && setUserSigned(userSubscribed?.length > 0 ? true : false);
+  }, [userUpdatedLoading, newUserData, userSigned]);
 
   useEffect(() => {
     setLoadingStatus(userUpdatedLoading);
@@ -134,8 +140,6 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   useEffect(() => {
     setLoadingStatus(userLoading);
   }, [userLoading]);
-
-  console.log(loadingStatus);
 
   return (
     <>
