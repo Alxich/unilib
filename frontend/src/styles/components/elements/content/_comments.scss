@@ -48,6 +48,7 @@
       position: relative;
 
       & > div:not(:last-child),
+      & > a:not(:last-child),
       & > form:not(:last-child) {
         margin-bottom: $comm_item_pad;
       }

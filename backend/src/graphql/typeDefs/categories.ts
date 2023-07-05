@@ -9,6 +9,7 @@ const typeDefs = gql`
     id: String
     title: String
     desc: String
+    subscribers: [User]
     subscriberCount: Int
     subscriberIDs: [String]
     createdAt: Date

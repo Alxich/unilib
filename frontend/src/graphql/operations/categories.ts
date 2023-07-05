@@ -5,6 +5,9 @@ const categoryFields = `
   icon
   title
   desc
+  subscribers {
+    id
+  }
   subscriberCount
 `;
 

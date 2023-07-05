@@ -62,8 +62,6 @@ const Home: NextPage = () => {
       }
     };
 
-    console.log(userSubscribed);
-
     updatedPostsByQuery(period, userSubscribed);
   }, [fetchMore, period, userSubscribed]);
 

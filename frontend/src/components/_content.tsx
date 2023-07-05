@@ -1,14 +1,10 @@
-import { FC, createContext, useEffect, useState } from "react";
+import { FC, SetStateAction, createContext, useEffect, useState } from "react";
 import type { NextPageContext } from "next";
 import Head from "next/head";
 import classNames from "classnames";
 import { Toaster, toast } from "react-hot-toast";
-
-// Importing once next-auth session
 import { getSession, useSession } from "next-auth/react";
-
 import { Header, Banner, Sidebar, Reels, WritterPost } from "../components";
-
 import { useQuery, useSubscription } from "@apollo/client";
 import CategoriesOperations from "../graphql/operations/categories";
 import UsersOperations from "../graphql/operations/users";
@@ -47,8 +43,8 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   const [bannerActive, setBannerActive] = useState(false);
   const [writterActive, setWritterActive] = useState(false);
   const [userSigned, setUserSigned] = useState(false);
-  const [period, setPeriod] = useState<ContentViews>("popular"); // Initialize period as an empty string
-  const [userSubscribed, setUserSubscribed] = useState<string[] | undefined>(); // Initialize subscribed as an empty array
+  const [period, setPeriod] = useState<ContentViews>("popular");
+  const [userSubscribed, setUserSubscribed] = useState<string[] | undefined>();
 
   const { data: session } = useSession();
 
@@ -84,54 +80,44 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   ];
 
   const { data: categories, loading: categoriesLoading } =
-    useQuery<CategoriesData>(CategoriesOperations.Queries.queryCategories, {
-      onError: (error) => {
-        toast.error(`Error loading categories: ${error}`);
-        console.error("Error in queryCategory func", error);
-      },
-    });
+    useQuery<CategoriesData>(CategoriesOperations.Queries.queryCategories);
 
-  const {
-    data: userFetch,
-    loading: userLoading,
-    fetchMore: userFetchMore,
-  } = useQuery<SearchUserData, SearchUserVariables>(
-    UsersOperations.Queries.searchUser,
-    {
-      variables: {
-        id: session ? session.user.id : "",
-      },
-      skip: !session,
-      onCompleted(data) {
-        setUserSigned(true);
-        setUserSubscribed(data.searchUser.subscribedCategoryIDs);
-      },
-      onError: (error) => {
-        toast.error(`Error loading categories: ${error}`);
-        console.error("Error in queryCategory func", error);
-      },
-    }
-  );
+  const { data: userFetch, loading: userLoading } = useQuery<
+    SearchUserData,
+    SearchUserVariables
+  >(UsersOperations.Queries.searchUser, {
+    variables: {
+      id: session ? session.user.id : "",
+    },
+    skip: !session,
+    onCompleted(data) {
+      const userSubscribed = data?.searchUser.subscribedCategoryIDs;
+
+      if (userSubscribed) {
+        setUserSigned(userSubscribed.length > 0 ? true : false);
+        setUserSubscribed(userSubscribed);
+      }
+    },
+    onError: (error) => {
+      toast.error(`Error loading categories: ${error}`);
+      console.error("Error in queryCategory func", error);
+    },
+  });
 
   const { data: newUserData, loading: userUpdatedLoading } =
     useSubscription<UserSubscriptionData>(
-      CategoriesOperations.Subscriptions.userUpdated,
+      CategoriesOperations.Subscriptions.userUpdated
     );
 
   useEffect(() => {
     const userSubscribed = newUserData?.userUpdated.subscribedCategoryIDs;
+    console.log(userSubscribed, userUpdatedLoading !== true);
 
-    console.log(userSubscribed);
-
-    userSubscribed &&
-      userUpdatedLoading !== true &&
-      setUserSubscribed(userSubscribed); // If userSigned it there is always session
-    userSubscribed && setUserSigned(userSubscribed?.length > 0 ? true : false);
-  }, [userUpdatedLoading, newUserData, userSigned]);
-
-  useEffect(() => {
-    setLoadingStatus(userUpdatedLoading);
-  }, [userUpdatedLoading]);
+    if (userSubscribed && userUpdatedLoading !== true) {
+      setUserSigned(userSubscribed.length > 0 ? true : false);
+      setUserSubscribed(userSubscribed);
+    }
+  }, [userUpdatedLoading, newUserData]);
 
   useEffect(() => {
     setLoadingStatus(categoriesLoading);
@@ -140,6 +126,10 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   useEffect(() => {
     setLoadingStatus(userLoading);
   }, [userLoading]);
+
+  useEffect(() => {
+    setLoadingStatus(userUpdatedLoading);
+  }, [userUpdatedLoading]);
 
   return (
     <>

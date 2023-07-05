@@ -29,7 +29,6 @@ const resolvers = {
       try {
        
         if (period === "follow") {
-          console.log(period);
           if (!subscribedCategories || subscribedCategories.length <= 0) {
             return [];
           }

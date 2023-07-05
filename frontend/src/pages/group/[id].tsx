@@ -9,11 +9,7 @@ import { AuthorInfo, Post } from "../../components";
 
 import { useQuery } from "@apollo/client";
 import PostOperations from "../../graphql/operations/posts";
-import {
-  PostsByCatData,
-  PostsCatVariables,
-  SubscribeCategoryArguments,
-} from "../../util/types";
+import { PostsByCatData, PostsCatVariables } from "../../util/types";
 import { PostPopulated } from "../../../../backend/src/util/types";
 
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -100,31 +96,34 @@ const Author: FC<NextPage> = () => {
         id={id}
         session={session}
       />
-      <div className="posts-container container">
-        {loading ? (
-          <h3> Loading...</h3>
-        ) : (
-          posts && (
-            <InfiniteScroll
-              dataLength={posts.length}
-              next={getMorePost}
-              hasMore={hasMore}
-              loader={<h3> Loading...</h3>}
-              endMessage={
-                <p>
-                  Вот і все. Ви переглянули весь інтернет і може відочити {":)"}
-                </p>
-              }
-            >
-              {posts.map((item: PostPopulated, i: number) => {
-                return (
-                  <Post session={session} data={item} key={`${item}__${i}`} />
-                );
-              })}
-            </InfiniteScroll>
-          )
-        )}
-      </div>
+      {loading ? (
+        <h3> Loading...</h3>
+      ) : (
+        <>
+          <div className="posts-container container">
+            {posts && (
+              <InfiniteScroll
+                dataLength={posts.length}
+                next={getMorePost}
+                hasMore={hasMore}
+                loader={<h3> Loading...</h3>}
+                endMessage={
+                  <p>
+                    Вот і все. Ви переглянули весь інтернет і може відочити{" "}
+                    {":)"}
+                  </p>
+                }
+              >
+                {posts.map((item: PostPopulated, i: number) => {
+                  return (
+                    <Post session={session} data={item} key={`${item}__${i}`} />
+                  );
+                })}
+              </InfiniteScroll>
+            )}
+          </div>
+        </>
+      )}
     </>
   );
 };

@@ -1,16 +1,22 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import Image from "next/image";
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 
-import classNames from "classnames";
 import { toast } from "react-hot-toast";
+import classNames from "classnames";
+import Image from "next/image";
+import background from "../../../../public/images/background.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAlignCenter } from "@fortawesome/free-solid-svg-icons";
 
-import background from "../../../../public/images/background.png";
-
 import { Session } from "next-auth";
 import { useMutation, useQuery } from "@apollo/client";
+
 import {
   AuthorInfoTypes,
   CategoriesVariables,
@@ -33,7 +39,7 @@ interface AuthorInfoProps {
   type: "group" | "tag" | "author";
   id: string;
   session: Session | null;
-  period: String;
+  period: string;
   setPeriod: Dispatch<SetStateAction<string>>;
   showMore?: boolean;
   setShowMore?: Dispatch<SetStateAction<boolean>>;
@@ -51,7 +57,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
   setShowMore,
   showComments,
   setShowComments,
-}: AuthorInfoProps) => {
+}) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [userSubscribed, setUserSubscribed] = useState(false);
   const [blockContent, setBlockContent] = useState<AuthorInfoTypes>();
@@ -127,60 +133,89 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
     }
   };
 
-  const { data: currentUser, loading: currentUserLoading } = useQuery<
-    SearchUserData,
-    SearchUserVariables
-  >(UserOperations.Queries.searchUser, {
+  const {
+    data: currentUser,
+    loading: currentUserLoading,
+    refetch: refetchUser,
+  } = useQuery<SearchUserData, SearchUserVariables>(
+    UserOperations.Queries.searchUser,
+    {
+      variables: {
+        id: type === "author" ? id : session?.user.id || "",
+      },
+      /**
+       * Skip the query when sessionUser is null
+       * or undefined and if the type is not "group".
+       * -----------------------------------------------
+       * If it is a user we ignore it and load all staff
+       * because session not important in that case.
+       */
+      skip: type !== "author", // Skip the query if the type is not "group"
+      onCompleted(data) {
+        setBlockContent({ ...data.searchUser });
+      },
+      onError: (error) => {
+        toast.error(`Error loading user: ${error}`);
+        console.error("Error in searchUser func", error);
+      },
+    }
+  );
+
+  const {
+    data: categoryData,
+    loading: categoryLoading,
+    refetch: refetchCategory,
+  } = useQuery<CategoryData, CategoriesVariables>(
+    CategoryOperations.Queries.queryCategory,
+    {
+      variables: {
+        id: id,
+      },
+      skip: type !== "group", // Skip the query if the type is not "group"
+      onCompleted(data) {
+        setBlockContent({ ...data.queryCategory });
+      },
+      onError: (error) => {
+        toast.error(`Error on loading category ${error}`);
+        console.error("Error queryCategory func", error);
+      },
+    }
+  );
+
+  const {
+    data: tagData,
+    loading: tagLoading,
+    refetch: refetchTag,
+  } = useQuery<TagData, TagsVariables>(TagOperations.Queries.queryTag, {
     variables: {
-      id: type === "author" ? id : session?.user.id || "",
+      id: id,
     },
-    /**
-     * Skip the query when sessionUser is null
-     * or undefined and if the type is not "group".
-     * -----------------------------------------------
-     * If it is a user we ignore it and load all staff
-     * because session not important in that case.
-     */
-    ...(type !== "author" && { skip: !session || type !== "group" }),
+    skip: type !== "tag", // Skip the query if the type is not "tag"
+    onCompleted(data) {
+      setBlockContent({ ...data.queryTag });
+    },
     onError: (error) => {
-      toast.error(`Error loading user: ${error}`);
-      console.error("Error in searchUser func", error);
+      toast.error(`Error on loading category ${error}`);
+      console.error("Error queryCategory func", error);
     },
   });
 
   useEffect(() => {
-    if (type !== "author" && type !== "tag") {
-      // Skip the query if the type is not "group"
-      if (currentUser && currentUserLoading != true) {
-        const subscribedCategoryIDs =
-          currentUser.searchUser.subscribedCategoryIDs;
-        const isSubscribed = subscribedCategoryIDs.find(
-          (categoryId) => categoryId === id
-        );
-
-        setUserSubscribed(isSubscribed ? true : false);
+    switch (type) {
+      case "author": {
+        refetchUser();
+        break;
       }
-    } else if (type === "author") {
-      if (currentUser && currentUserLoading != true) {
-        if (session) {
-          const subscribedUsers = currentUser.searchUser.followedBy;
-          const { id } = session.user;
-
-          if (subscribedUsers) {
-            const isSubscribed = subscribedUsers.find(
-              (follow) => follow.follower.id === id
-            );
-            setUserSubscribed(isSubscribed ? true : false);
-          } else {
-            setUserSubscribed(true);
-          }
-        } else {
-          console.error("Not authorized Session");
-          setUserSubscribed(false);
-        }
+      case "group": {
+        refetchCategory();
+        break;
+      }
+      case "tag": {
+        refetchTag();
+        break;
       }
     }
-  }, [currentUserLoading, currentUser, id, session, type]);
+  }, []);
 
   const [followUser] = useMutation<
     { followUser: FollowUserArguments },
@@ -251,59 +286,54 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
     }
   };
 
-  const { data: categoryData, loading: categoryLoading } = useQuery<
-    CategoryData,
-    CategoriesVariables
-  >(CategoryOperations.Queries.queryCategory, {
-    variables: {
-      id: id,
-    },
-    skip: type !== "group", // Skip the query if the type is not "group"
-    onError: (error) => {
-      toast.error(`Error on loading category ${error}`);
-      console.error("Error queryCategory func", error);
-    },
-  });
-
-  const { data: tagData, loading: tagLoading } = useQuery<
-    TagData,
-    TagsVariables
-  >(TagOperations.Queries.queryTag, {
-    variables: {
-      id: id,
-    },
-    skip: type !== "tag", // Skip the query if the type is not "group"
-    onError: (error) => {
-      toast.error(`Error on loading category ${error}`);
-      console.error("Error queryCategory func", error);
-    },
-  });
-
   useEffect(() => {
-    switch (type) {
-      case "group":
-        categoryLoading !== true &&
-          categoryData &&
-          setBlockContent(categoryData.queryCategory);
-        break;
-      case "tag":
-        tagLoading !== true && tagData && setBlockContent(tagData.queryTag);
-        break;
-      case "author":
-        currentUserLoading !== true &&
-          currentUser &&
-          setBlockContent(currentUser.searchUser);
-        break;
-      default:
-        break;
+    if (type !== "author" && type !== "tag") {
+      if (categoryData && categoryLoading != true) {
+        if (session) {
+          const subscribedUsers = categoryData.queryCategory.subscribers;
+          const { id } = session.user;
+
+          if (session && categoryData.queryCategory) {
+            const isSubscribed = subscribedUsers.find(
+              (follow) => follow.id === id
+            );
+
+            setUserSubscribed(isSubscribed ? true : false);
+          } else {
+            setUserSubscribed(true);
+          }
+        }
+      } else {
+        console.error("Not authorized Session");
+        setUserSubscribed(false);
+      }
+    } else if (type === "author") {
+      if (currentUser && currentUserLoading != true) {
+        if (session) {
+          const subscribedUsers = currentUser.searchUser.followedBy;
+          const { id } = session.user;
+
+          if (subscribedUsers) {
+            const isSubscribed = subscribedUsers.find(
+              (follow) => follow.follower.id === id
+            );
+            setUserSubscribed(isSubscribed ? true : false);
+          } else {
+            setUserSubscribed(true);
+          }
+        } else {
+          console.error("Not authorized Session");
+          setUserSubscribed(false);
+        }
+      }
     }
   }, [
     categoryData,
     categoryLoading,
     currentUser,
     currentUserLoading,
-    tagData,
-    tagLoading,
+    id,
+    session,
     type,
   ]);
 
@@ -445,16 +475,18 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
             >
               <p>Записів</p>
             </div>
-            {currentUser && type !== "author" && (
+            {!currentUser && type !== "author" && (
               <div
                 className="item"
                 onClick={() => {
-                  userSubscribed != true
-                    ? onSubscribeCategory(true)
-                    : onSubscribeCategory(false);
+                  userSubscribed === true
+                    ? onSubscribeCategory(false)
+                    : onSubscribeCategory(true);
                 }}
               >
-                <p>{userSubscribed != true ? "Відстежувати" : "Відписатися"}</p>
+                <p>
+                  {userSubscribed === true ? "Відписатися" : "Відстежувати"}
+                </p>
               </div>
             )}
             {currentUser?.searchUser.id !== session?.user.id &&

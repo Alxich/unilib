@@ -30,6 +30,7 @@ import { CommentPopulated } from "../../../../../../backend/src/util/types";
 import RecursiveCommentItem from "./_recursiveCommentItem";
 import CommentInput from "./_commentInput";
 import CommentInputEdit from "./_commentInputEdit";
+import Link from "next/link";
 
 const CommentItem: FC<CommentItemProps> = ({
   session,
@@ -248,10 +249,10 @@ const CommentItem: FC<CommentItemProps> = ({
             />
           </div>
         )}
-        <div className="user-author">
+        <Link href={`/author/${author.id}`} className="user-author">
           <div className="author">
             <div className="user-icon">
-              {!isDeleted && author?.image && (
+              {!isDeleted && author.image && (
                 <Image
                   src={author.image}
                   height={1080}
@@ -263,14 +264,14 @@ const CommentItem: FC<CommentItemProps> = ({
 
             <div className="author-names">
               <div className="name">
-                <p>{isDeleted ? "Ескапад автора" : author?.username}</p>
+                <p>{isDeleted ? "Ескапад автора" : author.username}</p>
               </div>
               <div className="time">
                 <p> {" " + formatTimeToPost(createdAt)}</p>
               </div>
             </div>
           </div>
-        </div>
+        </Link>
         {text && editActive ? (
           <CommentInputEdit
             session={session}
