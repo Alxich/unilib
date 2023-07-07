@@ -144,7 +144,7 @@ const CommentInput: FC<CommentInputProps> = ({
           subscribeToMoreComments(postId);
         }
 
-        setAnswerShowActive(true);
+        setAnswerShowActive && setAnswerShowActive(true);
 
         toast.success("Comment was created!");
       }
