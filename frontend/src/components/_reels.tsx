@@ -24,7 +24,6 @@ const Reels: FC = () => {
   const {
     data: reelsArray,
     loading,
-    subscribeToMore,
   } = useQuery<CommentsData>(CommentOperations.Queries.queryComments, {
     onCompleted: (commentArray) => {
       if (commentArray.queryComments) {

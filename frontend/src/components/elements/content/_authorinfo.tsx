@@ -215,6 +215,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
         break;
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [followUser] = useMutation<

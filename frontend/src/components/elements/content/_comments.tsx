@@ -3,7 +3,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 import { CommentItem, CommentInput } from "./comments";
 
-import { useQuery } from "@apollo/client";
+import { useQuery, useSubscription } from "@apollo/client";
 import { Session } from "next-auth";
 import CommentOperations from "../../../graphql/operations/comments";
 import {
@@ -51,7 +51,6 @@ const Comments: FC<CommentsProps> = ({
     data: commentArray,
     loading,
     fetchMore,
-    subscribeToMore,
   } = useQuery<CommentsByPostData, QueryPostCommentsArgs>(
     CommentOperations.Queries.queryPostComments,
     {
@@ -81,29 +80,23 @@ const Comments: FC<CommentsProps> = ({
   const [onceLoaded, setOnceLoaded] = useState(false);
   const [comments, setComments] = useState<CommentPopulated[] | undefined>();
 
-  // const subscribeToMoreComments = (postId: string) => {
-  //   subscribeToMore({
-  //     document: CommentOperations.Subscriptions.commentSent,
-  //     variables: {
-  //       postId,
-  //     },
-  //     updateQuery: (
-  //       prev,
-  //       { subscriptionData }: CommentsSentSubscriptionData
-  //     ) => {
-  //       if (!subscriptionData.data) return prev;
+  const { data: newCommentData } =
+    useSubscription<CommentsSentSubscriptionData>(
+      CommentOperations.Subscriptions.commentsUpdated
+    );
 
-  //       const newComment = subscriptionData.data.commentSent;
+  useEffect(() => {
+    if (newCommentData) {
+      const newComment = newCommentData.commentsUpdated;
+      const oldComments = comments;
 
-  //       // Update the comments state with the new comment
-  //       setComments(
-  //         (prevComments) => prevComments && [newComment, ...prevComments]
-  //       );
-
-  //       return prev;
-  //     },
-  //   });
-  // };
+      newComment &&
+        oldComments &&
+        !newComment.parentId &&
+        setComments([newComment, ...oldComments]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newCommentData]);
 
   useEffect(() => {
     if (onceLoaded !== true && loading === false) {
@@ -134,40 +127,40 @@ const Comments: FC<CommentsProps> = ({
   const getMoreComments = async () => {
     if (comments) {
       if (userId === undefined && postId !== undefined) {
-        const newComments = await fetchMore({
+        const { data } = await fetchMore({
           variables: {
             skip: comments.length,
             take: 3,
           },
         });
 
-        if (newComments.data.queryPostComments.length === 0) {
+        if (data.queryPostComments.length === 0) {
           setHasMore(false);
           return null;
         }
 
         setComments((prevComments) => {
           return prevComments
-            ? [...prevComments, ...newComments.data.queryPostComments]
-            : newComments.data.queryPostComments;
+            ? [...prevComments, ...data.queryPostComments]
+            : data.queryPostComments;
         });
       } else if (userId !== undefined && postId === undefined) {
-        const newComments = await fetchMoreUserComments({
+        const { data } = await fetchMoreUserComments({
           variables: {
             skip: comments.length,
             take: 3,
           },
         });
 
-        if (newComments.data.queryUserComments.length === 0) {
+        if (data.queryUserComments.length === 0) {
           setHasMore(false);
           return null;
         }
 
         setComments((prevComments) => {
           return prevComments
-            ? [...prevComments, ...newComments.data.queryUserComments]
-            : newComments.data.queryUserComments;
+            ? [...prevComments, ...data.queryUserComments]
+            : data.queryUserComments;
         });
       }
     }
@@ -213,11 +206,12 @@ const Comments: FC<CommentsProps> = ({
           next={getMoreComments}
           hasMore={hasMore}
           loader={<p>Loading...</p>}
+          key={comments.map((item) => item.id).join("-")} // Unique key for comments array
         >
           <div className="container comments-flow">
             {comments.map((item, i: number) => (
               <CommentItem
-                key={`${item.id}__first__${i}`}
+                key={`${item.id}__first__${i}`} // Unique key for each comment item
                 session={session}
                 commentsData={item}
                 complainItems={complainItems}

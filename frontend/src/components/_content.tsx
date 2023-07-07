@@ -111,7 +111,6 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
 
   useEffect(() => {
     const userSubscribed = newUserData?.userUpdated.subscribedCategoryIDs;
-    console.log(userSubscribed, userUpdatedLoading !== true);
 
     if (userSubscribed && userUpdatedLoading !== true) {
       setUserSigned(userSubscribed.length > 0 ? true : false);

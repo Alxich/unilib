@@ -334,11 +334,7 @@ export interface CommentsSubscriptionData {
 }
 
 export interface CommentsSentSubscriptionData {
-  subscriptionData: {
-    data: {
-      commentSent: CommentPopulated;
-    };
-  };
+  commentsUpdated: CommentPopulated;
 }
 
 /**

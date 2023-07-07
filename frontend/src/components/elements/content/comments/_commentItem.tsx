@@ -38,7 +38,6 @@ const CommentItem: FC<CommentItemProps> = ({
   complainItems,
   postId,
   isUser,
-  subscribeToMoreComments,
 }: CommentItemProps) => {
   const [activeElem, setActiveElem] = useState(false);
   const [answerActive, setAnswerActive] = useState(false);
