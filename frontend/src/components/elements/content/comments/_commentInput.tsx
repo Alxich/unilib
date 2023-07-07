@@ -1,4 +1,12 @@
-import { FC, MouseEvent, useCallback, useEffect, useState } from "react";
+import {
+  Dispatch,
+  FC,
+  MouseEvent,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import classNames from "classnames";
 import {
   useEditor,
@@ -39,6 +47,7 @@ interface CommentInputProps {
   session?: Session | null;
   postId?: string;
   parentId?: string | null;
+  setAnswerShowActive?: Dispatch<SetStateAction<boolean>>;
   subscribeToMoreComments?: (postId: string) => void;
 }
 
@@ -47,6 +56,7 @@ const CommentInput: FC<CommentInputProps> = ({
   postId,
   parentId,
   subscribeToMoreComments,
+  setAnswerShowActive,
 }: CommentInputProps) => {
   const [content, setContent] = useState("");
 
@@ -133,6 +143,8 @@ const CommentInput: FC<CommentInputProps> = ({
         if (postId && subscribeToMoreComments) {
           subscribeToMoreComments(postId);
         }
+
+        setAnswerShowActive(true);
 
         toast.success("Comment was created!");
       }

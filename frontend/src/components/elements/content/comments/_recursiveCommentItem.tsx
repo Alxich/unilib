@@ -19,7 +19,7 @@ import {
 import Notification from "../../_notification";
 import CommentInput from "./_commentInput";
 
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import CommentOperations from "../../../../graphql/operations/comments";
 import {
   CommentInteractionArguments,
@@ -55,11 +55,10 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
   const [commentData, setCommentData] = useState<CommentPopulated>(
     commentsData as CommentPopulated
   );
-  const [commentRepliesData, setCommentReplies] = useState<
-    CommentPopulated[] | undefined
-  >();
 
   const { id, author, likes, text, createdAt, isDeleted } = commentData;
+
+  const [comments, setComments] = useState<CommentPopulated[] | undefined>();
 
   const returnMeContent = (str: string) => {
     const html = generateHTML(JSON.parse(str), [StarterKit, TiptapImage]);
@@ -73,41 +72,20 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
     CommentsByCommentData,
     QueryCommentsByCommentArgs
   >(CommentOperations.Queries.queryCommentsByComment, {
-    variables: { commentId: id, take: 4, skip: 0 },
+    variables: { commentId: id },
     // skip: answerShowActive !== true,
     onCompleted: (commentArray) => {
       if (commentArray.queryCommentsByComment) {
         // Update the component's state or trigger a refetch to update the data
-        setCommentReplies(commentArray.queryCommentsByComment);
+        setComments(commentArray.queryCommentsByComment);
       } else {
-        setCommentReplies([]);
+        setComments([]);
       }
     },
     onError: ({ message }) => {
       console.error(message);
     },
   });
-
-  // const subscribeToMoreComments = (postId: string) => {
-  //   subscribeToMore({
-  //     document: CommentOperations.Subscriptions.commentSent,
-  //     variables: {
-  //       postId,
-  //     },
-  //     updateQuery: (
-  //       prev,
-  //       { subscriptionData }: CommentsSentSubscriptionData
-  //     ) => {
-  //       if (!subscriptionData.data) return prev;
-
-  //       const newComment = subscriptionData.data.commentSent;
-
-  //       return Object.assign({}, prev, {
-  //         queryCommentsByComment: [newComment, ...prev.queryCommentsByComment],
-  //       });
-  //     },
-  //   });
-  // };
 
   const [addLikeToComment] = useMutation<
     { addLikeToComment: CommentPopulated },
@@ -262,6 +240,24 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
     }
   };
 
+  const { data: newCommentData } =
+    useSubscription<CommentsSentSubscriptionData>(
+      CommentOperations.Subscriptions.commentsUpdated
+    );
+
+  useEffect(() => {
+    if (newCommentData) {
+      const newComment = newCommentData.commentsUpdated;
+      const oldComments = comments;
+
+      newComment &&
+        oldComments &&
+        newComment.parentId === id &&
+        setComments([...oldComments, newComment]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newCommentData]);
+
   return (
     <div className="item">
       <div className="main-content">
@@ -366,14 +362,14 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
                 activeElem={activeElem}
               />
             </div>
-            {commentRepliesData != undefined && commentRepliesData && (
+            {comments != undefined && comments && (
               <div
                 className="answer-count"
                 onClick={() =>
                   setAnswerShowActive(answerShowActive ? false : true)
                 }
               >
-                <p>{commentRepliesData.length} Відповідь</p>
+                <p>{comments.length} Відповідь</p>
               </div>
             )}
           </div>
@@ -418,27 +414,25 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
             postId={postId}
             session={session}
             parentId={id}
+            setAnswerShowActive={setAnswerShowActive}
             // subscribeToMoreComments={subscribeToMoreComments}
           />
         )}
       </div>
 
-      {loading != true &&
-        commentRepliesData != undefined &&
-        commentRepliesData.length > 0 &&
-        answerShowActive && (
-          <div className="comments-to-item">
-            {commentRepliesData.map((item, i: any) => (
-              <RecursiveCommentItem
-                key={`${item.id}__recursive__${i}`}
-                session={session}
-                commentsData={item}
-                complainItems={complainItems}
-                postId={postId}
-              />
-            ))}
-          </div>
-        )}
+      {loading != true && answerShowActive && comments && (
+        <div className="comments-to-item">
+          {comments.map((item, i: number) => (
+            <RecursiveCommentItem
+              key={`${item.id}__recursive__${i}`}
+              session={session}
+              commentsData={item}
+              complainItems={complainItems}
+              postId={postId}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

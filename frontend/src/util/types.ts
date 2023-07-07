@@ -8,6 +8,7 @@ import {
   TagPopulated,
   UserPopulated,
 } from "../../../backend/src/util/types";
+import { User } from "@prisma/client";
 
 /**
  * Client configuration
@@ -286,8 +287,8 @@ export interface QueryUserCommentsArgs {
 
 export interface QueryCommentsByCommentArgs {
   commentId: string;
-  take: number;
-  skip: number;
+  take?: number;
+  skip?: number;
 }
 
 export interface CommentInteractionArguments {
@@ -336,6 +337,16 @@ export interface CommentsSubscriptionData {
 export interface CommentsSentSubscriptionData {
   commentsUpdated: CommentPopulated;
 }
+
+export type CommentReply = Comment & {
+  author: User;
+  post: {
+    id: string;
+    title: string;
+  };
+  parent: Comment | null;
+  replies: Comment[];
+};
 
 /**
  * Tags

@@ -25,8 +25,8 @@ const typeDefs = gql`
     queryUserComments(userId: String!, take: Int!, skip: Int!): [Comment]
     queryCommentsByComment(
       commentId: String!
-      take: Int!
-      skip: Int!
+      take: Int
+      skip: Int
     ): [Comment]
   }
 

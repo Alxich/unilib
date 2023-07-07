@@ -78,7 +78,7 @@ export default {
     `,
 
     queryCommentsByComment: gql`
-      query QueryCommentsByComment($commentId: String!, $skip: Int!, $take: Int!) {
+      query QueryCommentsByComment($commentId: String!, $skip: Int, $take: Int) {
         queryCommentsByComment(commentId: $commentId, skip: $skip, take: $take) {
           ${CommentFields}
           replies {

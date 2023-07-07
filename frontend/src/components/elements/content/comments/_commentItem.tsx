@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 
@@ -18,12 +18,14 @@ import {
 
 import Notification from "../../_notification";
 
-import { useMutation } from "@apollo/client";
+import { useMutation, useSubscription } from "@apollo/client";
 import CommentOperations from "../../../../graphql/operations/comments";
 import {
   Comment,
   CommentInteractionArguments,
   CommentItemProps,
+  CommentReply,
+  CommentsSentSubscriptionData,
 } from "../../../../util/types";
 import { formatTimeToPost } from "../../../../util/functions";
 import { CommentPopulated } from "../../../../../../backend/src/util/types";
@@ -50,6 +52,10 @@ const CommentItem: FC<CommentItemProps> = ({
 
   const { id, author, likes, text, createdAt, isDeleted, replies } =
     commentData;
+
+  const [comments, setComments] = useState<
+    Comment[] | CommentReply | undefined
+  >(replies as unknown as CommentReply[]);
 
   const returnMeContent = (str: string) => {
     const html = generateHTML(JSON.parse(str), [StarterKit, TiptapImage]);
@@ -212,6 +218,27 @@ const CommentItem: FC<CommentItemProps> = ({
     }
   };
 
+  const { data: newCommentData } =
+    useSubscription<CommentsSentSubscriptionData>(
+      CommentOperations.Subscriptions.commentsUpdated
+    );
+
+  useEffect(() => {
+    if (newCommentData) {
+      const newComment = newCommentData.commentsUpdated;
+      const oldComments = comments;
+
+      newComment &&
+        oldComments &&
+        newComment.parentId === id &&
+        setComments([
+          newComment as unknown as Comment,
+          ...(oldComments as CommentReply[]),
+        ]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newCommentData]);
+
   return (
     <div className="item">
       <div className="main-content">
@@ -366,19 +393,17 @@ const CommentItem: FC<CommentItemProps> = ({
           <CommentInput postId={postId} session={session} parentId={id} />
         )}
       </div>
-      {isUser !== true && replies != undefined && replies.length > 0 && (
+      {!isUser && replies !== undefined && replies.length > 0 && comments && (
         <div className="comments-to-item">
-          {replies.map((item, i: any) => {
-            return (
-              <RecursiveCommentItem
-                key={`${item.id}__first__${i}`}
-                session={session}
-                commentsData={item as unknown as Comment}
-                complainItems={complainItems}
-                postId={postId}
-              />
-            );
-          })}
+          {(comments as (CommentReply | Comment)[]).map((item, i: any) => (
+            <RecursiveCommentItem
+              key={`${item.id}__first__${i}`}
+              session={session}
+              commentsData={item as Comment}
+              complainItems={complainItems}
+              postId={postId}
+            />
+          ))}
         </div>
       )}
     </div>

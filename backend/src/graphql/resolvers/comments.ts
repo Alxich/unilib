@@ -156,8 +156,8 @@ const resolvers = {
           orderBy: {
             createdAt: "asc",
           },
-          skip,
-          take,
+          ...(skip && { skip }),
+          ...(take && { take }),
         });
 
         if (!comments) {
