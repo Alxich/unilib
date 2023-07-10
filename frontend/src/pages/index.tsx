@@ -15,8 +15,15 @@ import { ContentContext, UserContext } from "../components/_content";
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
-  const [period] = useContext(ContentContext);
+  const [period, setPeriod] = useContext(ContentContext);
   const [userSubscribed] = useContext(UserContext);
+  const [rangeValue, setRangeValue] = useState<
+    "today" | "week" | "month" | "year"
+  >("year");
+
+  useEffect(() => {
+    setPeriod(rangeValue);
+  }, [rangeValue, setPeriod]);
 
   // const [onceLoaded, setOnceLoaded] = useState(false);
   const [posts, setPosts] = useState<PostPopulated[] | undefined>();
@@ -97,7 +104,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <Flowrange />
+      <Flowrange rangeValue={rangeValue} setRangeValue={setRangeValue} />
       <Newestflow />
       <div className="posts-container container">
         {loading ? (
