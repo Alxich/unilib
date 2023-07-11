@@ -90,10 +90,10 @@ const resolvers = {
             parent: null,
           },
           orderBy: {
-            createdAt: "desc",
+            createdAt: "asc",
           },
-          skip,
-          take,
+          ...(skip && { skip }),
+          ...(take && { take }),
         });
 
         if (!comments) {
@@ -124,8 +124,8 @@ const resolvers = {
           orderBy: {
             createdAt: "asc",
           },
-          skip,
-          take,
+          ...(skip && { skip }),
+          ...(take && { take }),
         });
 
         if (!comments) {

@@ -1,12 +1,13 @@
 import { FC, useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 
 import { generateHTML } from "@tiptap/html";
 import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
+import ImageTipTap from "@tiptap/extension-image";
 
 import { formatTimeToPost } from "../../../util/functions";
 import { PostData, SubscribeCategoryArguments } from "../../../util/types";
@@ -49,7 +50,7 @@ const PostPage: FC<PostPageProps> = ({ data, session, postCommentsCount }) => {
   } = postData;
 
   const returnMeContent = (str: string) => {
-    const html = generateHTML(JSON.parse(str), [StarterKit, Image]);
+    const html = generateHTML(JSON.parse(str), [StarterKit, ImageTipTap]);
 
     return (
       <div className="text-block" dangerouslySetInnerHTML={{ __html: html }} />
@@ -216,7 +217,16 @@ const PostPage: FC<PostPageProps> = ({ data, session, postCommentsCount }) => {
     <div className="post post-wrapper">
       <div className="user-author">
         <div className="author">
-          <div className="user-icon"></div>
+          <Link href={`/author/${author.id}`} className="user-icon">
+            {author.image && (
+              <Image
+                src={author.image}
+                height={1080}
+                width={1920}
+                alt="author-background"
+              />
+            )}
+          </Link>
           <div className="author-names">
             <Link href={`/group/${category.id}`} className="group">
               <p>{category.title}</p>

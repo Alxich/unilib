@@ -253,8 +253,8 @@ export interface CommentCreateVariables {
 
 export interface QueryPostCommentsArgs {
   postId: string;
-  take: number;
-  skip: number;
+  take?: number;
+  skip?: number;
 }
 
 export interface QueryUserCommentsArgs {

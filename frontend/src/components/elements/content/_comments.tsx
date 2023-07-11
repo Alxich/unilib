@@ -54,7 +54,7 @@ const Comments: FC<CommentsProps> = ({
   } = useQuery<CommentsByPostData, QueryPostCommentsArgs>(
     CommentOperations.Queries.queryPostComments,
     {
-      variables: { postId: postId ? postId : "", take: 4, skip: 0 },
+      variables: { postId: postId ? postId : "" },
       skip: userId !== undefined || postId === undefined,
       onError: ({ message }) => {
         console.error(message);
@@ -93,7 +93,7 @@ const Comments: FC<CommentsProps> = ({
       newComment &&
         oldComments &&
         !newComment.parentId &&
-        setComments([newComment, ...oldComments]);
+        setComments([...oldComments, newComment]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newCommentData]);

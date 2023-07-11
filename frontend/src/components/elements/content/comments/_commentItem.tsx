@@ -54,7 +54,7 @@ const CommentItem: FC<CommentItemProps> = ({
     commentData;
 
   const [comments, setComments] = useState<
-    Comment[] | CommentReply | undefined
+    Comment[] | CommentReply[] | undefined
   >(replies as unknown as CommentReply[]);
 
   const returnMeContent = (str: string) => {
@@ -227,14 +227,14 @@ const CommentItem: FC<CommentItemProps> = ({
     if (newCommentData) {
       const newComment = newCommentData.commentsUpdated;
       const oldComments = comments;
-
-      newComment &&
-        oldComments &&
-        newComment.parentId === id &&
-        setComments([
-          newComment as unknown as Comment,
-          ...(oldComments as CommentReply[]),
-        ]);
+      oldComments
+        ? newComment &&
+          newComment.parentId === id &&
+          setComments([
+            ...(oldComments as CommentReply[]),
+            newComment as unknown as Comment,
+          ])
+        : setComments([newComment as unknown as Comment]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newCommentData]);
@@ -347,9 +347,9 @@ const CommentItem: FC<CommentItemProps> = ({
                 />
               </div>
             )}
-            {isUser !== true && replies != undefined && replies && (
+            {isUser !== true && comments != undefined && comments && (
               <div className="answer-count">
-                <p>{replies.length} Відповідь</p>
+                <p>{comments.length} Відповідь</p>
               </div>
             )}
           </div>
@@ -393,7 +393,7 @@ const CommentItem: FC<CommentItemProps> = ({
           <CommentInput postId={postId} session={session} parentId={id} />
         )}
       </div>
-      {!isUser && replies !== undefined && replies.length > 0 && comments && (
+      {!isUser && comments ? (
         <div className="comments-to-item">
           {(comments as (CommentReply | Comment)[]).map((item, i: any) => (
             <RecursiveCommentItem
@@ -403,8 +403,23 @@ const CommentItem: FC<CommentItemProps> = ({
               complainItems={complainItems}
               postId={postId}
             />
-          ))}
+          ))}{" "}
         </div>
+      ) : (
+        replies !== undefined &&
+        replies.length > 0 && (
+          <div className="comments-to-item">
+            {(comments as (CommentReply | Comment)[]).map((item, i: any) => (
+              <RecursiveCommentItem
+                key={`${item.id}__first__${i}`}
+                session={session}
+                commentsData={item as Comment}
+                complainItems={complainItems}
+                postId={postId}
+              />
+            ))}
+          </div>
+        )
       )}
     </div>
   );

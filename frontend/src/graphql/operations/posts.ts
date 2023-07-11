@@ -7,6 +7,7 @@ const PostFields = `
   author {
     id
     username
+    image
   }
   category {
     id

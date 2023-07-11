@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
 interface FlowrangeProps {
-  rangeValue: "today" | "week" | "month" | "year";
+  rangeValue: "year" | "today" | "week" | "month";
   setRangeValue: Dispatch<SetStateAction<"today" | "week" | "month" | "year">>;
 }
 
@@ -39,7 +39,7 @@ const Flowrange: FC<FlowrangeProps> = ({
 
   const year = new Date().getFullYear();
 
-  const [rangeText, setRangeText] = useState<string>(formatDate());
+  const [rangeText, setRangeText] = useState<string>(`${year} Рік`);
 
   return (
     <div className="flow-range open-more">
@@ -70,7 +70,7 @@ const Flowrange: FC<FlowrangeProps> = ({
               >
                 {year} Рік
               </p>
-            )}{" "}
+            )}
             {rangeValue !== "week" && (
               <p
                 onClick={() => {
@@ -80,7 +80,7 @@ const Flowrange: FC<FlowrangeProps> = ({
               >
                 Тиждень
               </p>
-            )}{" "}
+            )}
             {rangeValue !== "month" && (
               <p
                 onClick={() => {
@@ -90,11 +90,11 @@ const Flowrange: FC<FlowrangeProps> = ({
               >
                 Місяць
               </p>
-            )}{" "}
+            )}
             {rangeValue !== "today" && (
               <p
                 onClick={() => {
-                  setRangeText(formatDate());
+                  setRangeText(formatDate);
                   setRangeValue("today");
                 }}
               >

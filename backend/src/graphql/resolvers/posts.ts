@@ -391,6 +391,7 @@ export const postPopulated = Prisma.validator<Prisma.PostInclude>()({
     select: {
       id: true,
       username: true,
+      image: true,
     },
   },
   category: {

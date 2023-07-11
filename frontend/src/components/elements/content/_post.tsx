@@ -1,5 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+("next/image");
 import classNames from "classnames";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,7 +15,7 @@ import Button from "../_button";
 
 import { generateHTML } from "@tiptap/html";
 import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
+import ImageTitap from "@tiptap/extension-image";
 
 import { formatTimeToPost } from "../../../util/functions";
 
@@ -47,7 +49,9 @@ const Post: FC<PostPageProps> = ({
   isFailPage,
   children,
 }: PostPageProps) => {
-  const [userSubscribed, setUserSubscribed] = useState(false);
+  const [userSubscribed, setUserSubscribed] = useState<boolean | undefined>(
+    undefined
+  );
 
   const [postData, setPostData] = useState<PostPopulated>(
     data as PostPopulated
@@ -97,7 +101,7 @@ const Post: FC<PostPageProps> = ({
     postData as PostPopulated;
 
   const returnMeContent = (str: string) => {
-    const html = generateHTML(JSON.parse(str), [StarterKit, Image]);
+    const html = generateHTML(JSON.parse(str), [StarterKit, ImageTitap]);
 
     return (
       <Link
@@ -254,7 +258,16 @@ const Post: FC<PostPageProps> = ({
     >
       <div className="user-author">
         <div className="author">
-          <Link href={"/group/1"} className="user-icon"></Link>
+          <Link href={"/group/1"} className="user-icon">
+            {author.image && (
+              <Image
+                src={author.image}
+                height={1080}
+                width={1920}
+                alt="author-background"
+              />
+            )}
+          </Link>
           <div className="author-names">
             <Link href={`/group/${category.id}`} className="group">
               <p>{category.title}</p>

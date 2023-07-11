@@ -21,13 +21,9 @@ const typeDefs = gql`
   type Query {
     queryComment(id: String): Comment
     queryComments: [Comment]
-    queryPostComments(postId: String!, take: Int!, skip: Int!): [Comment]
-    queryUserComments(userId: String!, take: Int!, skip: Int!): [Comment]
-    queryCommentsByComment(
-      commentId: String!
-      take: Int
-      skip: Int
-    ): [Comment]
+    queryPostComments(postId: String!, take: Int, skip: Int): [Comment]
+    queryUserComments(userId: String!, take: Int, skip: Int): [Comment]
+    queryCommentsByComment(commentId: String!, take: Int, skip: Int): [Comment]
   }
 
   type Mutation {

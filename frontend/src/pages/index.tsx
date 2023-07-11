@@ -18,7 +18,7 @@ const Home: NextPage = () => {
   const [period, setPeriod] = useContext(ContentContext);
   const [userSubscribed] = useContext(UserContext);
   const [rangeValue, setRangeValue] = useState<
-    "today" | "week" | "month" | "year"
+    "year" | "today" | "week" | "month"
   >("year");
 
   useEffect(() => {
