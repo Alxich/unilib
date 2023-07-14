@@ -53,9 +53,18 @@ const Post: FC<NextPage> = () => {
     <div className="posts-container container">
       {postData ? (
         <>
-          <PostPage data={postData} session={session} postCommentsCount={postCommentsCount} />
+          <PostPage
+            data={postData}
+            session={session}
+            postCommentsCount={postCommentsCount}
+          />
           {session && (
-            <Comments session={session} postId={postData.queryPost.id} setPostCommentsCount={setPostCommentsCount} />
+            <Comments
+              session={session}
+              postId={postData.queryPost.id}
+              setPostCommentsCount={setPostCommentsCount}
+              userId={session.user.id}
+            />
           )}
         </>
       ) : (

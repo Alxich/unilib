@@ -34,12 +34,17 @@ const Author: FC<NextPage> = () => {
       skip: 0,
       take: 3,
     },
+    onCompleted(data) {
+      setPosts([]);
+      setPosts(data.queryPostsByCat);
+    },
     onError: ({ message }) => {
       toast.error(message);
     },
   });
 
   useEffect(() => {
+    setPosts([]);
     // Call the queryPostsByCat function whenever the period changes
     fetchMore({
       variables: {
@@ -52,16 +57,14 @@ const Author: FC<NextPage> = () => {
     });
   }, [period, id, fetchMore]);
 
-  const [onceLoaded, setOnceLoaded] = useState(false);
   const [posts, setPosts] = useState<PostPopulated[] | undefined>();
 
   useEffect(() => {
-    if (onceLoaded != true && loading == false) {
+    if (loading == false) {
       data?.queryPostsByCat && setPosts(data.queryPostsByCat);
-      setOnceLoaded(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, onceLoaded, setOnceLoaded]);
+  }, [loading]);
 
   const [hasMore, setHasMore] = useState(true);
 
@@ -107,9 +110,10 @@ const Author: FC<NextPage> = () => {
                 next={getMorePost}
                 hasMore={hasMore}
                 loader={<h3> Loading...</h3>}
+                key={posts.map((item) => item.id).join("-")} // Unique key for posts array
                 endMessage={
                   <p>
-                    Вот і все. Ви переглянули весь інтернет і може відочити{" "}
+                    Вот і все. Ви переглянули весь інтернет і можете відпочити{" "}
                     {":)"}
                   </p>
                 }

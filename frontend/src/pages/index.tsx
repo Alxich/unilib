@@ -116,9 +116,10 @@ const Home: NextPage = () => {
               next={getMorePost}
               hasMore={hasMore}
               loader={<h3> Loading...</h3>}
+              key={posts.map((item) => item.id).join("-")} // Unique key for posts array
               endMessage={
                 <p>
-                  Вот і все. Ви переглянули весь інтернет і може відочити {":)"}
+                  Вот і все. Ви переглянули весь інтернет і можете відпочити {":)"}
                 </p>
               }
             >
