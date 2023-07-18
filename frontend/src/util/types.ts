@@ -372,7 +372,7 @@ export interface TagData {
 export interface TagDataById {}
 
 export interface TagsData {
-  tags: Array<TagPopulated>;
+  queryTags: Array<TagPopulated>;
 }
 
 /**

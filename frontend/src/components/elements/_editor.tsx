@@ -1,4 +1,4 @@
-import { FC, useState, useCallback } from "react";
+import { FC, useState, useCallback, Dispatch, SetStateAction } from "react";
 import classNames from "classnames";
 
 import { BubbleMenu, EditorContent, FloatingMenu } from "@tiptap/react";
@@ -16,13 +16,26 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 
+import { Session } from "next-auth";
+
 import { Button } from "../elements";
+import TagEdit from "./editor/_tagEdit";
+
+import { TagArguments } from "../../util/types";
 
 interface EditorProps {
   editor: any;
+  session: Session | null;
+  tags: TagArguments[] | undefined;
+  setTags: Dispatch<SetStateAction<TagArguments[] | undefined>>;
 }
 
-const EditorBlock: FC<EditorProps> = ({ editor }: EditorProps) => {
+const EditorBlock: FC<EditorProps> = ({
+  editor,
+  session,
+  tags,
+  setTags,
+}: EditorProps) => {
   const [openImagePop, setOpenImagePop] = useState(false);
   const [imagePopText, setImagePopText] = useState("");
 
@@ -197,6 +210,7 @@ const EditorBlock: FC<EditorProps> = ({ editor }: EditorProps) => {
         </div>
       </div>
       <EditorContent editor={editor} />
+      <TagEdit session={session} tags={tags} setTags={setTags} />
     </>
   );
 };

@@ -16,7 +16,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    createTag(id: String, title: String): Boolean
+    createTag(id: String, title: String): Tag
   }
 `;
 

@@ -148,6 +148,12 @@ form {
     margin-bottom: $input_gap;
     transition: all $transition_normal;
 
+    &.tagwritter {
+      background-color: $tag_writter_input;
+      border-bottom-color: $tag_writter_input_over;
+      color: $writter-color;
+    }
+
     &.invalid {
       border-color: $error;
     }

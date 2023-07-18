@@ -5,7 +5,7 @@
   width: 100%;
   top: $header_height;
   padding-top: 35px;
-  padding-bottom: 120px;
+  padding-bottom: 95px;
   opacity: 0;
   visibility: hidden;
   transition: all $transition_normal;
@@ -14,6 +14,10 @@
     opacity: 1;
     visibility: visible;
     overflow-y: scroll;
+  }
+
+  .container {
+    justify-content: flex-start;
   }
 
   .head {
@@ -101,12 +105,19 @@
 
   .content {
     max-width: 716px;
+    height: 100%;
     width: 100%;
     z-index: 1;
 
     form {
       position: relative;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       height: 100%;
     }
   }
+
+  @import "./writter/tag-editor";
 }

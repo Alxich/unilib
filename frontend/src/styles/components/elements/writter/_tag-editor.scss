@@ -1,0 +1,56 @@
+#tag-editor {
+  display: block;
+  width: 100%;
+
+  margin-top: auto;
+
+  div {
+    width: 100%;
+
+    &.add-tag {
+      display: flex;
+      justify-content: center;
+      flex-direction: row;
+      align-items: center;
+      margin-bottom: 15px;
+
+      input {
+        margin-bottom: 0;
+      }
+
+      button {
+        width: 20%;
+        margin-left: 15px;
+      }
+    }
+  }
+
+  .title > * {
+    font-weight: 500;
+    color: $writter-color;
+    margin-top: 0;
+  }
+
+  .tags {
+    border-bottom: 1px solid $tag_writter_input_over;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+
+  .available-tags {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  button {
+    height: 40px;
+    width: auto;
+
+    &:not(:nth-child(2)) {
+      margin-left: 6px;
+    }
+  }
+}

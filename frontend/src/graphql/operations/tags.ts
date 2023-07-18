@@ -6,6 +6,7 @@ export default {
     queryTags: gql`
       query queryTags {
         queryTags {
+          id
           title
         }
       }
@@ -14,6 +15,7 @@ export default {
     queryTag: gql`
       query queryTag($id: String) {
         queryTag(id: $id) {
+          id
           title
         }
       }
@@ -22,7 +24,10 @@ export default {
   Mutations: {
     createTag: gql`
       mutation createTag($title: String) {
-        createTag(title: $title)
+        createTag(title: $title) {
+          id
+          title
+        }
       }
     `,
   },

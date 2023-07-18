@@ -8,7 +8,7 @@ import { useMutation } from "@apollo/client";
 import { Session } from "next-auth";
 
 import PostsOperations from "../graphql/operations/posts";
-import { CreatePostArguments } from "../util/types";
+import { CreatePostArguments, TagArguments } from "../util/types";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -41,6 +41,7 @@ const WritterPost: FC<IWritterPostProps> = ({
   const [content, setContent] = useState(
     `<p>Вибиріть слово щоб його редагувати.</p>`
   );
+  const [tags, setTags] = useState<TagArguments[] | undefined>([]);
 
   // Initialize tiptap editor
 
@@ -142,7 +143,7 @@ const WritterPost: FC<IWritterPostProps> = ({
         content: JSON.stringify(content),
         authorId: userID,
         categoryId: filterText.id,
-        tagsId: [{ id: "647f4670285771952d403d26" }],
+        tagsId: tags,
       };
 
       const { data, errors } = await createPost({
@@ -172,7 +173,7 @@ const WritterPost: FC<IWritterPostProps> = ({
 
   return (
     <div id="writter" className={classNames({ active: writterActive })}>
-      <div className="container full-width">
+      <div className="container full-width full-height">
         <div className="head">
           <div
             className="fafont-icon big interactive cross"
@@ -265,7 +266,12 @@ const WritterPost: FC<IWritterPostProps> = ({
               value={capitalize(titleText)}
               onChange={(e) => setTitleText(e.target.value)}
             />
-            <EditorBlock editor={editor} />
+            <EditorBlock
+              editor={editor}
+              session={session}
+              tags={tags}
+              setTags={setTags}
+            />
           </form>
         </div>
       </div>

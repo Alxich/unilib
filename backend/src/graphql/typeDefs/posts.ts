@@ -53,6 +53,7 @@ const typeDefs = gql`
 
   input TagInput {
     id: String
+    title: String
   }
 
   type Mutation {

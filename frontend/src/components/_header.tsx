@@ -24,7 +24,6 @@ import { ObjectId } from "bson";
 import toast from "react-hot-toast";
 
 import CategoriesOperations from "../graphql/operations/categories";
-import TagsOperations from "../graphql/operations/tags";
 import { CreateCategoryArguments, CreateTagArguments } from "../util/types";
 
 interface HeaderProps {
@@ -135,50 +134,6 @@ const Header: FC<HeaderProps> = ({
     }
   };
 
-  const [createTag] = useMutation<
-  { createTag: boolean }, 
-  CreateTagArguments>(TagsOperations.Mutations.createTag);
-
-  const onCreateTag = async () => {
-    if (session == null) {
-      console.error("onCreateCategory error: Not Authorized Session");
-
-      return false;
-    }
-
-    try {
-      const { username } = session.user;
-      const newId = new ObjectId().toString();
-
-      // Check if user exist to make post secure
-      if (!username) {
-        throw new Error("Not authorized user");
-      }
-
-      const tag = {
-        id: newId,
-        title: "gamedevelop",
-      };
-
-      const { data, errors } = await createTag({
-        variables: {
-          ...tag,
-        },
-      });
-
-      if (!data?.createTag || errors) {
-        throw new Error("Error creating tag");
-      }
-
-      if (!errors) {
-        toast.success("Tag was created!");
-      }
-    } catch (error: any) {
-      console.error("onCreateTag error", error);
-      toast.error(error?.message);
-    }
-  };
-
   return (
     <header
       className={classNames("masthead", {
@@ -223,16 +178,6 @@ const Header: FC<HeaderProps> = ({
             disabled={!session?.user}
           >
             {"Cтворити категорію"}
-          </Button>
-          <Button
-            iconIncluded
-            iconName={faPlus}
-            filled
-            big
-            onClick={() => onCreateTag()}
-            disabled={!session?.user}
-          >
-            {"Cтворити тег"}
           </Button>
         </div>
         <div

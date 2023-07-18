@@ -133,6 +133,15 @@
     }
 
     .hashtags {
+      display: flex;
+      justify-content: flex-start;
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+      max-width: 100%;
+      width: 100%;
+
+      a,
       p {
         transition: all $transition_normal;
         cursor: pointer;
@@ -140,10 +149,10 @@
         &:hover {
           color: $active_elem;
         }
-      }
 
-      p:not(:last-child) {
-        margin-right: $post_hash_gap;
+        &:not(:last-child) {
+          margin-right: $post_hash_gap;
+        }
       }
     }
 
