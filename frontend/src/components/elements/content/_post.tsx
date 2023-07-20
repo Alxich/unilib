@@ -291,7 +291,7 @@ const Post: FC<PostPageProps> = ({
             <h3>{title}</h3>
           </Link>
         </div>
-        {returnMeContent(content)}
+        {content !== undefined && returnMeContent(content)}
       </div>
       <div className="interactions">
         <div className="lt-side">

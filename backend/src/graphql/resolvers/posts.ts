@@ -89,17 +89,14 @@ const resolvers = {
               : {
                   views: "desc",
                 },
-          ...(popular !== true &&
-            period && {
-              where: {
-                tags: {
-                  some: {
-                    id: tagId,
-                  },
-                },
+          ...(period && {
+            where: {
+              tagIDs: { equals: tagId },
+              ...(popular !== true && {
                 createdAt: { gte: startDate, lt: endDate },
-              },
-            }),
+              }),
+            },
+          }),
           skip, // Skip post to query (not copy the result)
           take, // First 10 posts
         });
@@ -138,15 +135,16 @@ const resolvers = {
               : {
                   views: "desc",
                 },
-          ...(popular !== true &&
-            period && {
-              where: {
-                category: {
-                  id: catId,
-                },
-                createdAt: { gte: startDate, lt: endDate },
+          ...(period && {
+            where: {
+              category: {
+                id: catId,
               },
-            }),
+              ...(popular !== true && {
+                createdAt: { gte: startDate, lt: endDate },
+              }),
+            },
+          }),
           skip, // Skip post to query (not copy the result)
           take, // First 10 posts
         });

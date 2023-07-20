@@ -159,6 +159,7 @@ const WritterPost: FC<IWritterPostProps> = ({
       if (!errors) {
         setContent("");
         setTitleText("");
+        setTags([]);
         editor?.commands.setContent(
           `<p>Вибиріть слово щоб його редагувати.</p>`
         );

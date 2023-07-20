@@ -1,16 +1,27 @@
 .open-more {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   flex-direction: row;
   align-items: center;
+  width: 100%;
+  padding-top: 8px;
 
   & > p {
     margin: 0 8px 0 0;
+  }
+
+  & > a {
+    margin-left: auto;
+  }
+
+  .fafont-icon {
+    margin-right: auto;
   }
 }
 
 .changer {
   position: relative;
+  width: auto;
 
   & > p {
     color: $active_elem;

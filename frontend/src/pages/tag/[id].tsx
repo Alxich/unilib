@@ -22,6 +22,7 @@ const TagPage: FC<NextPage> = () => {
 
   // Used as sting because knew that it will only be variable not array
   const id = router.query.id as string;
+  const [posts, setPosts] = useState<PostPopulated[] | undefined>();
 
   const { data, loading, fetchMore } = useQuery<
     PostsByTagsData,
@@ -34,21 +35,35 @@ const TagPage: FC<NextPage> = () => {
       skip: 0,
       take: 3,
     },
+    onCompleted(data) {
+      setPosts(data.queryPostsByTag);
+    },
     onError: ({ message }) => {
       toast.error(message);
     },
   });
 
-  const [onceLoaded, setOnceLoaded] = useState(false);
-  const [posts, setPosts] = useState<PostPopulated[] | undefined>();
-
   useEffect(() => {
-    if (onceLoaded != true && loading == false) {
-      data?.queryPostsByTag && setPosts(data.queryPostsByTag);
-      setOnceLoaded(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, onceLoaded, setOnceLoaded]);
+    // Call the queryPostsByTag function whenever the period changes
+    const updatedPostsByQuery = async (period: string) => {
+      setPosts([]);
+      const newData = await fetchMore({
+        variables: {
+          period: period !== "popular" ? period : "today",
+          popular: period === "popular", // Set the popular variable based on the selected period
+          tagId: id,
+          skip: 0,
+          take: 3,
+        },
+      });
+
+      if (newData.data.queryPostsByTag) {
+        setPosts(newData.data.queryPostsByTag);
+      }
+    };
+
+    updatedPostsByQuery(period);
+  }, [fetchMore, id, period]);
 
   const [hasMore, setHasMore] = useState(true);
 
