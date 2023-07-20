@@ -43,6 +43,11 @@
     flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
+
+    button {
+      background: rgba(82, 82, 82, 0.129);
+      color: $outbox_bg;
+    }
   }
 
   button {

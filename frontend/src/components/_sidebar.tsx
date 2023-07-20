@@ -5,12 +5,15 @@ import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { NavElement } from "./elements";
 import { CategoryPopulated } from "../../../backend/src/util/types";
 import { ContentViewChanger, ContentViews } from "../util/types";
+import Link from "next/link";
 
 interface SidebarProps {
   categories?: Array<ContentViewChanger>;
   fandoms?: Array<CategoryPopulated>;
   userSigned: boolean;
   setPeriod: Dispatch<SetStateAction<ContentViews>>;
+  setBannerActive: Dispatch<SetStateAction<boolean>>;
+  setBagReportActive: Dispatch<SetStateAction<boolean>>;
 }
 
 const Sidebar: FC<SidebarProps> = ({
@@ -18,10 +21,24 @@ const Sidebar: FC<SidebarProps> = ({
   fandoms,
   userSigned,
   setPeriod,
+  setBannerActive,
+  setBagReportActive,
 }: SidebarProps) => {
   const fandomsLengthBefore = 5;
+  const [themeOption, setThemeOption] = useState(false); // False - black / True - white theme
   const [openAllFandom, setOpenAllFandom] = useState(false);
   const [openAllThemes, setOpenAllThemes] = useState(false);
+
+  useEffect(() => {
+    // True - white / false - black
+    if (themeOption) {
+      document.body.classList.add("white-themed");
+      document.body.classList.remove("black-themed");
+    } else {
+      document.body.classList.add("black-themed");
+      document.body.classList.remove("white-themed");
+    }
+  }, [themeOption]);
 
   return (
     <div id="sidebar" className="container full-height flex-left to-left">
@@ -98,7 +115,7 @@ const Sidebar: FC<SidebarProps> = ({
           </div>
           <div className="changer">
             <p onClick={() => setOpenAllThemes(openAllThemes ? false : true)}>
-              Темна
+              {themeOption ? "Світла" : "Темна"}
             </p>
             <div
               className={classNames(
@@ -110,20 +127,32 @@ const Sidebar: FC<SidebarProps> = ({
             >
               <div className="triangle"></div>
               <div className="list container flex-left width-auto">
-                <p>Світла</p>
-                <p>Темна</p>
+                <p
+                  onClick={() => {
+                    setThemeOption(themeOption ? false : true);
+                    setOpenAllThemes(false);
+                  }}
+                >
+                  {themeOption ? "Темна" : "Світла"}
+                </p>
               </div>
             </div>
           </div>
         </div>
-        <div className="item">
+        <div
+          className="item"
+          onClick={() => {
+            setBagReportActive(true);
+            setBannerActive(true);
+          }}
+        >
           <p>Повідомити про баг</p>
         </div>
         <div className="item">
           <p>Замовити рекламу</p>
         </div>
         <div className="item">
-          <p>Про проект</p>
+          <Link href={"/post/about"}>Про проект</Link>
           <p>Правила</p>
         </div>
       </div>

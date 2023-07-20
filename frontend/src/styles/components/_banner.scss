@@ -55,7 +55,7 @@
       margin-bottom: $banner_logo_mrg;
 
       p {
-       @include logo($font_size: $h1_font_size);
+        @include logo($font_size: $h1_font_size);
       }
     }
 
@@ -64,12 +64,23 @@
       margin: 0;
     }
 
+    .report-form,
     .login-form {
       max-width: $banner_log_width;
       padding-top: $banner_log_pad_top;
+      padding-bottom: 20px;
 
       input {
         background-color: $overhigh_bg;
+      }
+    }
+
+    .report-form {
+      max-width: 380px;
+      textarea {
+        background-color: $color;
+        min-height: 220px;
+        color: $writter-color;
       }
     }
 

@@ -43,6 +43,7 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   const [bannerActive, setBannerActive] = useState(false);
   const [writterActive, setWritterActive] = useState(false);
   const [userSigned, setUserSigned] = useState(false);
+  const [bagReportActive, setBagReportActive] = useState(false);
   const [period, setPeriod] = useState<ContentViews>("popular");
   const [userSubscribed, setUserSubscribed] = useState<string[] | undefined>();
 
@@ -161,6 +162,8 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
                     fandoms={categories?.queryCategories}
                     setPeriod={setPeriod}
                     userSigned={userSigned}
+                    setBannerActive={setBannerActive}
+                    setBagReportActive={setBagReportActive}
                   />
                   <div id="content" className="container">
                     <ContentContext.Provider value={[period, setPeriod]}>
@@ -182,6 +185,7 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
         bannerActive={bannerActive}
         setBannerActive={setBannerActive}
         session={session}
+        bagReportActive={bagReportActive}
       />
       {session && (
         <WritterPost

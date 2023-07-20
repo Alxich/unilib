@@ -7,18 +7,25 @@ import { CreateUsernameVariables } from "../util/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
-import { Registration, UsualIntro, UsernameCreate } from "./elements/banner";
+import {
+  Registration,
+  UsualIntro,
+  UsernameCreate,
+  BagReport,
+} from "./elements/banner";
 
 interface BannerProps {
   session: Session | null;
   bannerActive: boolean;
   setBannerActive: any;
+  bagReportActive: boolean;
 }
 
 const Banner: FC<BannerProps> = ({
   bannerActive,
   setBannerActive,
   session,
+  bagReportActive,
 }: BannerProps) => {
   const [regClicked, setRegClicked] = useState(false);
   const [userData, setUserData] = useState<CreateUsernameVariables | undefined>(
@@ -75,7 +82,9 @@ const Banner: FC<BannerProps> = ({
         <div className="logo">
           <p>unilib</p>
         </div>
-        {session?.user && !userData?.username ? (
+        {bagReportActive ? (
+          <BagReport />
+        ) : session?.user && !userData?.username ? (
           <UsernameCreate setBannerActive={setBannerActive} />
         ) : regClicked ? (
           <Registration setRegClicked={setRegClicked} />
