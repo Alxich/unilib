@@ -68,6 +68,8 @@ export interface SearchedUserById {
   aboutMe: string;
   image: string;
   banner: string;
+  email: string;
+  createdAt: Date;
   subscribedCategoryIDs: [string];
   followedBy?: Array<Followers>;
 }
@@ -436,4 +438,5 @@ export interface AuthorInfoTypes {
   aboutMe?: string;
   image?: string;
   subscribedCategoryIDs?: [string];
+  createdAt: Date
 }

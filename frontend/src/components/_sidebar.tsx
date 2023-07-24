@@ -153,7 +153,7 @@ const Sidebar: FC<SidebarProps> = ({
         </div>
         <div className="item">
           <Link href={"/post/about"}>Про проект</Link>
-          <p>Правила</p>
+          <Link href={"/post/rules"}>Правила</Link>
         </div>
       </div>
     </div>

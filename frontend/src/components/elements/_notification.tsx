@@ -4,12 +4,14 @@ import { signOut } from "next-auth/react";
 
 import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Link from "next/link";
 
 interface NotificationProps {
   username?: string | null;
   items: {
     title: string;
     text?: string;
+    link?: string;
     icon?: any;
     type?: string;
   }[];
@@ -66,9 +68,49 @@ const Notification: FC<NotificationProps> = ({
         </div>
         <div className="main container flex-left">
           {items?.map((item, i) => {
-            const { title, text, icon, type: itemType } = item;
+            const { link, title, text, icon, type: itemType } = item;
 
-            return (
+            return link ? (
+              <Link href={link}
+                className="item container flex-left flex-row"
+                key={`${item}__${i}`}
+                onClick={() => {
+                  itemType === "signOut" && signOut();
+                }}
+              >
+                {type != "complain" && type != "user" && (
+                  <div className="user-ico"></div>
+                )}
+                <div
+                  className={classNames("content container", {
+                    "flex-row": type === "user",
+                    "width-auto": type !== "user",
+                  })}
+                >
+                  {icon && (
+                    <div className="fafont-icon interactive">
+                      <FontAwesomeIcon
+                        icon={icon}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          color: "inherit",
+                        }}
+                      />
+                    </div>
+                  )}
+                  {type !== "user" && (
+                    <div className="title">
+                      <p>{title}</p>
+                    </div>
+                  )}
+
+                  <div className="text">
+                    <p>{type === "user" ? title : text}</p>
+                  </div>
+                </div>
+              </Link>
+            ): (
               <div
                 className="item container flex-left flex-row"
                 key={`${item}__${i}`}

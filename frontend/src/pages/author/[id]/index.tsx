@@ -5,12 +5,12 @@ import { toast } from "react-hot-toast";
 
 import { useSession } from "next-auth/react";
 
-import { AuthorInfo, Comments, MoreAuthor, Post } from "../../components";
+import { AuthorInfo, Comments, MoreAuthor, Post } from "../../../components";
 
 import { useQuery } from "@apollo/client";
-import PostOperations from "../../graphql/operations/posts";
-import { PostsByAuthorData, PostsAuthorVariables } from "../../util/types";
-import { PostPopulated } from "../../../../backend/src/util/types";
+import PostOperations from "../../../graphql/operations/posts";
+import { PostsByAuthorData, PostsAuthorVariables } from "../../../util/types";
+import { PostPopulated } from "../../../../../backend/src/util/types";
 
 import InfiniteScroll from "react-infinite-scroll-component";
 

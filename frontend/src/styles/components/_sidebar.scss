@@ -97,6 +97,7 @@
         margin-bottom: $sdbar_add_text_gap;
       }
 
+      a,
       p {
         line-height: 1.2;
         transition: all $transition_normal;
@@ -121,7 +122,8 @@
         }
       }
 
-      .changer .wrapper .list p {
+      .changer .wrapper .list p,
+      .changer .wrapper .list a {
         margin-left: 0;
       }
     }

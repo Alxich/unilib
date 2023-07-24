@@ -34,9 +34,12 @@ import CategoryOperations from "../../../graphql/operations/categories";
 import TagOperations from "../../../graphql/operations/tags";
 import UserOperations from "../../../graphql/operations/users";
 import { CategoryPopulated } from "../../../../../backend/src/util/types";
+import Button from "../_button";
+import { formatTimeToPost } from "../../../util/functions";
 
 interface AuthorInfoProps {
   type: "group" | "tag" | "author";
+  auhtorEdit?: boolean;
   id: string;
   session: Session | null;
   period: string;
@@ -57,6 +60,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
   setShowMore,
   showComments,
   setShowComments,
+  auhtorEdit,
 }) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [userSubscribed, setUserSubscribed] = useState(false);
@@ -345,6 +349,28 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
     { key: "year", text: "Рік" },
   ];
 
+  /**
+   * Edit variables for creating edit page
+   */
+
+  const [username, setUsername] = useState<string>("");
+  const [desc, setDesc] = useState<string>("");
+  const [image, setImage] = useState<string>("");
+  const [banner, setBanner] = useState<string>("");
+  const [currentPassword, setCurrentPassword] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
+
+  useEffect(() => {
+    if (blockContent) {
+      const { username, desc, banner, image } = blockContent;
+
+      username && setUsername(username);
+      desc && setDesc(desc);
+      image && setImage(image);
+      banner && setBanner(banner);
+    }
+  }, [blockContent]);
+
   return categoryLoading ? (
     <div>Loading</div>
   ) : (
@@ -389,6 +415,10 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
               ? blockContent.username
               : "Нова категорія"}
           </h2>
+
+          {auhtorEdit && blockContent?.createdAt && (
+            <p>Разом з нами від {formatTimeToPost(blockContent.createdAt)}</p>
+          )}
         </div>
 
         {blockContent &&
@@ -461,115 +491,197 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
             </div>
           </>
         )}
-        <div className="actions">
-          <div className="list-of-actions">
-            <div
-              className={classNames("item", {
-                active: showMore !== true,
-              })}
-              onClick={() => {
-                if (setShowMore && setShowComments) {
-                  setShowMore(false);
-                  setShowComments(false);
-                }
-              }}
-            >
-              <p>Записів</p>
-            </div>
-            {!currentUser && type !== "author" && (
+        {auhtorEdit !== true ? (
+          <div className="actions">
+            <div className="list-of-actions">
               <div
-                className="item"
+                className={classNames("item", {
+                  active: showMore !== true,
+                })}
                 onClick={() => {
-                  userSubscribed === true
-                    ? onSubscribeCategory(false)
-                    : onSubscribeCategory(true);
+                  if (setShowMore && setShowComments) {
+                    setShowMore(false);
+                    setShowComments(false);
+                  }
                 }}
               >
-                <p>
-                  {userSubscribed === true ? "Відписатися" : "Відстежувати"}
-                </p>
+                <p>Записів</p>
               </div>
-            )}
-            {currentUser?.searchUser.id !== session?.user.id &&
-              type === "author" &&
-              session && (
+              {!currentUser && type !== "author" && (
                 <div
                   className="item"
                   onClick={() => {
-                    userSubscribed != true
-                      ? onFollowUser(true)
-                      : onFollowUser(false);
+                    userSubscribed === true
+                      ? onSubscribeCategory(false)
+                      : onSubscribeCategory(true);
                   }}
                 >
                   <p>
-                    {userSubscribed != true ? "Відстежувати" : "Відписатися"}
+                    {userSubscribed === true ? "Відписатися" : "Відстежувати"}
                   </p>
                 </div>
               )}
-            {type === "author" && (
-              <>
-                <div
-                  className={classNames("item", {
-                    active: showComments !== false,
-                  })}
-                  onClick={() => setShowComments && setShowComments(true)}
-                >
-                  <p>Коментарі</p>
-                </div>
+              {currentUser?.searchUser.id !== session?.user.id &&
+                type === "author" &&
+                session && (
+                  <div
+                    className="item"
+                    onClick={() => {
+                      userSubscribed != true
+                        ? onFollowUser(true)
+                        : onFollowUser(false);
+                    }}
+                  >
+                    <p>
+                      {userSubscribed != true ? "Відстежувати" : "Відписатися"}
+                    </p>
+                  </div>
+                )}
+              {type === "author" && (
+                <>
+                  <div
+                    className={classNames("item", {
+                      active: showComments !== false,
+                    })}
+                    onClick={() => setShowComments && setShowComments(true)}
+                  >
+                    <p>Коментарі</p>
+                  </div>
 
-                <div
-                  className={classNames("item", {
-                    active: showMore !== false,
-                  })}
-                  onClick={() => {
-                    if (setShowMore && setShowComments) {
-                      setShowMore(true);
-                      setShowComments(false);
-                    }
-                  }}
-                >
-                  <p>Більше</p>
+                  <div
+                    className={classNames("item", {
+                      active: showMore !== false,
+                    })}
+                    onClick={() => {
+                      if (setShowMore && setShowComments) {
+                        setShowMore(true);
+                        setShowComments(false);
+                      }
+                    }}
+                  >
+                    <p>Більше</p>
+                  </div>
+                </>
+              )}
+            </div>
+            {showMore !== true && (
+              <div className="changer filter open-more">
+                <div className="fafont-icon interactive">
+                  <FontAwesomeIcon
+                    onClick={() => setOpenFilter(openFilter ? false : true)}
+                    icon={faAlignCenter}
+                    style={{ width: "100%", height: "100%", color: "inherit" }}
+                  />
                 </div>
-              </>
+                <div
+                  className={classNames(
+                    "wrapper container flex-right width-auto",
+                    {
+                      active: openFilter,
+                    }
+                  )}
+                >
+                  <div className="triangle"></div>
+                  <div className="list container flex-left width-auto">
+                    {filterOptions.map(
+                      (item: { key: string; text: string }, i: number) => (
+                        <p
+                          key={`${item}__${i}`}
+                          className={classNames({
+                            active: period === item.key,
+                          })}
+                          onClick={() => {
+                            period !== item.key && setPeriod(item.key);
+                          }}
+                        >
+                          {item.text}
+                        </p>
+                      )
+                    )}
+                  </div>
+                </div>
+              </div>
             )}
           </div>
-          {showMore !== true && (
-            <div className="changer filter open-more">
-              <div className="fafont-icon interactive">
-                <FontAwesomeIcon
-                  onClick={() => setOpenFilter(openFilter ? false : true)}
-                  icon={faAlignCenter}
-                  style={{ width: "100%", height: "100%", color: "inherit" }}
+        ) : (
+          <div className="edit">
+            <div className="title">
+              <h5>Настройки користувача</h5>
+            </div>
+            <form>
+              <div className="item">
+                <div className="title">
+                  <p>Змінити ім{"`"}я користувача</p>
+                </div>
+                <input
+                  placeholder={`Your current username: ${currentUser?.searchUser.username}`}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
-              <div
-                className={classNames(
-                  "wrapper container flex-right width-auto",
-                  {
-                    active: openFilter,
-                  }
-                )}
-              >
-                <div className="triangle"></div>
-                <div className="list container flex-left width-auto">
-                  {filterOptions.map(
-                    (item: { key: string; text: string }, i: number) => (
-                      <p
-                        key={`${item}__${i}`}
-                        className={classNames({ active: period === item.key })}
-                        onClick={() => {
-                          period !== item.key && setPeriod(item.key);
-                        }}
-                      >
-                        {item.text}
-                      </p>
-                    )
-                  )}
+              <div className="item">
+                <div className="title">
+                  <p>Змінити опис користувача</p>
+                </div>
+                <textarea
+                  value={desc}
+                  onChange={(e) => setDesc(e.target.value)}
+                />
+              </div>
+              <div className="item">
+                <div className="title">
+                  <p>Ваш email до якого привязаний аккаунт</p>
+                </div>
+                <input value={currentUser?.searchUser.email} disabled />
+              </div>
+              <div className="item">
+                <div className="title">
+                  <p>Змінити іконку користувача</p>
+                </div>
+                <input
+                  placeholder={`Your current image: ${currentUser?.searchUser.image}`}
+                  value={image}
+                  onChange={(e) => setImage(e.target.value)}
+                />
+              </div>
+              <div className="item">
+                <div className="title">
+                  <p>Змінити баннер користувача</p>
+                </div>
+                <input
+                  placeholder={`Your current banner: ${currentUser?.searchUser.banner}`}
+                  value={banner}
+                  onChange={(e) => setBanner(e.target.value)}
+                />
+              </div>
+              <div className="item">
+                <div className="title">
+                  <p>Змінити пороль користувача</p>
+                </div>
+                <div>
+                  <input
+                    placeholder={"Please write your current password"}
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                  />
+                  <input
+                    placeholder={"Write your new password"}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
                 </div>
               </div>
-            </div>
-          )}
-        </div>
+              <div className="item update">
+                <div className="title">
+                  <p>Оновити ваші нові дані користувача</p>
+                </div>
+                <Button filled big>
+                  Оновити
+                </Button>
+              </div>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );

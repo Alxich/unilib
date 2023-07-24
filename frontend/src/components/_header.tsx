@@ -70,10 +70,12 @@ const Header: FC<HeaderProps> = ({
   const userItems = [
     {
       title: "Мій аккаунт",
+      link: `/author/${session?.user.id}`,
       icon: faIdBadge,
     },
     {
       title: "Настройки аккаунту",
+      link: `/author/${session?.user.id}/edit`,
       icon: faGears,
     },
     {

@@ -20,6 +20,8 @@ export default {
           banner
           aboutMe
           subscribedCategoryIDs
+          email
+          createdAt
           followedBy {
             follower {
               id

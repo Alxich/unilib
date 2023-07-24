@@ -23,6 +23,8 @@
 }
 
 .post {
+  overflow: hidden;
+
   &.fail-page {
     .interactions,
     .name {

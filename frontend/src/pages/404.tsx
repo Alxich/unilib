@@ -12,7 +12,7 @@ const FourOhFour: NextPage = () => {
   };
 
   return (
-    <Post data={data} isFailPage>
+    <Post data={data} isFailPage session={null}>
       <p>
         Походу ви зайшли сюди помилково а можливо й спеціально (дивакувата ви
         людина), але вам досі доступний увесь контент на сайті тому просто
