@@ -96,6 +96,108 @@ const resolvers = {
       return await verifyAndCreateUsername({ userId: id, username }, prisma);
     },
 
+    updateUser: async function updateUser(
+      _: any,
+      args: {
+        username?: string;
+        desc?: string;
+        image?: string;
+        banner?: string;
+        password?: string;
+      },
+      context: GraphQLContext
+    ): Promise<CreateItemResoponse> {
+      const { session, prisma } = context;
+      const { username, desc, image, banner } = args;
+
+      if (!session?.user) {
+        return {
+          error: "Not authorized",
+        };
+      }
+
+      const { id: sessionId, username: sessionUsername } = session.user;
+
+      const user = await prisma.user.findUnique({
+        where: {
+          id: sessionId,
+        },
+        include: userPopulated,
+      });
+
+      if (!user) {
+        return {
+          error: "Not user found",
+        };
+      }
+
+      let updateUserResult: CreateItemResoponse = {
+        success: false,
+        error: undefined,
+      };
+
+      const updateOtherUserValues = async (newValues: {
+        aboutMe?: string;
+        image?: string;
+        banner?: string;
+      }): Promise<CreateItemResoponse> => {
+        const { aboutMe, banner, image } = newValues;
+
+        if (newValues) {
+          try {
+            const data = await prisma.user.updateMany({
+              where: {
+                id: sessionId,
+              },
+              data: {
+                ...{
+                  ...(user.aboutMe !== aboutMe && aboutMe && { aboutMe }),
+                  ...(user.image !== image && image && { image }),
+                  ...(user.banner !== banner && banner && { banner }),
+                },
+              },
+            });
+
+            console.log(data);
+
+            return { success: true };
+          } catch (error: any) {
+            console.error("updateDesc error", error);
+            return {
+              error: error?.message as string,
+            };
+          }
+        } else {
+          return { error: "Not provided with new data" };
+        }
+      };
+
+      if (username && username !== sessionUsername) {
+        updateUserResult = await verifyAndCreateUsername(
+          { userId: sessionId, username },
+          prisma
+        );
+      }
+
+      if (user) {
+        updateUserResult = await updateOtherUserValues({
+          aboutMe: desc,
+          banner: banner,
+          image: image,
+        });
+      }
+
+      if (updateUserResult.success !== true) {
+        console.error(
+          "Error occured while updating user",
+          updateUserResult.error
+        );
+        return updateUserResult;
+      } else {
+        return updateUserResult;
+      }
+    },
+
     followUser: async function name(
       _: any,
       args: { followerId: string; followingId: string },

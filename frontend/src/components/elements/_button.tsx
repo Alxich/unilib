@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 
 interface buttonProps {
-  onClick?: () => void;
+  onClick?: (e?: any) => void;
   className?: string;
   outline?: boolean;
   filled?: boolean;

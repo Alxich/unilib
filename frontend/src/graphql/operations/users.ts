@@ -47,6 +47,26 @@ export default {
         }
       }
     `,
+    updateUser: gql`
+      mutation UpdateUser(
+        $username: String
+        $desc: String
+        $image: String
+        $banner: String
+        $password: String
+      ) {
+        updateUser(
+          username: $username
+          desc: $desc
+          image: $image
+          banner: $banner
+          password: $password
+        ) {
+          success
+          error
+        }
+      }
+    `,
     followUser: gql`
       mutation followUser($followerId: String!, $followingId: String!) {
         followUser(followerId: $followerId, followingId: $followingId) {

@@ -18,6 +18,11 @@ export interface DeleteItemResoponse {
   error?: string;
 }
 
+export interface UpdateItemResoponse {
+  success?: boolean;
+  error?: string;
+}
+
 export interface ContentViewChanger {
   icon: "faFire" | "faClock" | "faNewspaper";
   title: string;
@@ -94,6 +99,14 @@ export interface FollowItem {
 export interface FollowUserArguments {
   followerId: string;
   followingId: string;
+}
+
+export interface UpdateUserArguments {
+  username?: string;
+        desc?: string;
+        image?: string;
+        banner?: string;
+        password?: string;
 }
 
 export interface UserSubscriptionData {

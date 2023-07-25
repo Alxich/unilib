@@ -28,6 +28,8 @@ import {
   SubscribeCategoryArguments,
   TagData,
   TagsVariables,
+  UpdateItemResoponse,
+  UpdateUserArguments,
 } from "../../../util/types";
 
 import CategoryOperations from "../../../graphql/operations/categories";
@@ -313,7 +315,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
         setUserSubscribed(false);
       }
     } else if (type === "author") {
-      if (currentUser && currentUserLoading != true) {
+      if (currentUser?.searchUser && currentUserLoading != true) {
         if (session) {
           const subscribedUsers = currentUser.searchUser.followedBy;
           const { id } = session.user;
@@ -362,14 +364,96 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
 
   useEffect(() => {
     if (blockContent) {
-      const { username, desc, banner, image } = blockContent;
+      const { username, aboutMe, banner, image } = blockContent;
 
       username && setUsername(username);
-      desc && setDesc(desc);
+      aboutMe && setDesc(aboutMe);
       image && setImage(image);
       banner && setBanner(banner);
     }
   }, [blockContent]);
+
+  const [updateProccessing, setUpdateProccessing] = useState<boolean>(false);
+  const cooldownTimeInSeconds = 5; // Length of cooldown time
+  const [cooldown, setCooldown] = useState<number>(cooldownTimeInSeconds);
+  const [isCooldownActive, setIsCooldownActive] = useState<boolean>(false);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (isCooldownActive) {
+      interval = setInterval(() => {
+        setCooldown((prevCooldown) => prevCooldown - 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [isCooldownActive]);
+
+  useEffect(() => {
+    cooldown === 0 && stopCooldown();
+  }, [cooldown]);
+
+  // Start counting cooldown
+  const startCooldown = () => {
+    setCooldown(cooldownTimeInSeconds);
+    setIsCooldownActive(true);
+  };
+
+  // End counting cooldown (For extra situation)
+  const stopCooldown = () => {
+    setIsCooldownActive(false);
+  };
+
+  const [updateUser] = useMutation<
+    { updateUser: UpdateItemResoponse },
+    UpdateUserArguments
+  >(UserOperations.Mutations.updateUser);
+
+  const onUpdateUser = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    setUpdateProccessing(true);
+    try {
+      if (!session) {
+        throw new Error("Not authorized Session");
+      }
+
+      const { username: sessionUsername, id: userId } = session.user;
+
+      // Check if user exist to make post secure
+      if (!sessionUsername) {
+        throw new Error("Not authorized user");
+      }
+
+      if (!currentUser) {
+        throw new Error("Not authorized user");
+      }
+
+      const { data, errors } = await updateUser({
+        variables: {
+          banner,
+          desc,
+          image,
+          username,
+        },
+      });
+      console.log(data?.updateUser);
+
+      if (!data?.updateUser.success || errors) {
+        setUpdateProccessing(false);
+        throw new Error("Error to update user");
+      }
+
+      if (!errors) {
+        toast.success("User was updated!");
+        setUpdateProccessing(false);
+        startCooldown();
+      }
+    } catch (error: any) {
+      console.error("onFollowUser error", error);
+      toast.error(error?.message);
+    }
+  };
 
   return categoryLoading ? (
     <div>Loading</div>
@@ -604,83 +688,92 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
             )}
           </div>
         ) : (
-          <div className="edit">
-            <div className="title">
-              <h5>Настройки користувача</h5>
+          currentUser?.searchUser !== null && (
+            <div className="edit">
+              <div className="title">
+                <h5>Настройки користувача</h5>
+              </div>
+              <form>
+                <div className="item">
+                  <div className="title">
+                    <p>Змінити ім{"`"}я користувача</p>
+                  </div>
+                  <input
+                    placeholder={`Your current username: ${currentUser?.searchUser.username}`}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </div>
+                <div className="item">
+                  <div className="title">
+                    <p>Змінити опис користувача</p>
+                  </div>
+                  <textarea
+                    value={desc}
+                    onChange={(e) => setDesc(e.target.value)}
+                  />
+                </div>
+                <div className="item">
+                  <div className="title">
+                    <p>Ваш email до якого привязаний аккаунт</p>
+                  </div>
+                  <input value={currentUser?.searchUser.email} disabled />
+                </div>
+                <div className="item">
+                  <div className="title">
+                    <p>Змінити іконку користувача</p>
+                  </div>
+                  <input
+                    placeholder={`Your current image: ${currentUser?.searchUser.image}`}
+                    value={image}
+                    onChange={(e) => setImage(e.target.value)}
+                  />
+                </div>
+                <div className="item">
+                  <div className="title">
+                    <p>Змінити баннер користувача</p>
+                  </div>
+                  <input
+                    placeholder={`Your current banner: ${currentUser?.searchUser.banner}`}
+                    value={banner}
+                    onChange={(e) => setBanner(e.target.value)}
+                  />
+                </div>
+                <div className="item">
+                  <div className="title">
+                    <p>Змінити пороль користувача</p>
+                  </div>
+                  <div>
+                    <input
+                      placeholder={"Please write your current password"}
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                    />
+                    <input
+                      placeholder={"Write your new password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="item update">
+                  <div className="title">
+                    <p>Оновити ваші нові дані користувача</p>
+                  </div>
+                  <Button
+                    filled
+                    big
+                    onClick={(e: any) => {
+                      onUpdateUser(e);
+                    }}
+                    disabled={isCooldownActive || updateProccessing}
+                  >
+                    {isCooldownActive ? `Оновити (${cooldown}сек)` : "Оновити"}
+                  </Button>
+                </div>
+              </form>
             </div>
-            <form>
-              <div className="item">
-                <div className="title">
-                  <p>Змінити ім{"`"}я користувача</p>
-                </div>
-                <input
-                  placeholder={`Your current username: ${currentUser?.searchUser.username}`}
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </div>
-              <div className="item">
-                <div className="title">
-                  <p>Змінити опис користувача</p>
-                </div>
-                <textarea
-                  value={desc}
-                  onChange={(e) => setDesc(e.target.value)}
-                />
-              </div>
-              <div className="item">
-                <div className="title">
-                  <p>Ваш email до якого привязаний аккаунт</p>
-                </div>
-                <input value={currentUser?.searchUser.email} disabled />
-              </div>
-              <div className="item">
-                <div className="title">
-                  <p>Змінити іконку користувача</p>
-                </div>
-                <input
-                  placeholder={`Your current image: ${currentUser?.searchUser.image}`}
-                  value={image}
-                  onChange={(e) => setImage(e.target.value)}
-                />
-              </div>
-              <div className="item">
-                <div className="title">
-                  <p>Змінити баннер користувача</p>
-                </div>
-                <input
-                  placeholder={`Your current banner: ${currentUser?.searchUser.banner}`}
-                  value={banner}
-                  onChange={(e) => setBanner(e.target.value)}
-                />
-              </div>
-              <div className="item">
-                <div className="title">
-                  <p>Змінити пороль користувача</p>
-                </div>
-                <div>
-                  <input
-                    placeholder={"Please write your current password"}
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                  />
-                  <input
-                    placeholder={"Write your new password"}
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="item update">
-                <div className="title">
-                  <p>Оновити ваші нові дані користувача</p>
-                </div>
-                <Button filled big>
-                  Оновити
-                </Button>
-              </div>
-            </form>
-          </div>
+          )
         )}
       </div>
     </div>

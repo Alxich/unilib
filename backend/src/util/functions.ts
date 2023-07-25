@@ -70,6 +70,8 @@ export async function verifyAndCreateUsername(
       },
     });
 
+    console.log(username);
+
     if (existingUser) {
       return {
         error: "Username already taken. Try another",

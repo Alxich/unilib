@@ -68,32 +68,30 @@ const NewestFlow: FC = () => {
 
   return loading ? (
     <></>
-  ) : (
+  ) : flowItems && flowItems?.queryPostsByTag.length > 0 ? (
     <div id="newestflow" className="container post-wrapper">
-      {flowItems && (
-        <div className="container flex-start">
-          {flowItems.queryPostsByTag.map((item, i) =>
-            openMore ? (
+      <div className="container flex-start">
+        {flowItems.queryPostsByTag.map((item, i) =>
+          openMore ? (
+            <FlowItem
+              key={`${item}__${i}`}
+              id={item.id}
+              title={item.title}
+              counter={0}
+            />
+          ) : (
+            i <= lengthBeforeArray && (
               <FlowItem
                 key={`${item}__${i}`}
                 id={item.id}
                 title={item.title}
                 counter={0}
               />
-            ) : (
-              i <= lengthBeforeArray && (
-                <FlowItem
-                  key={`${item}__${i}`}
-                  id={item.id}
-                  title={item.title}
-                  counter={0}
-                />
-              )
             )
-          )}
-        </div>
-      )}
-      {flowItems && flowItems.queryPostsByTag.length > 5 && (
+          )
+        )}
+      </div>
+      {flowItems.queryPostsByTag.length > 5 && (
         <div className="open-more">
           <p onClick={() => setOpenMore(openMore ? false : true)}>
             Показати ще
@@ -120,6 +118,8 @@ const NewestFlow: FC = () => {
         </div>
       )}
     </div>
+  ) : (
+    <></>
   );
 };
 

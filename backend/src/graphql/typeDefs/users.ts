@@ -28,6 +28,13 @@ const typeDefs = gql`
 
   type Mutation {
     createUsername(username: String!): CreateItemResoponse
+    updateUser(
+      username: String
+      desc: String
+      image: String
+      banner: String
+      password: String
+    ): CreateItemResoponse
     followUser(followerId: String!, followingId: String!): FollowUserResoponse
     unfollowUser(
       followerId: String!
