@@ -28,6 +28,9 @@ const Comments: FC<CommentsProps> = ({
   userId,
   setPostCommentsCount,
 }: CommentsProps) => {
+  const [onceLoaded, setOnceLoaded] = useState(false);
+  const [comments, setComments] = useState<CommentPopulated[] | undefined>();
+
   const complainItems = [
     {
       title: "Скарга за копірайт",
@@ -55,12 +58,17 @@ const Comments: FC<CommentsProps> = ({
     CommentOperations.Queries.queryPostComments,
     {
       variables: { postId: postId ? postId : "" },
-      skip: userId !== undefined || postId === undefined,
+      skip: userId !== undefined && postId === undefined,
+      onCompleted(data) {
+        setComments(data.queryPostComments);
+      },
       onError: ({ message }) => {
         console.error(message);
       },
     }
   );
+
+  console.log(postId);
 
   const {
     data: commentArrayUser,
@@ -70,15 +78,12 @@ const Comments: FC<CommentsProps> = ({
     CommentOperations.Queries.queryUserComments,
     {
       variables: { userId: userId ? userId : "", take: 4, skip: 0 },
-      skip: userId === undefined || postId !== undefined,
+      skip: userId !== undefined && postId !== undefined,
       onError: ({ message }) => {
         console.error(message);
       },
     }
   );
-
-  const [onceLoaded, setOnceLoaded] = useState(false);
-  const [comments, setComments] = useState<CommentPopulated[] | undefined>();
 
   const { data: newCommentData } =
     useSubscription<CommentsSentSubscriptionData>(
@@ -99,34 +104,31 @@ const Comments: FC<CommentsProps> = ({
   }, [newCommentData]);
 
   useEffect(() => {
-    if (onceLoaded !== true && loading === false) {
-      if (
-        userId === undefined &&
-        postId !== undefined &&
-        commentArray?.queryPostComments
-      ) {
+    if (onceLoaded !== true && loading !== true) {
+      if (userId !== undefined && postId !== undefined && commentArray) {
         setComments(commentArray.queryPostComments);
         setPostCommentsCount &&
           setPostCommentsCount(commentArray.queryPostComments.length);
+        setOnceLoaded(true);
       } else if (
         userId !== undefined &&
         postId === undefined &&
-        commentArrayUser?.queryUserComments
+        commentArrayUser
       ) {
         setComments(commentArrayUser.queryUserComments);
+        setOnceLoaded(true);
       } else {
         setComments([]);
       }
-      setOnceLoaded(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, onceLoaded, setOnceLoaded]);
+  }, [loading, onceLoaded]);
 
   const [hasMore, setHasMore] = useState(true);
 
   const getMoreComments = async () => {
     if (comments) {
-      if (userId === undefined && postId !== undefined) {
+      if (userId !== undefined && postId !== undefined) {
         const { data } = await fetchMore({
           variables: {
             skip: comments.length,
@@ -168,12 +170,14 @@ const Comments: FC<CommentsProps> = ({
     return [];
   };
 
-  return loading || loadingUserComments ? (
+  console.log(comments);
+
+  return loading === true || loadingUserComments === true ? (
     <div>Loading</div>
   ) : (
     <div id="comments" className="post-wrapper container">
       {/* Render comments from commentArray */}
-      {userId === undefined && postId !== undefined && commentArray && (
+      {userId !== undefined && postId !== undefined && commentArray && (
         <div className="title">
           <h3>Коментарів</h3>
           <div className="count">
@@ -192,7 +196,7 @@ const Comments: FC<CommentsProps> = ({
         </div>
       )}
 
-      {userId === undefined && postId !== undefined && (
+      {userId !== undefined && postId !== undefined && (
         <CommentInput
           session={session}
           postId={postId}

@@ -3,12 +3,17 @@ import classNames from "classnames";
 import { ObjectId } from "bson";
 import toast from "react-hot-toast";
 
-import { useMutation } from "@apollo/client";
-
 import { Session } from "next-auth";
 
+import { useMutation, useQuery } from "@apollo/client";
 import PostsOperations from "../graphql/operations/posts";
-import { CreatePostArguments, TagArguments } from "../util/types";
+import CategoriesOperations from "../graphql/operations/categories";
+
+import {
+  CategoriesData,
+  CreatePostArguments,
+  TagArguments,
+} from "../util/types";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -172,7 +177,12 @@ const WritterPost: FC<IWritterPostProps> = ({
     }
   };
 
-  return (
+  const { data: categories, loading: categoriesLoading } =
+    useQuery<CategoriesData>(CategoriesOperations.Queries.queryCategories);
+
+  return categoriesLoading ? (
+    <></>
+  ) : (
     <div id="writter" className={classNames({ active: writterActive })}>
       <div className="container full-width full-height">
         <div className="head">
@@ -221,30 +231,19 @@ const WritterPost: FC<IWritterPostProps> = ({
                   >
                     <div className="triangle"></div>
                     <div className="list container flex-left width-auto">
-                      <p
-                        onClick={() => {
-                          setFilterText({ title: "Мій блог", id: "123" });
-                        }}
-                      >
-                        Мій блог
-                      </p>
-                      <p
-                        onClick={() => {
-                          setFilterText({
-                            title: "GameDev",
-                            id: "647f454f8f38358775c3e8c3",
-                          });
-                        }}
-                      >
-                        GameDev
-                      </p>
-                      <p
-                        onClick={() => {
-                          setFilterText({ title: "Ігри", id: "123" });
-                        }}
-                      >
-                        Ігри
-                      </p>
+                      {categories?.queryCategories.map((item, i) => (
+                        <p
+                          key={`${item}___${i}`}
+                          onClick={() => {
+                            setFilterText({
+                              title: item.title,
+                              id: item.id,
+                            });
+                          }}
+                        >
+                          GameDev
+                        </p>
+                      ))}
                     </div>
                   </div>
                 </div>

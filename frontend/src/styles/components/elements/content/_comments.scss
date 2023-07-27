@@ -1,4 +1,9 @@
 #comments {
+
+  &.post-wrapper > div {
+    width: 100%;
+  }
+
   & > .title {
     display: flex;
     justify-content: flex-start;
@@ -88,6 +93,14 @@
             min-width: $user_icon_small;
             cursor: pointer;
             overflow: hidden;
+
+            img {
+              display: flex;
+              height: 100%;
+              width: 100%;
+              object-fit: cover;
+              object-position: center;
+            }
           }
 
           .author-names {
