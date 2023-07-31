@@ -1,12 +1,15 @@
 #content {
-    max-width: 660px;
+  max-width: 660px;
 
-    @import "./elements/content/flow-range";
-    @import "./elements/content/newestflow";
-    @import "./elements/content/user-elem";
-    @import "./elements/content/post";
-    @import "./elements/content/author-info";
-    @import "./elements/content/author-more";
-    @import "./elements/content/comments";
+  &.is-messages {
+    align-items: flex-start;
+  }
+
+  @import "./elements/content/flow-range";
+  @import "./elements/content/newestflow";
+  @import "./elements/content/user-elem";
+  @import "./elements/content/post";
+  @import "./elements/content/author-info";
+  @import "./elements/content/author-more";
+  @import "./elements/content/comments";
 }
-

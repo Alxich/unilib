@@ -1,0 +1,12 @@
+#messages {
+  background-color: $elem_over_bg;
+  border-radius: $reg_radius;
+  width: 100%;
+  padding: 20px;
+
+  @import "./conversation";
+}
+
+@import "./messages/";
+@import "./_message-bar";
+@import "./fail-page";

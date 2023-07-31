@@ -128,6 +128,7 @@ form {
     }
   }
 
+  &.answer-conversation,
   &.comment > div[aria-expanded],
   &.comment > div:nth-child(1),
   input,
@@ -163,6 +164,7 @@ form {
     }
   }
 
+  &.answer-conversation,
   &.comment {
     position: relative;
     background-color: $background;
@@ -197,6 +199,13 @@ form {
     #tippy-6,
     div[data-tippy-root] {
       padding: 5px;
+      padding-top: 0px;
+    }
+
+    .ProseMirror-trailingBreak {
+      position: absolute;
+      top: 14px;
+      padding-left: 6px;
     }
 
     .floating-menu {
@@ -230,6 +239,24 @@ form {
     .post-send {
       right: 20px;
     }
+  }
+
+  &.answer-conversation {
+    justify-content: center;
+    height: 60px;
+    margin: 0;
+
+    p[data-placeholder] {
+      margin: 0;
+    }
+
+    p:not([data-placeholder]) {
+      color: $color;
+    }
+  }
+
+  &.answer-conversation > div:nth-child(1) {
+    padding: 0;
   }
 
   code {

@@ -1,0 +1,45 @@
+.header {
+  position: relative;
+  z-index: 1;
+
+  .infromation {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+
+    .user-icon {
+      background: $color;
+      border-radius: 50%;
+      height: $user_icon_small;
+      width: $user_icon_small;
+      min-width: $user_icon_small;
+      cursor: pointer;
+      overflow: hidden;
+
+      img {
+        display: flex;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+    }
+    .username {
+      margin-left: $msg_item_gap;
+
+      p {
+        margin: 0;
+      }
+    }
+  }
+
+  .open-more {
+    padding: 0;
+
+    .wrapper {
+      bottom: -26px;
+      right: -6px;
+    }
+  }
+}

@@ -1,0 +1,97 @@
+.item {
+  position: relative;
+  background: $overhigh_bg;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  height: 85px;
+  width: 100%;
+  padding: $msg_item_gap;
+  margin-bottom: $msg_item_gap;
+
+  .user-icon {
+    background: $color;
+    border-radius: 50%;
+    height: $user_icon_small;
+    width: $user_icon_small;
+    min-width: $user_icon_small;
+    cursor: pointer;
+    overflow: hidden;
+
+    img {
+      display: flex;
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+  }
+
+  .container {
+    padding: 0 8px;
+
+    & > div {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row;
+      align-items: center;
+      width: 100%;
+    }
+
+    p {
+      margin: 0;
+      padding: 0;
+    }
+
+    .user-titles {
+      margin-bottom: 6px;
+
+      .username {
+        width: 100%;
+
+        p {
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          max-width: 150px;
+          width: 100%;
+        }
+      }
+
+      .time > p {
+        font-size: $p_font_size_small;
+        font-weight: 300;
+      }
+    }
+
+    .information {
+      p {
+        font-size: $p_font_size_small;
+        font-weight: 300;
+
+        &:not(.counter) {
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          max-width: 160px;
+        }
+      }
+
+      .counter {
+        position: relative;
+        background-color: $active_elem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 100px;
+        width: 16px;
+        height: 16px;
+        font-size: $p_font_size;
+        font-weight: 500;
+      }
+    }
+  }
+}

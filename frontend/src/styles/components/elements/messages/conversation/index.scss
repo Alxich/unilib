@@ -1,0 +1,14 @@
+#conversation {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+
+  & > div:not(:last-child) {
+    margin-bottom: $msg_item_gap;
+  }
+
+  @import "./header";
+  @import "./wrapper";
+}

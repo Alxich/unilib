@@ -44,9 +44,9 @@ const Notification: FC<NotificationProps> = ({
               </div>
               <div className="actions container flex-center flex-row width-auto">
                 {type != "complain" && (
-                  <div className="item">
+                  <Link href={"/messages/"} className="item">
                     <p>Відкрити усі</p>
-                  </div>
+                  </Link>
                 )}
                 <div className="item">
                   {type != "complain" ? <p>Очистити</p> : <p>Закрити</p>}
@@ -71,7 +71,8 @@ const Notification: FC<NotificationProps> = ({
             const { link, title, text, icon, type: itemType } = item;
 
             return link ? (
-              <Link href={link}
+              <Link
+                href={link}
                 className="item container flex-left flex-row"
                 key={`${item}__${i}`}
                 onClick={() => {
@@ -110,7 +111,7 @@ const Notification: FC<NotificationProps> = ({
                   </div>
                 </div>
               </Link>
-            ): (
+            ) : (
               <div
                 className="item container flex-left flex-row"
                 key={`${item}__${i}`}

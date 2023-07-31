@@ -3,8 +3,17 @@ import type { NextPageContext } from "next";
 import Head from "next/head";
 import classNames from "classnames";
 import { Toaster, toast } from "react-hot-toast";
+import {
+  Header,
+  Banner,
+  Sidebar,
+  Reels,
+  WritterPost,
+  MessagesBar,
+} from "../components";
+
+import { useRouter } from "next/router";
 import { getSession, useSession } from "next-auth/react";
-import { Header, Banner, Sidebar, Reels, WritterPost } from "../components";
 import { useQuery, useSubscription } from "@apollo/client";
 import CategoriesOperations from "../graphql/operations/categories";
 import UsersOperations from "../graphql/operations/users";
@@ -23,7 +32,7 @@ interface ContentProps {
 
 type ContentContextValue = [
   ContentViews,
-  React.Dispatch<React.SetStateAction<ContentViews>>
+  React.Dispatch<SetStateAction<ContentViews>>
 ];
 
 export const ContentContext = createContext<ContentContextValue>([
@@ -48,6 +57,9 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   const [userSubscribed, setUserSubscribed] = useState<string[] | undefined>();
 
   const { data: session } = useSession();
+
+  const router = useRouter();
+  const isMessagesRoute = router.pathname.startsWith("/messages");
 
   useEffect(() => {
     writterActive
@@ -165,7 +177,13 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
                     setBannerActive={setBannerActive}
                     setBagReportActive={setBagReportActive}
                   />
-                  <div id="content" className="container">
+                  <div
+                    id="content"
+                    className={classNames("container", {
+                      "full-height full-width flex-row flex-space is-messages":
+                        isMessagesRoute,
+                    })}
+                  >
                     <ContentContext.Provider value={[period, setPeriod]}>
                       <UserContext.Provider
                         value={[userSubscribed, setUserSubscribed]}
@@ -174,7 +192,7 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
                       </UserContext.Provider>
                     </ContentContext.Provider>
                   </div>
-                  <Reels />
+                  {isMessagesRoute ? <MessagesBar /> : <Reels />}
                 </>
               )}
             </div>

@@ -1,0 +1,9 @@
+#messages-list {
+  & > div:not(:last-child) {
+    margin-bottom: $msg_item_gap;
+  }
+
+  .container {
+    @import "./message-item";
+  }
+}

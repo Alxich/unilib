@@ -14,3 +14,9 @@ export {
   PostPage,
   Comments,
 } from "./elements/content/index";
+export {
+  MessagesBar,
+  Conversation,
+  Messages,
+  OhfailPage,
+} from "./elements/messages/index";
