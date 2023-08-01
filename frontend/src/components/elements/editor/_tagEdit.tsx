@@ -37,7 +37,6 @@ export const TagEdit: FC<TagEditProps> = ({
     error,
   } = useQuery<TagsData>(TagsOperations.Queries.queryTags, {
     onCompleted(data) {
-      console.log(data.queryTags);
       setAvailableTagsArray(data.queryTags);
     },
   });

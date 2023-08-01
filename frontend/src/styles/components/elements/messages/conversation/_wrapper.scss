@@ -2,11 +2,12 @@
   position: relative;
   background-color: $background;
   display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
+  justify-content: flex-start;
+  flex-direction: column-reverse;
   align-items: center;
   border-radius: $reg_radius;
-  min-height: 55vh;
+  min-height: 65vh;
+  max-height: 65vh;
   width: 100%;
   padding: 20px;
   overflow-y: auto;
@@ -18,21 +19,20 @@
     justify-content: space-between;
     flex-direction: row;
     align-items: center;
+    flex-wrap: wrap;
     border-radius: 4px;
-    min-height: 38px;
-    width: 280px;
+    max-width: 280px;
     padding: 12px 6px;
 
-    &:not(:last-child) {
+    &:not(:first-child) {
       margin-bottom: $msg_item_gap;
     }
 
-    &:nth-child(1n) {
+    &.sender {
       margin-right: auto;
     }
 
-    &:nth-child(2n) {
-      margin-right: 0;
+    &.author {
       margin-left: auto;
 
       .triangle {
@@ -46,6 +46,10 @@
       position: absolute;
       bottom: -8px;
       left: -3px;
+    }
+
+    .text {
+      margin-bottom: 2px;
     }
 
     p {
@@ -63,6 +67,9 @@
       &.time {
         font-weight: 300;
         margin: 0;
+        white-space: nowrap;
+        margin-left: auto;
+        padding-left: 12px;
       }
     }
   }

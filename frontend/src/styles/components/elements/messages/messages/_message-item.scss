@@ -63,6 +63,7 @@
       .time > p {
         font-size: $p_font_size_small;
         font-weight: 300;
+        white-space: nowrap;
       }
     }
 

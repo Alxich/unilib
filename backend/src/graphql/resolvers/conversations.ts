@@ -45,6 +45,9 @@ const resolvers = {
           //     },
           //   },
           // },
+          orderBy: {
+            createdAt: "asc",
+          },
           include: conversationPopulated,
         });
 

@@ -44,7 +44,7 @@ const Notification: FC<NotificationProps> = ({
               </div>
               <div className="actions container flex-center flex-row width-auto">
                 {type != "complain" && (
-                  <Link href={"/messages/"} className="item">
+                  <Link href={"/messages/all"} className="item">
                     <p>Відкрити усі</p>
                   </Link>
                 )}

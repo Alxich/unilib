@@ -68,8 +68,6 @@ const Comments: FC<CommentsProps> = ({
     }
   );
 
-  console.log(postId);
-
   const {
     data: commentArrayUser,
     loading: loadingUserComments,
@@ -169,8 +167,6 @@ const Comments: FC<CommentsProps> = ({
 
     return [];
   };
-
-  console.log(comments);
 
   return loading === true || loadingUserComments === true ? (
     <div>Loading</div>

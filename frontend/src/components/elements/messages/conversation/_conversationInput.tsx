@@ -1,13 +1,8 @@
-import {
-  Dispatch,
-  FC,
-  MouseEvent,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { FC, MouseEvent, useCallback, useState } from "react";
 import classNames from "classnames";
+import toast from "react-hot-toast";
+import { ObjectId } from "bson";
+
 import {
   useEditor,
   EditorContent,
@@ -17,6 +12,12 @@ import {
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import { Placeholder } from "@tiptap/extension-placeholder";
+
+import { Session } from "next-auth";
+import { useMutation } from "@apollo/client";
+
+import MessageOperations from "../../../../graphql/operations/messages";
+import { MessagesData, SendMessageVariables } from "../../../../util/types";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -30,13 +31,18 @@ import {
   faStrikethrough,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
+
 import Button from "../../_button";
 
-interface ConversationInputProps {}
+interface ConversationInputProps {
+  session: Session;
+  conversationId: string;
+}
 
-const ConversationInput: FC<ConversationInputProps> = (
-  props: ConversationInputProps
-) => {
+const ConversationInput: FC<ConversationInputProps> = ({
+  session,
+  conversationId,
+}: ConversationInputProps) => {
   const [content, setContent] = useState("");
 
   const editor = useEditor({
@@ -71,6 +77,79 @@ const ConversationInput: FC<ConversationInputProps> = (
     },
     [editor, imagePopText]
   );
+
+  const [sendMessage] = useMutation<
+    { sendMessage: boolean },
+    SendMessageVariables
+  >(MessageOperations.Mutations.sendMessage);
+
+  const onSendMessage = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    try {
+      const { id: senderId } = session.user;
+      const newId = new ObjectId().toString();
+      const newMessage: SendMessageVariables = {
+        id: newId,
+        senderId,
+        conversationId,
+        body: JSON.stringify(content),
+      };
+      const { data, errors } = await sendMessage({
+        variables: {
+          ...newMessage,
+        },
+        /**
+         * Optimistically update UI
+         */
+        optimisticResponse: {
+          sendMessage: true,
+        },
+        update: (cache) => {
+          setContent("");
+          editor?.commands.setContent(``);
+
+          const existing = cache.readQuery<MessagesData>({
+            query: MessageOperations.Query.messages,
+            variables: { conversationId },
+          }) as MessagesData;
+
+          cache.writeQuery<MessagesData, { conversationId: string }>({
+            query: MessageOperations.Query.messages,
+            variables: { conversationId },
+            data: {
+              ...existing,
+              messages: [
+                {
+                  id: newId,
+                  body: JSON.stringify(content),
+                  senderId: session.user.id,
+                  conversationId,
+                  sender: {
+                    id: session.user.id,
+                    username: session.user.username,
+                  },
+                  createdAt: new Date(Date.now()),
+                  updatedAt: new Date(Date.now()),
+                },
+                ...existing.messages,
+              ],
+            },
+          });
+        },
+      });
+
+      if (!data?.sendMessage || errors) {
+        throw new Error("Error sending message");
+      } else {
+        setContent("");
+        editor?.commands.setContent(``);
+      }
+    } catch (error: any) {
+      console.error("onSendMessage error", error);
+      toast.error(error?.message);
+    }
+  };
 
   if (!editor) {
     return null;
@@ -193,8 +272,7 @@ const ConversationInput: FC<ConversationInputProps> = (
           interactive: editor.isEmpty !== true,
         })}
         onClick={(e) => {
-          e.preventDefault();
-          editor.isEmpty !== true && console.log(true);
+          editor.isEmpty !== true && onSendMessage(e);
         }}
       >
         <FontAwesomeIcon

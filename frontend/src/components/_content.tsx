@@ -192,7 +192,11 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
                       </UserContext.Provider>
                     </ContentContext.Provider>
                   </div>
-                  {isMessagesRoute ? <MessagesBar /> : <Reels />}
+                  {isMessagesRoute ? (
+                    <MessagesBar session={session} />
+                  ) : (
+                    <Reels />
+                  )}
                 </>
               )}
             </div>

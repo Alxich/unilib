@@ -4,13 +4,22 @@ import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 
+import { Session } from "next-auth";
+
 import ConversationWrapper from "./_conversationWrapper";
 import ConversationInput from "./_conversationInput";
 
-interface ConversationProps {}
+interface ConversationProps {
+  conversationId: string;
+  session: Session;
+}
 
-const Conversation: FC<ConversationProps> = (props: ConversationProps) => {
+const Conversation: FC<ConversationProps> = ({
+  conversationId,
+  session,
+}: ConversationProps) => {
   const [openFilter, setOpenFilter] = useState(false);
+  const [participants, setParticipant] = useState();
 
   return (
     <div id="conversation">
@@ -44,8 +53,11 @@ const Conversation: FC<ConversationProps> = (props: ConversationProps) => {
           </div>
         </div>
       </div>
-      <ConversationWrapper />
-      <ConversationInput />
+      <ConversationWrapper
+        conversationId={conversationId}
+        userId={session.user.id}
+      />
+      <ConversationInput conversationId={conversationId} session={session} />
     </div>
   );
 };

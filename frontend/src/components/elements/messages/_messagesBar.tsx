@@ -3,64 +3,25 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import classNames from "classnames";
 
-interface MessagesBarProps {}
+import { Session } from "next-auth";
 
-const MessagesBar: FC<MessagesBarProps> = (props: MessagesBarProps) => {
+import MessagesBarChatsWrapper from "./messages/_messagesBarChatWrapper";
+
+interface MessagesBarProps {
+  session: Session;
+}
+
+const MessagesBar: FC<MessagesBarProps> = ({ session }: MessagesBarProps) => {
   const router = useRouter();
   const isMessagesRoute = router.pathname.startsWith("/messages/chat");
   const isMessagesAllRoute = router.query.type === "all";
   const isMessagesUnreadRoute = router.query.type === "unread";
   const isMessagesMarkedRoute = router.query.type === "marked";
 
-  console.log(isMessagesRoute);
-
   return (
     <div id="messages-bar" className="container content-pad">
       {isMessagesRoute ? (
-        <>
-          <div className="header messages container full-width flex-row flex-space">
-            <div className="title">
-              <p>Усі повідомлення</p>
-            </div>
-            <Link href={"/messages/all"}>Показати усі</Link>
-          </div>
-          <div className="container full-width">
-            <Link href={"/messages/chat/1"} className="item message active">
-              <div className="user-icon"></div>
-              <div className="container full-width">
-                <div className="user-titles">
-                  <div className="username">
-                    <p>Кирило Туров</p>
-                  </div>
-                  <div className="time">
-                    <p>12:31</p>
-                  </div>
-                </div>
-                <div className="information">
-                  <p>Привіт! Як у тебе справи ?</p>
-                  <p className="counter">6</p>
-                </div>
-              </div>
-            </Link>
-            <Link href={"/messages/chat/2"} className="item message">
-              <div className="user-icon"></div>
-              <div className="container full-width">
-                <div className="user-titles">
-                  <div className="username">
-                    <p>Кирило Туров</p>
-                  </div>
-                  <div className="time">
-                    <p>12:31</p>
-                  </div>
-                </div>
-                <div className="information">
-                  <p>У цьому прикладі ми застосовуємо стилі до всіх тегів</p>
-                  <p className="counter">6</p>
-                </div>
-              </div>
-            </Link>
-          </div>
-        </>
+        <MessagesBarChatsWrapper session={session} />
       ) : (
         <>
           <div className="header default container full-width flex-row flex-space">

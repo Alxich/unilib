@@ -9,6 +9,7 @@ interface buttonProps {
   filled?: boolean;
   form?: boolean;
   small?: boolean;
+  writeAuthor?: boolean;
   big?: boolean;
   fullWidth?: boolean;
   iconIncluded?: boolean;
@@ -26,6 +27,7 @@ const Button: FC<buttonProps> = ({
   form,
   small,
   big,
+  writeAuthor,
   fullWidth,
   iconIncluded,
   iconName,
@@ -42,6 +44,7 @@ const Button: FC<buttonProps> = ({
         outline: outline,
         small: small,
         big: big,
+        "write-author": writeAuthor,
         className,
         form: form,
         loading: loading,

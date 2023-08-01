@@ -58,6 +58,12 @@
       margin-bottom: $msg_item_gap;
 
       &.message {
+        &.active {
+          opacity: 0.8;
+          pointer-events: none;
+          cursor: default;
+        }
+
         .user-icon {
           background: $color;
           border-radius: 50%;
@@ -111,6 +117,7 @@
             .time > p {
               font-size: $p_font_size_small;
               font-weight: 300;
+              white-space: nowrap;
             }
           }
 

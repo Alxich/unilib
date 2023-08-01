@@ -7,19 +7,22 @@ import Image from "@tiptap/extension-image";
 
 import { ConversationPopulated } from "../../../../../../backend/src/util/types";
 import { formatTimeToPost, formatUsernames } from "../../../../util/functions";
+import classNames from "classnames";
 
-interface MessagesItemProps {
+interface MessagesBarChatItemProps {
   onClick: () => void;
   userId: string;
   hasSeenLatestMessage: boolean;
+  currentChat: boolean;
   data: ConversationPopulated;
 }
 
-const MessagesItem: FC<MessagesItemProps> = ({
+const MessagesBarChatItem: FC<MessagesBarChatItemProps> = ({
   userId,
   hasSeenLatestMessage,
+  currentChat,
   data,
-}: MessagesItemProps) => {
+}: MessagesBarChatItemProps) => {
   const { id, latestMessage, participants, updatedAt } = data;
   const messageBody = latestMessage?.body;
 
@@ -32,7 +35,12 @@ const MessagesItem: FC<MessagesItemProps> = ({
   };
 
   return (
-    <Link href={`/messages/chat/${id}`} className="item">
+    <Link
+      href={`/messages/chat/${id}`}
+      className={classNames("item message", {
+        active: currentChat,
+      })}
+    >
       <div className="user-icon"></div>
       <div className="container full-width">
         <div className="user-titles">
@@ -57,4 +65,4 @@ const MessagesItem: FC<MessagesItemProps> = ({
   );
 };
 
-export default MessagesItem;
+export default MessagesBarChatItem;

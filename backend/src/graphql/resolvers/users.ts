@@ -158,8 +158,6 @@ const resolvers = {
               },
             });
 
-            console.log(data);
-
             return { success: true };
           } catch (error: any) {
             console.error("updateDesc error", error);

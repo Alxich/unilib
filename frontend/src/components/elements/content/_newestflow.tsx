@@ -64,8 +64,6 @@ const NewestFlow: FC = () => {
     }
   );
 
-  console.log(flowItems && flowItems.queryPostsByTag);
-
   return loading ? (
     <></>
   ) : flowItems && flowItems?.queryPostsByTag.length > 0 ? (

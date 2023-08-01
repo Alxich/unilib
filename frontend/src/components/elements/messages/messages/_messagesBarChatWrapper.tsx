@@ -1,32 +1,35 @@
-import { FC, useEffect, useState } from "react";
-import { NextPage } from "next";
+import { useEffect, FC, useState } from "react";
+import Link from "next/link";
+
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 
-import { Messages } from "../../components";
+import { Session } from "next-auth";
 
 import { useQuery, useMutation, useSubscription, gql } from "@apollo/client";
-import ConversationOperations from "../../graphql/operations/conversations";
-import MessageOperations from "../../graphql/operations/messages";
+import ConversationOperations from "../../../../graphql/operations/conversations";
+import MessageOperations from "../../../../graphql/operations/messages";
 import {
   ConversationsData,
   ConversationUpdatedData,
   MessagesData,
   ConversationDeletedData,
   ConversationCreatedSubscriptionData,
-} from "../../util/types";
-import { ParticipantPopulated } from "../../../../backend/src/util/types";
+} from "../../../../util/types";
+import { ParticipantPopulated } from "../../../../../../backend/src/util/types";
+import { ConversationPopulated } from "../../../../../../backend/src/util/types";
+import MessagesBarChatItem from "./_messagesBarChatItem";
 
-import { useSession } from "next-auth/react";
+interface MessagesBarChatsWrapperProps {
+  session: Session;
+}
 
-interface MessagesPageProps {}
-
-const MessagesPage: FC<NextPage> = (props: MessagesPageProps) => {
+const MessagesBarChatsWrapper: FC<MessagesBarChatsWrapperProps> = ({
+  session,
+}: MessagesBarChatsWrapperProps) => {
   const [userId, setUserId] = useState<string | undefined>();
   const router = useRouter();
-  const { conversationId } = router.query;
-
-  const { data: session } = useSession();
+  const conversationId = router.query.id;
 
   useEffect(() => {
     if (session) {
@@ -347,18 +350,42 @@ const MessagesPage: FC<NextPage> = (props: MessagesPageProps) => {
     return null;
   }
 
+  const getUserParticipantObject = (conversation: ConversationPopulated) => {
+    return conversation.participants.find(
+      (p) => p.user.id === session.user.id
+    ) as ParticipantPopulated;
+  };
+
   return (
-    <div id="messages">
-      {session && (
-        <Messages
-          conversationsLoading={conversationsLoading}
-          session={session}
-          conversations={conversationsData?.conversations || []}
-          onViewConversation={onViewConversation}
-        />
-      )}
-    </div>
+    <>
+      <div className="header messages container full-width flex-row flex-space">
+        <div className="title">
+          <p>Усі повідомлення</p>
+        </div>
+        <Link href={"/messages/all"}>Показати усі</Link>
+      </div>
+      <div className="container full-width">
+        {!conversationsLoading &&
+          conversationsData &&
+          conversationsData.conversations.map((item, i) => {
+            const { hasSeenLatestMessage } = getUserParticipantObject(item);
+
+            return (
+              <MessagesBarChatItem
+                key={`${item.id}__${i}`}
+                onClick={() =>
+                  onViewConversation(item.id, hasSeenLatestMessage)
+                }
+                userId={session.user.id}
+                hasSeenLatestMessage={hasSeenLatestMessage}
+                currentChat={conversationId === item.id}
+                data={item}
+              />
+            );
+          })}
+      </div>
+    </>
   );
 };
 
-export default MessagesPage;
+export default MessagesBarChatsWrapper;
