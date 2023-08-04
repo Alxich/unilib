@@ -50,7 +50,7 @@ const MessagesItem: FC<MessagesItemProps> = ({
             <p>Поки що цей чат порожній</p>
           )}
 
-          {hasSeenLatestMessage && <p className="counter"></p>}
+          {!hasSeenLatestMessage && <p className="counter"></p>}
         </div>
       </div>
     </Link>

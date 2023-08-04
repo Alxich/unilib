@@ -26,6 +26,7 @@ const resolvers = {
 
       try {
         const { id } = session.user;
+
         /**
          * Find all conversations that user is part of
          */
@@ -58,6 +59,80 @@ const resolvers = {
           (conversation) =>
             !!conversation.participants.find((p) => p.userId === id)
         );
+      } catch (error: any) {
+        console.error("Error", error);
+        throw new GraphQLError(error?.message);
+      }
+    },
+    conversationsCount: async function getConversationsCount(
+      _: any,
+      args: Record<string, never>,
+      context: GraphQLContext
+    ): Promise<Array<ConversationPopulated>> {
+      const { session, prisma } = context;
+
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      try {
+        const { id } = session.user;
+
+        /**
+         * Find all conversations that user is part of
+         */
+        const conversations = await prisma.conversation.findMany({
+          orderBy: {
+            createdAt: "asc",
+          },
+          include: conversationPopulated,
+        });
+
+        /**
+         * Since above query does not work
+         */
+        return conversations.filter(
+          (conversation) =>
+            !!conversation.participants.find((p) => p.userId === id)
+        );
+      } catch (error: any) {
+        console.error("Error", error);
+        throw new GraphQLError(error?.message);
+      }
+    },
+    conversationById: async function getConversationById(
+      _: any,
+      args: { id: string },
+      context: GraphQLContext
+    ): Promise<ConversationPopulated> {
+      const { session, prisma } = context;
+      const { id: conversationId } = args;
+
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      try {
+        const { id } = session.user;
+
+        /**
+         * Find conversation by id that user is part of
+         */
+        const conversation = await prisma.conversation.findUnique({
+          where: {
+            id: conversationId,
+          },
+          include: conversationPopulated,
+        });
+
+        if (!conversation) {
+          throw new GraphQLError("There is no such conversation");
+        }
+
+        /**
+         * Since above query does not work
+         */
+        return conversation;
       } catch (error: any) {
         console.error("Error", error);
         throw new GraphQLError(error?.message);

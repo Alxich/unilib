@@ -15,13 +15,19 @@ import {
   ConversationDeletedData,
   ConversationCreatedSubscriptionData,
 } from "../../util/types";
-import { ParticipantPopulated } from "../../../../backend/src/util/types";
+import {
+  ConversationPopulated,
+  ParticipantPopulated,
+} from "../../../../backend/src/util/types";
 
 import { useSession } from "next-auth/react";
 
 interface MessagesPageProps {}
 
 const MessagesPage: FC<NextPage> = (props: MessagesPageProps) => {
+  const [conversationArray, setConversationArray] = useState<
+    ConversationPopulated[] | undefined | null
+  >([]);
   const [userId, setUserId] = useState<string | undefined>();
   const router = useRouter();
   const { conversationId } = router.query;
@@ -49,6 +55,9 @@ const MessagesPage: FC<NextPage> = (props: MessagesPageProps) => {
   } = useQuery<ConversationsData, null>(
     ConversationOperations.Queries.conversations,
     {
+      onCompleted(data) {
+        setConversationArray(data.conversations);
+      },
       onError: ({ message }) => {
         toast.error(message);
       },
@@ -81,6 +90,20 @@ const MessagesPage: FC<NextPage> = (props: MessagesPageProps) => {
             removedUserIds,
           },
         } = subscriptionData;
+
+        if (!conversationsData) return;
+
+        const updatedArray = conversationsData.conversations.map(
+          (conversation) => {
+            if (conversation.id === updatedConversation.id) {
+              return updatedConversation;
+            } else {
+              return conversation;
+            }
+          }
+        );
+
+        setConversationArray(updatedArray);
 
         const { id: updatedConversationId, latestMessage } =
           updatedConversation;
@@ -227,7 +250,7 @@ const MessagesPage: FC<NextPage> = (props: MessagesPageProps) => {
     conversationId: string,
     hasSeenLatestMessage: boolean
   ) => {
-    router.push({ query: { conversationId } });
+    router.push(`/messages/chat/${conversationId}`);
 
     /**
      * Only mark as read if conversation is unread
@@ -353,7 +376,7 @@ const MessagesPage: FC<NextPage> = (props: MessagesPageProps) => {
         <Messages
           conversationsLoading={conversationsLoading}
           session={session}
-          conversations={conversationsData?.conversations || []}
+          conversations={conversationArray || []}
           onViewConversation={onViewConversation}
         />
       )}

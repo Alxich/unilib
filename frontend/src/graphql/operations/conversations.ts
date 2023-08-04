@@ -25,6 +25,26 @@ export default {
         }
       }
     `,
+    conversationsCount: gql`
+      query conversationsCount {
+        conversationsCount {
+          id
+          participants {
+            user {
+              id
+            }
+            hasSeenLatestMessage
+          }
+        }
+      }
+    `,
+    conversationById: gql`
+        query ConversationById($id: String) {
+          conversationById(id: $id) {
+            ${ConversationFields}
+          }
+        }
+      `,
   },
   Mutations: {
     createConversation: gql`

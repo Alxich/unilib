@@ -9,6 +9,7 @@ import React, {
 import { toast } from "react-hot-toast";
 import classNames from "classnames";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import background from "../../../../public/images/background.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -47,7 +48,6 @@ import Button from "../_button";
 import { formatTimeToPost } from "../../../util/functions";
 
 import ConversationOperations from "../../../graphql/operations/conversations";
-import { useRouter } from "next/router";
 
 interface AuthorInfoProps {
   type: "group" | "tag" | "author";

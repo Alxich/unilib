@@ -87,6 +87,10 @@ const ConversationInput: FC<ConversationInputProps> = ({
     event.preventDefault();
 
     try {
+      if (!conversationId) {
+        throw new Error("Error now conversation ID. Chat is corupted");
+      }
+
       const { id: senderId } = session.user;
       const newId = new ObjectId().toString();
       const newMessage: SendMessageVariables = {
@@ -95,6 +99,7 @@ const ConversationInput: FC<ConversationInputProps> = ({
         conversationId,
         body: JSON.stringify(content),
       };
+      
       const { data, errors } = await sendMessage({
         variables: {
           ...newMessage,

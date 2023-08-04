@@ -1,5 +1,4 @@
 import { Prisma } from "@prisma/client";
-// import { GraphQLError } from "apollo-server-core";
 import { GraphQLError } from "graphql";
 import { withFilter } from "graphql-subscriptions";
 import { userIsConversationParticipant } from "../../util/functions";
@@ -100,6 +99,13 @@ const resolvers = {
         });
 
         /**
+         * Should be created
+         */
+        if (!newMessage) {
+          throw new GraphQLError("Error to send a new message");
+        }
+
+        /**
          * Could cache this in production
          */
         const participant = await prisma.conversationParticipant.findFirst({
@@ -119,11 +125,26 @@ const resolvers = {
         const { id: participantId } = participant;
 
         /**
-         * Update conversation latestMessage
+         * Find conversation by id that user is part of
          */
-        const conversation = await prisma.conversation.update({
+        const conversationCheck = await prisma.conversation.findUnique({
           where: {
             id: conversationId,
+          },
+          include: conversationPopulated,
+        });
+
+        if (!conversationCheck) {
+          throw new GraphQLError("There is no such conversation");
+        }
+
+        /**
+         * Update conversation latestMessage
+         */
+
+        const conversation = await prisma.conversation.update({
+          where: {
+            id: conversationId.toString(), // Передайте відповідне id батьківського об'єкту
           },
           data: {
             latestMessageId: newMessage.id,

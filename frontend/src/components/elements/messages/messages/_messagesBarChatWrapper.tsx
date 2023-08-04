@@ -27,6 +27,9 @@ interface MessagesBarChatsWrapperProps {
 const MessagesBarChatsWrapper: FC<MessagesBarChatsWrapperProps> = ({
   session,
 }: MessagesBarChatsWrapperProps) => {
+  const [conversationArray, setConversationArray] = useState<
+    ConversationPopulated[] | undefined | null
+  >([]);
   const [userId, setUserId] = useState<string | undefined>();
   const router = useRouter();
   const conversationId = router.query.id;
@@ -52,6 +55,9 @@ const MessagesBarChatsWrapper: FC<MessagesBarChatsWrapperProps> = ({
   } = useQuery<ConversationsData, null>(
     ConversationOperations.Queries.conversations,
     {
+      onCompleted(data) {
+        setConversationArray(data.conversations);
+      },
       onError: ({ message }) => {
         toast.error(message);
       },
@@ -84,6 +90,20 @@ const MessagesBarChatsWrapper: FC<MessagesBarChatsWrapperProps> = ({
             removedUserIds,
           },
         } = subscriptionData;
+
+        if (!conversationsData) return;
+
+        const updatedArray = conversationsData.conversations.map(
+          (conversation) => {
+            if (conversation.id === updatedConversation.id) {
+              return updatedConversation;
+            } else {
+              return conversation;
+            }
+          }
+        );
+
+        setConversationArray(updatedArray);
 
         const { id: updatedConversationId, latestMessage } =
           updatedConversation;
@@ -230,7 +250,7 @@ const MessagesBarChatsWrapper: FC<MessagesBarChatsWrapperProps> = ({
     conversationId: string,
     hasSeenLatestMessage: boolean
   ) => {
-    router.push({ query: { conversationId } });
+    router.push(`/messages/chat/${conversationId}`);
 
     /**
      * Only mark as read if conversation is unread
@@ -356,6 +376,8 @@ const MessagesBarChatsWrapper: FC<MessagesBarChatsWrapperProps> = ({
     ) as ParticipantPopulated;
   };
 
+  console.log(conversationsData);
+
   return (
     <>
       <div className="header messages container full-width flex-row flex-space">
@@ -366,8 +388,8 @@ const MessagesBarChatsWrapper: FC<MessagesBarChatsWrapperProps> = ({
       </div>
       <div className="container full-width">
         {!conversationsLoading &&
-          conversationsData &&
-          conversationsData.conversations.map((item, i) => {
+          conversationArray &&
+          conversationArray.map((item, i) => {
             const { hasSeenLatestMessage } = getUserParticipantObject(item);
 
             return (

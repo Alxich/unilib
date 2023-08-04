@@ -152,6 +152,10 @@ export interface ConversationsData {
   conversations: Array<ConversationPopulated>;
 }
 
+export interface ConversationsCountData {
+  conversationsCount: Array<ConversationPopulated>;
+}
+
 export interface ConversationCreatedSubscriptionData {
   subscriptionData: {
     data: {

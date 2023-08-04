@@ -79,6 +79,10 @@
           white-space: nowrap;
           max-width: 160px;
         }
+
+        br {
+          display: none;
+        }
       }
 
       .counter {

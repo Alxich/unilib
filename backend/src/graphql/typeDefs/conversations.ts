@@ -30,6 +30,8 @@ const typeDefs = gql`
 
   type Query {
     conversations: [Conversation]
+    conversationById(id: String): Conversation
+    conversationsCount: [Conversation]
   }
 
   type Mutation {
