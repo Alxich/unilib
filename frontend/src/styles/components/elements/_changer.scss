@@ -27,6 +27,13 @@
     color: $active_elem;
   }
 
+  &.messages {
+    .wrapper {
+      bottom: -26px;
+  right: -7px;
+    }
+  }
+
   .wrapper {
     position: absolute;
     bottom: 26px;

@@ -32,6 +32,7 @@ export interface ContentViewChanger {
 
 export type ContentViews = "popular" | "follow" | "today" | "week" | "month" | "year";
 
+
 /**
  * Users
  */

@@ -1,10 +1,19 @@
 import { FC } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
+import { toast } from "react-hot-toast";
 
 import { useSession } from "next-auth/react";
 
 import { Conversation } from "../../../components";
+import { ConversationsData } from "../../../util/types";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import ConversationOperations from "../../../graphql/operations/conversations";
+import {
+  ConversationPopulated,
+  ParticipantPopulated,
+} from "../../../../../backend/src/util/types";
+import ConversationModalProvider from "../../../context/ModalContent";
 
 interface MessagesChatProps {}
 
@@ -14,12 +23,144 @@ const MessagesChat: FC<NextPage> = (props: MessagesChatProps) => {
 
   const { data: session } = useSession();
 
+  /**
+   * Query all conversations
+   */
+  const {
+    data: conversationsData,
+    loading: conversationsLoading,
+    error: conversationsError,
+    subscribeToMore,
+  } = useQuery<ConversationsData, null>(
+    ConversationOperations.Queries.conversations,
+    {
+      onError: ({ message }) => {
+        toast.error(message);
+      },
+    }
+  );
+
+  /**
+   * Mutations
+   */
+  const [markConversationAsRead] = useMutation<
+    { markConversationAsRead: true },
+    { userId: string; conversationId: string }
+  >(ConversationOperations.Mutations.markConversationAsRead);
+
+  const onViewConversation = async (
+    conversationId: string,
+    hasSeenLatestMessage: boolean
+  ) => {
+    router.push({ query: { conversationId } });
+
+    /**
+     * Only mark as read if conversation is unread
+     */
+    if (hasSeenLatestMessage) return;
+
+    try {
+      if (!session) return;
+
+      const userId = session.user.id;
+
+      await markConversationAsRead({
+        variables: {
+          userId,
+          conversationId,
+        },
+        optimisticResponse: {
+          markConversationAsRead: true,
+        },
+        update: (cache) => {
+          /**
+           * Get conversation participants
+           * from cache
+           */
+          const participantsFragment = cache.readFragment<{
+            participants: Array<ParticipantPopulated>;
+          }>({
+            id: `Conversation:${conversationId}`,
+            fragment: gql`
+              fragment Participants on Conversation {
+                participants {
+                  user {
+                    id
+                    username
+                  }
+                  hasSeenLatestMessage
+                }
+              }
+            `,
+          });
+
+          if (!participantsFragment) return;
+
+          /**
+           * Create copy to
+           * allow mutation
+           */
+          const participants = [...participantsFragment.participants];
+
+          const userParticipantIdx = participants.findIndex(
+            (p) => p.user.id === userId
+          );
+
+          /**
+           * Should always be found
+           * but just in case
+           */
+          if (userParticipantIdx === -1) return;
+
+          const userParticipant = participants[userParticipantIdx];
+
+          /**
+           * Update user to show latest
+           * message as read
+           */
+          participants[userParticipantIdx] = {
+            ...userParticipant,
+            hasSeenLatestMessage: true,
+          };
+
+          /**
+           * Update cache
+           */
+          cache.writeFragment({
+            id: `Conversation:${conversationId}`,
+            fragment: gql`
+              fragment UpdatedParticipants on Conversation {
+                participants
+              }
+            `,
+            data: {
+              participants,
+            },
+          });
+        },
+      });
+    } catch (error) {
+      console.log("onViewConversation error", error);
+    }
+  };
+
   return (
-    <div id="messages">
-      {session && conversationId && typeof conversationId === "string" && (
-        <Conversation conversationId={conversationId} session={session} />
-      )}
-    </div>
+    <ConversationModalProvider>
+      <div id="messages">
+        {!conversationsLoading &&
+          conversationsData &&
+          session &&
+          conversationId &&
+          typeof conversationId === "string" && (
+            <Conversation
+              conversations={conversationsData.conversations}
+              onViewConversation={onViewConversation}
+              conversationId={conversationId}
+              session={session}
+            />
+          )}
+      </div>
+    </ConversationModalProvider>
   );
 };
 

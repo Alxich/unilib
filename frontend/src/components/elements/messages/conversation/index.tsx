@@ -1,4 +1,5 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import classNames from "classnames";
 import { toast } from "react-hot-toast";
 
@@ -7,7 +8,7 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 
 import { Session } from "next-auth";
 
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import ConversationOperations from "../../../../graphql/operations/conversations";
 import {
   ConversationPopulated,
@@ -16,18 +17,45 @@ import {
 
 import ConversationWrapper from "./_conversationWrapper";
 import ConversationInput from "./_conversationInput";
+import OhfailPage from "../_ohfailpage";
+
+import { IModalContext, ModalContext } from "../../../../context/ModalContent";
+
+import wizzardBorisCat from "../../../../../public/images/boris-wizzard.png";
+import { returnMeFunnyError } from "../../../../util/functions";
+import MessagesModal from "../messages/modal/_messagesModal";
 
 interface ConversationProps {
   conversationId: string;
   session: Session;
+  conversations: Array<ConversationPopulated>;
+  onViewConversation: (
+    conversationId: string,
+    hasSeenLatestMessage: boolean
+  ) => void;
 }
 
 const Conversation: FC<ConversationProps> = ({
   conversationId,
   session,
+  conversations,
+  onViewConversation,
 }: ConversationProps) => {
+  const router = useRouter();
+  const [conversation, setConversation] = useState<
+    ConversationPopulated | undefined
+  >();
   const [openFilter, setOpenFilter] = useState(false);
   const [participants, setParticipant] = useState<(string | null)[]>();
+
+  const [openConversationCreation, setOpenConversationCreation] =
+    useState(false);
+  const { modalOpen, openModal, closeModal } =
+    useContext<IModalContext>(ModalContext);
+  const [editingConversation, setEditingConversation] =
+    useState<ConversationPopulated | null>(null);
+
+  const { id: userId } = session.user;
 
   /**
    * Queries
@@ -36,7 +64,6 @@ const Conversation: FC<ConversationProps> = ({
     data: conversationData,
     loading: conversationLoading,
     error: conversationError,
-    subscribeToMore,
   } = useQuery<{ conversationById: ConversationPopulated }, { id: string }>(
     ConversationOperations.Queries.conversationById,
     {
@@ -57,6 +84,8 @@ const Conversation: FC<ConversationProps> = ({
 
   useEffect(() => {
     if (conversationData) {
+      setConversation(conversationData.conversationById);
+
       const users = getUserParticipantsObject(
         conversationData.conversationById
       );
@@ -65,21 +94,111 @@ const Conversation: FC<ConversationProps> = ({
     }
   }, [conversationData]);
 
+  /**
+   * Mutations
+   */
+
+  const [updateParticipants, { loading: updateParticipantsLoading }] =
+    useMutation<
+      { updateParticipants: boolean },
+      { conversationId: string; participantIds: Array<string> }
+    >(ConversationOperations.Mutations.updateParticipants);
+
+  const [deleteConversation] = useMutation<
+    { deleteConversation: boolean },
+    { conversationId: string }
+  >(ConversationOperations.Mutations.deleteConversation);
+
+  const onLeaveConversation = async (conversation: ConversationPopulated) => {
+    const participantIds = conversation.participants
+      .filter((p) => p.user.id !== userId)
+      .map((p) => p.user.id);
+
+    try {
+      toast.promise(
+        updateParticipants({
+          variables: {
+            conversationId,
+            participantIds,
+          },
+          update: () => {
+            router.replace(
+              typeof process.env.NEXT_PUBLIC_BASE_URL === "string"
+                ? process.env.NEXT_PUBLIC_BASE_URL
+                : "/messages/all"
+            );
+          },
+        }),
+        {
+          loading: "Leaving conversation",
+          success: "Conversation bye bye :)",
+          error: "Failed to leave conversation",
+        }
+      );
+    } catch (error: any) {
+      console.log("onUpdateConversation error", error);
+      toast.error(error?.message);
+    }
+  };
+
+  const onDeleteConversation = async (conversationId: string) => {
+    try {
+      toast.promise(
+        deleteConversation({
+          variables: {
+            conversationId,
+          },
+          update: () => {
+            router.replace(
+              typeof process.env.NEXT_PUBLIC_BASE_URL === "string"
+                ? process.env.NEXT_PUBLIC_BASE_URL
+                : "/messages/all"
+            );
+          },
+        }),
+        {
+          loading: "Deleting conversation",
+          success: "Conversation deleted",
+          error: "Failed to delete conversation",
+        }
+      );
+    } catch (error) {
+      console.log("onDeleteConversation error", error);
+    }
+  };
+
+  const onEditConversation = (conversation: ConversationPopulated) => {
+    setEditingConversation(conversation);
+    openModal();
+  };
+
+  const toggleClose = () => {
+    setEditingConversation(null);
+    setOpenConversationCreation(false);
+    closeModal();
+
+    router.reload();
+  };
+
+  const getUserParticipantObject = (conversation: ConversationPopulated) => {
+    return conversation.participants.find(
+      (p) => p.user.id === session.user.id
+    ) as ParticipantPopulated;
+  };
+
   if (conversationError) {
     return null;
   }
 
   return conversationLoading ? (
     <p>loading</p>
-  ) : (
+  ) : conversation ? (
     <div id="conversation">
       <div className="header container flex-row flex-space full-width">
         <div className="infromation">
           <div className="user-icon"></div>
           <div className="username">
-            <p>
-              {conversationData && participants?.map((item) => `${item}, `)}
-            </p>
+            <p>{conversation && participants?.map((item) => `${item}, `)}</p>
           </div>
         </div>
 
@@ -98,18 +217,62 @@ const Conversation: FC<ConversationProps> = ({
           >
             <div className="triangle"></div>
             <div className="list container flex-left width-auto">
-              <p key={`12312`} className={classNames({})} onClick={() => {}}>
+              <p
+                onClick={() => {
+                  setOpenConversationCreation(true);
+                  onEditConversation(conversation);
+                  setOpenFilter(false)
+                }}
+              >
+                Редагувати співрозмову
+              </p>
+              <p onClick={() => {onDeleteConversation(conversationId); setOpenFilter(false)}}>
                 Видалити бесіду
+              </p>
+              <p onClick={() => {onLeaveConversation(conversation); setOpenFilter(false)}}>
+                Покинути співрозмову
               </p>
             </div>
           </div>
         </div>
       </div>
-      <ConversationWrapper
-        conversationId={conversationId}
-        userId={session.user.id}
-      />
-      <ConversationInput conversationId={conversationId} session={session} />
+
+      {openConversationCreation ? (
+        <MessagesModal
+          isOpen={modalOpen}
+          onClose={toggleClose}
+          session={session}
+          conversations={conversations}
+          editingConversation={editingConversation}
+          onViewConversation={onViewConversation}
+          getUserParticipantObject={getUserParticipantObject}
+        />
+      ) : (
+        <>
+          <ConversationWrapper
+            conversationId={conversationId}
+            userId={session.user.id}
+          />
+          <ConversationInput
+            conversationId={conversationId}
+            session={session}
+          />
+        </>
+      )}
+    </div>
+  ) : (
+    <div id="conversation">
+      <div className="header container flex-row flex-space full-width">
+        <div className="infromation">
+          <div className="user-icon"></div>
+          <div className="username">
+            <p>Вот так вот і ломаємо сайти...</p>
+          </div>
+        </div>
+      </div>
+      <div className="conversation-wrapper">
+        <OhfailPage image={wizzardBorisCat} text={returnMeFunnyError()} />
+      </div>
     </div>
   );
 };

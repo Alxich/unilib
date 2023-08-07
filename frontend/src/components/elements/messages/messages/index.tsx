@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useContext, useState } from "react";
 import classNames from "classnames";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,6 +11,9 @@ import {
   ConversationPopulated,
   ParticipantPopulated,
 } from "../../../../../../backend/src/util/types";
+
+import MessagesModal from "./modal/_messagesModal";
+import { IModalContext, ModalContext } from "../../../../context/ModalContent";
 
 import sadSaymonCat from "../../../../../public/images/sad-saymon.png";
 
@@ -31,6 +34,12 @@ const Messages: FC<MessagesProps> = ({
   session,
 }: MessagesProps) => {
   const [openFilter, setOpenFilter] = useState(false);
+  const [openConversationCreation, setOpenConversationCreation] =
+    useState(false);
+  const { modalOpen, openModal, closeModal } =
+    useContext<IModalContext>(ModalContext);
+  const [editingConversation, setEditingConversation] =
+    useState<ConversationPopulated | null>(null);
 
   const getUserParticipantObject = (conversation: ConversationPopulated) => {
     return conversation.participants.find(
@@ -38,18 +47,23 @@ const Messages: FC<MessagesProps> = ({
     ) as ParticipantPopulated;
   };
 
+  const toggleClose = () => {
+    setEditingConversation(null);
+    closeModal();
+  };
+
   return (
     <div id="messages-list">
       <div className="header container flex-row flex-space full-width">
         <div className="title">
           <h5>
-            {conversations
+            {conversations.length > 0
               ? "Усі наявні повідомлення"
               : "У вас немає нявних повідомлень"}
           </h5>
         </div>
 
-        <div className="changer open-more">
+        <div className="changer open-more messages">
           <div className="fafont-icon interactive">
             <FontAwesomeIcon
               onClick={() => setOpenFilter(openFilter ? false : true)}
@@ -64,15 +78,33 @@ const Messages: FC<MessagesProps> = ({
           >
             <div className="triangle"></div>
             <div className="list container flex-left width-auto">
-              <p key={`12312`} className={classNames({})} onClick={() => {}}>
-                Видалити бесіду
+              <p
+                className={classNames({ active: openConversationCreation })}
+                onClick={() => {
+                  setOpenConversationCreation(true);
+                  setOpenFilter(false);
+                }}
+              >
+                Cтворити співрозмову
               </p>
             </div>
           </div>
         </div>
       </div>
       <div className="container full-width">
-        {!conversationsLoading && conversations ? (
+        {openConversationCreation ? (
+          <MessagesModal
+            isOpen={modalOpen}
+            onClose={toggleClose}
+            session={session}
+            conversations={conversations}
+            editingConversation={editingConversation}
+            onViewConversation={onViewConversation}
+            getUserParticipantObject={getUserParticipantObject}
+          />
+        ) : !conversationsLoading &&
+          conversations &&
+          conversations.length > 0 ? (
           conversations.map((item, i) => {
             const { hasSeenLatestMessage } = getUserParticipantObject(item);
 

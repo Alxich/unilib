@@ -873,6 +873,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
                           })}
                           onClick={() => {
                             period !== item.key && setPeriod(item.key);
+                            setOpenFilter(false);
                           }}
                         >
                           {item.text}

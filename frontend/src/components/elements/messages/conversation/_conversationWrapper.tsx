@@ -89,7 +89,7 @@ const ConversationWrapper: FC<ConversationWrapperProps> = ({
 
   return (
     <div className="conversation-wrapper">
-      {data?.messages ? (
+      {data?.messages && data?.messages.length > 0 ? (
         data.messages.map((item, i) => (
           <div
             className={classNames("item", {

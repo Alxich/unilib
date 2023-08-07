@@ -239,6 +239,7 @@ const WritterPost: FC<IWritterPostProps> = ({
                               title: item.title,
                               id: item.id,
                             });
+                            setOpenFilter(false)
                           }}
                         >
                           GameDev

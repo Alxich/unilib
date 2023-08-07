@@ -21,6 +21,7 @@ import {
 } from "../../../../backend/src/util/types";
 
 import { useSession } from "next-auth/react";
+import ConversationModalProvider from "../../context/ModalContent";
 
 interface MessagesPageProps {}
 
@@ -371,16 +372,18 @@ const MessagesPage: FC<NextPage> = (props: MessagesPageProps) => {
   }
 
   return (
-    <div id="messages">
-      {session && (
-        <Messages
-          conversationsLoading={conversationsLoading}
-          session={session}
-          conversations={conversationArray || []}
-          onViewConversation={onViewConversation}
-        />
-      )}
-    </div>
+    <ConversationModalProvider>
+      <div id="messages">
+        {session && (
+          <Messages
+            conversationsLoading={conversationsLoading}
+            session={session}
+            conversations={conversationArray || []}
+            onViewConversation={onViewConversation}
+          />
+        )}
+      </div>
+    </ConversationModalProvider>
   );
 };
 

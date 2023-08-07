@@ -1,0 +1,84 @@
+#messages-modal {
+  @import "../messages/_message-item";
+
+  width: 100%;
+  z-index: 0;
+
+  p {
+    margin: 0;
+  }
+
+  .header {
+    padding: 12px 0;
+
+    .title {
+      h5 {
+        margin: 0;
+      }
+    }
+  }
+
+  form {
+    margin-bottom: 12px;
+
+    input {
+      margin: 0;
+    }
+
+    button {
+      padding-left: 80px;
+      padding-right: 80px;
+      margin-left: 12px;
+    }
+  }
+
+  .user-list {
+    .item {
+      width: auto;
+      margin-right: 12px;
+      margin-left: 0;
+
+      .container p {
+        margin-right: 12px;
+      }
+    }
+  }
+
+  .participents {
+    border-top: 1px solid $border_action;
+    padding-top: 12px;
+
+    .item {
+        width: auto;
+        margin-right: 12px;
+        margin-left: 0;
+    }
+
+    .title {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .item {
+      height: auto;
+      .username {
+        margin-right: 12px;
+      }
+    }
+  }
+
+  .existing-conversation {
+    align-items: flex-start;
+
+    .title {
+        width: 100%;
+        margin-bottom: 12px;
+      }
+
+      .item {
+        width: 100%;
+        margin-bottom: 12px;
+      }
+  
+  }
+}

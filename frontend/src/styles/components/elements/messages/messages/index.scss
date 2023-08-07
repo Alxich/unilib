@@ -1,6 +1,21 @@
 #messages-list {
+
   & > div:not(:last-child) {
     margin-bottom: $msg_item_gap;
+  }
+
+  .header {
+    position: relative;
+    z-index: 1;
+    
+    .changer {
+      padding: 0
+    }
+  }
+
+  & > .container:not(.header) {
+    position: relative;
+    z-index: 0;
   }
 
   .container {

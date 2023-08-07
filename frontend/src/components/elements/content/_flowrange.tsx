@@ -66,6 +66,7 @@ const Flowrange: FC<FlowrangeProps> = ({
                 onClick={() => {
                   setRangeText(`${year} Рік`);
                   setRangeValue("year");
+                  setOpenRange(false)
                 }}
               >
                 {year} Рік
@@ -76,6 +77,7 @@ const Flowrange: FC<FlowrangeProps> = ({
                 onClick={() => {
                   setRangeText("Тиждень");
                   setRangeValue("week");
+                  setOpenRange(false)
                 }}
               >
                 Тиждень
@@ -86,6 +88,7 @@ const Flowrange: FC<FlowrangeProps> = ({
                 onClick={() => {
                   setRangeText("Місяць");
                   setRangeValue("month");
+                  setOpenRange(false)
                 }}
               >
                 Місяць
@@ -96,6 +99,7 @@ const Flowrange: FC<FlowrangeProps> = ({
                 onClick={() => {
                   setRangeText(formatDate);
                   setRangeValue("today");
+                  setOpenRange(false)
                 }}
               >
                 {formatDate()}

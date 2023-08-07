@@ -376,8 +376,6 @@ const MessagesBarChatsWrapper: FC<MessagesBarChatsWrapperProps> = ({
     ) as ParticipantPopulated;
   };
 
-  console.log(conversationsData);
-
   return (
     <>
       <div className="header messages container full-width flex-row flex-space">

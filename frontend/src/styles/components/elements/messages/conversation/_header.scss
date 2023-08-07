@@ -1,6 +1,6 @@
 .header {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 
   .infromation {
     display: flex;
@@ -36,10 +36,12 @@
 
   .open-more {
     padding: 0;
+    z-index: 1;
 
     .wrapper {
-      bottom: -26px;
+      top: 15px;
       right: -6px;
+      bottom: auto;
     }
   }
 }
