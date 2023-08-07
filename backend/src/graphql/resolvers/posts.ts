@@ -27,7 +27,6 @@ const resolvers = {
       const { startDate, endDate } = getDateQueryRange(period);
 
       try {
-       
         if (period === "follow") {
           if (!subscribedCategories || subscribedCategories.length <= 0) {
             return [];
@@ -235,6 +234,43 @@ const resolvers = {
         });
 
         return updatedPost;
+      } catch (error: any) {
+        console.error("Posts error", error);
+        throw new GraphQLError(error?.message);
+      }
+    },
+
+    querySearchPosts: async function (
+      _: any,
+      args: { searchText: string }, // Додайте поле searchText для передачі тексту для пошуку
+      context: GraphQLContext
+    ): Promise<Array<PostPopulated>> {
+      const { prisma } = context;
+      const { searchText } = args;
+
+      try {
+        if (!searchText) {
+          throw new GraphQLError("Please provide either id or searchText");
+        }
+
+        /**
+         * Search post by title or content
+         */
+        const searchResult = await prisma.post.findMany({
+          where: {
+            OR: [
+              { title: { contains: searchText } },
+              { content: { contains: searchText } },
+            ],
+          },
+          include: postPopulated,
+        });
+
+        if (!searchResult) {
+          throw new GraphQLError("No matching post found");
+        }
+
+        return searchResult;
       } catch (error: any) {
         console.error("Posts error", error);
         throw new GraphQLError(error?.message);

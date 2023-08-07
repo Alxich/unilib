@@ -229,12 +229,19 @@ export interface PostVariables {
   id: string;
 }
 
+export interface PostsSearchVariables {
+  searchText: string;
+}
+
 export interface PostInteractionArguments {
   id: string;
 }
 
 export interface PostsData {
   queryPosts: Array<PostPopulated>;
+}
+export interface PostsSearchgData {
+  querySearchPosts: Array<PostPopulated>;
 }
 
 export interface PostsByTagsData {

@@ -10,21 +10,26 @@ import {
   Reels,
   WritterPost,
   MessagesBar,
+  Post,
 } from "../components";
 
 import { useRouter } from "next/router";
 import { getSession, useSession } from "next-auth/react";
 import { useQuery, useSubscription } from "@apollo/client";
+import PostsOperations from "../graphql/operations/posts";
 import CategoriesOperations from "../graphql/operations/categories";
 import UsersOperations from "../graphql/operations/users";
 import {
   CategoriesData,
   ContentViewChanger,
   ContentViews,
+  PostsSearchVariables,
+  PostsSearchgData,
   SearchUserData,
   SearchUserVariables,
   UserSubscriptionData,
 } from "../util/types";
+import { PostPopulated } from "../../../backend/src/util/types";
 
 interface ContentProps {
   children: any;
@@ -131,6 +136,35 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
     }
   }, [userUpdatedLoading, newUserData]);
 
+  /**
+   * There is query where loads only while user filled some text in input
+   * Before it must not query to give more app loading perfomance
+   */
+
+  const [searchResults, setSearchResults] = useState<
+    PostPopulated[] | undefined
+  >([]);
+  const [searchText, setSearchText] = useState<string | undefined>();
+
+  const { data: postsSearch, loading: postLoading } = useQuery<
+    PostsSearchgData,
+    PostsSearchVariables
+  >(PostsOperations.Queries.querySearchPosts, {
+    variables: {
+      searchText: searchText ? searchText : "",
+    },
+    skip: !session || !searchText,
+    onCompleted(data) {
+      if (data.querySearchPosts) {
+        setSearchResults(data.querySearchPosts);
+      }
+    },
+    onError: (error) => {
+      toast.error(`Error loading post by search: ${error}`);
+      console.error("Error in querySearchPosts func", error);
+    },
+  });
+
   useEffect(() => {
     setLoadingStatus(categoriesLoading);
   }, [categoriesLoading]);
@@ -158,6 +192,7 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
             session={session}
             writterActive={writterActive}
             setWritterActive={setWritterActive}
+            setSearchText={setSearchText}
           />
           <main
             className={classNames("main", {
@@ -188,7 +223,28 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
                       <UserContext.Provider
                         value={[userSubscribed, setUserSubscribed]}
                       >
-                        {children}
+                        {searchText ? (
+                          postLoading ? (
+                            <h3> Loading...</h3>
+                          ) : (
+                            <div className="posts-container container">
+                              {searchResults &&
+                                searchResults.map(
+                                  (item: PostPopulated, i: number) => {
+                                    return (
+                                      <Post
+                                        session={session}
+                                        data={item}
+                                        key={`${item}__${i}`}
+                                      />
+                                    );
+                                  }
+                                )}
+                            </div>
+                          )
+                        ) : (
+                          children
+                        )}
                       </UserContext.Provider>
                     </ContentContext.Provider>
                   </div>

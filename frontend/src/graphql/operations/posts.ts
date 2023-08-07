@@ -66,6 +66,14 @@ export default {
         }
       }
     `,
+
+    querySearchPosts: gql`
+      query querySearchPosts($searchText: String!) {
+        querySearchPosts(searchText: $searchText) {
+          ${PostFields}
+        }
+      }
+    `,
   },
   Mutations: {
     createPost: gql`

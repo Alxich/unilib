@@ -1,9 +1,10 @@
-import React, { FC } from "react";
+import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import classNames from "classnames";
 
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 
 import { Session } from "next-auth";
 
@@ -21,16 +22,16 @@ import UserIcon from "../../public/images/user-icon.png";
 
 import { useMutation } from "@apollo/client";
 import { ObjectId } from "bson";
-import toast from "react-hot-toast";
 
 import CategoriesOperations from "../graphql/operations/categories";
-import { CreateCategoryArguments, CreateTagArguments } from "../util/types";
+import { CreateCategoryArguments } from "../util/types";
 
 interface HeaderProps {
   session: Session | null;
   setBannerActive: any;
   writterActive: boolean;
   setWritterActive: any;
+  setSearchText: Dispatch<SetStateAction<string | undefined>>;
 }
 
 const Header: FC<HeaderProps> = ({
@@ -38,6 +39,7 @@ const Header: FC<HeaderProps> = ({
   session,
   writterActive,
   setWritterActive,
+  setSearchText,
 }: HeaderProps) => {
   const router = useRouter();
 
@@ -84,6 +86,24 @@ const Header: FC<HeaderProps> = ({
       icon: faRightFromBracket,
     },
   ];
+
+  // There is func that performs the search methods
+
+  const [searchTimer, setSearchTimer] = useState<NodeJS.Timeout | null>(null);
+  const [userText, setUserText] = useState<string | undefined>();
+
+  const performSearch = (searchText: string | undefined, delay: number) => {
+    if (searchTimer) {
+      clearTimeout(searchTimer);
+    }
+
+    setSearchTimer(
+      setTimeout(() => {
+        console.log(`Searching for: ${searchText}`);
+        setSearchText(searchText);
+      }, delay)
+    );
+  };
 
   // Starting working with backend and using hoo createCategory
 
@@ -156,6 +176,11 @@ const Header: FC<HeaderProps> = ({
               name="Search"
               type="text"
               placeholder="Напишіть сюди щоб знайти те що шукаєте ..."
+              value={userText}
+              onChange={(e) => {
+                setUserText(e.target.value);
+                performSearch(e.target.value, 1000);
+              }}
             />
           </form>
 

@@ -49,6 +49,7 @@ const typeDefs = gql`
       skip: Int!
     ): [Post]
     queryPost(id: String!): Post
+    querySearchPosts(searchText: String!): [Post]
   }
 
   input TagInput {
