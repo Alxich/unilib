@@ -5,10 +5,6 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 
-import { generateHTML } from "@tiptap/html";
-import StarterKit from "@tiptap/starter-kit";
-import ImageTipTap from "@tiptap/extension-image";
-
 import { formatTimeToPost } from "../../../util/functions";
 import { PostData, SubscribeCategoryArguments } from "../../../util/types";
 
@@ -25,6 +21,8 @@ import {
   CategoryPopulated,
   PostPopulated,
 } from "../../../../../backend/src/util/types";
+
+import ReturnMeContent from "../../../util/functions/returnMeContent";
 
 interface PostPageProps {
   data: PostData;
@@ -48,14 +46,6 @@ const PostPage: FC<PostPageProps> = ({ data, session, postCommentsCount }) => {
     tags,
     views,
   } = postData;
-
-  const returnMeContent = (str: string) => {
-    const html = generateHTML(JSON.parse(str), [StarterKit, ImageTipTap]);
-
-    return (
-      <div className="text-block" dangerouslySetInnerHTML={{ __html: html }} />
-    );
-  };
 
   const [addLikeToPost] = useMutation<
     { addLikeToPost: PostPopulated },
@@ -249,7 +239,7 @@ const PostPage: FC<PostPageProps> = ({ data, session, postCommentsCount }) => {
         <div className="title">
           <h3>{title}</h3>
         </div>
-        <div className="text-block">{returnMeContent(content)}</div>
+        <ReturnMeContent className="text-block" content={content} />
       </div>
       <div className="add-info">
         <div className="lt-side">

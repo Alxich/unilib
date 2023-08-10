@@ -1,13 +1,10 @@
 import { FC } from "react";
 import Link from "next/link";
-
-import { generateHTML } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
+import classNames from "classnames";
 
 import { ConversationPopulated } from "../../../../../../backend/src/util/types";
 import { formatTimeToPost, formatUsernames } from "../../../../util/functions";
-import classNames from "classnames";
+import ReturnMeContent from "../../../../util/functions/returnMeContent";
 
 interface MessagesBarChatItemProps {
   onClick: () => void;
@@ -25,14 +22,6 @@ const MessagesBarChatItem: FC<MessagesBarChatItemProps> = ({
 }: MessagesBarChatItemProps) => {
   const { id, latestMessage, participants, updatedAt } = data;
   const messageBody = latestMessage?.body;
-
-  const returnMeContent = (str: string) => {
-    const html = generateHTML(JSON.parse(str), [StarterKit, Image]);
-
-    return (
-      <div className="text" dangerouslySetInnerHTML={{ __html: html }}></div>
-    );
-  };
 
   return (
     <Link
@@ -53,7 +42,7 @@ const MessagesBarChatItem: FC<MessagesBarChatItemProps> = ({
         </div>
         <div className="information">
           {messageBody ? (
-            returnMeContent(messageBody)
+            <ReturnMeContent className="text" content={messageBody} />
           ) : (
             <p>Поки що цей чат порожній</p>
           )}

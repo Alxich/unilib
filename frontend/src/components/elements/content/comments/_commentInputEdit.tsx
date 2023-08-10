@@ -4,10 +4,11 @@ import {
   MouseEvent,
   SetStateAction,
   useCallback,
-  useEffect,
   useState,
 } from "react";
 import classNames from "classnames";
+import { toast } from "react-hot-toast";
+
 import {
   useEditor,
   EditorContent,
@@ -17,7 +18,6 @@ import {
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import { Placeholder } from "@tiptap/extension-placeholder";
-import { toast } from "react-hot-toast";
 
 import {
   faBold,
@@ -37,12 +37,11 @@ import Button from "../../_button";
 
 import { useMutation } from "@apollo/client";
 import { Session } from "next-auth";
+
 import CommentOperations from "../../../../graphql/operations/comments";
-import {
-  Comment,
-  CommentEditInteractionArguments,
-} from "../../../../util/types";
+import { CommentEditInteractionArguments } from "../../../../util/types";
 import { CommentPopulated } from "../../../../../../backend/src/util/types";
+import { useEscapeClose } from "../../../../util/functions/useEscapeClose";
 
 interface CommentInputProps {
   session?: Session | null;
@@ -159,24 +158,13 @@ const CommentInputEdit: FC<CommentInputProps> = ({
     }
   };
 
-  // If user pressed esq clore our editor
-
-  const escFunction = useCallback(
-    (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setEditActive(false);
-      }
-    },
-    [setEditActive]
-  );
-
-  useEffect(() => {
-    document.addEventListener("keydown", escFunction, false);
-
-    return () => {
-      document.removeEventListener("keydown", escFunction, false);
-    };
-  }, [escFunction]);
+  /**
+   * Using useEscapeClose function to close the element
+   */
+  useEscapeClose({
+    activeElem: true, // Always true no need to check the state
+    setActiveElem: setEditActive,
+  });
 
   if (!editor) {
     return null;

@@ -1,8 +1,8 @@
 import { FC, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-("next/image");
 import classNames from "classnames";
+import { toast } from "react-hot-toast";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,14 +12,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import Button from "../_button";
-
-import { generateHTML } from "@tiptap/html";
-import StarterKit from "@tiptap/starter-kit";
-import ImageTitap from "@tiptap/extension-image";
-
-import { formatTimeToPost } from "../../../util/functions";
-
-import { toast } from "react-hot-toast";
 
 import { Session } from "next-auth";
 
@@ -35,6 +27,9 @@ import {
   CategoryPopulated,
   PostPopulated,
 } from "../../../../../backend/src/util/types";
+
+import { formatTimeToPost } from "../../../util/functions";
+import ReturnMeContent from "../../../util/functions/returnMeContent";
 
 interface PostPageProps {
   session: Session | null;
@@ -99,18 +94,6 @@ const Post: FC<PostPageProps> = ({
 
   const { id, title, author, category, content, createdAt, likes } =
     postData as PostPopulated;
-
-  const returnMeContent = (str: string) => {
-    const html = generateHTML(JSON.parse(str), [StarterKit, ImageTitap]);
-
-    return (
-      <Link
-        href={`/post/${id}`}
-        className="text-block"
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
-    );
-  };
 
   const onPostInteraction = async (type: boolean) => {
     /**
@@ -291,7 +274,13 @@ const Post: FC<PostPageProps> = ({
             <h3>{title}</h3>
           </Link>
         </div>
-        {content !== undefined && returnMeContent(content)}
+        {content !== undefined && (
+          <ReturnMeContent
+            className="text-block"
+            content={content}
+            isLink={{ url: `/post/${id}` }}
+          />
+        )}
       </div>
       <div className="interactions">
         <div className="lt-side">

@@ -1,4 +1,4 @@
-import { FC, MouseEvent, MouseEventHandler } from "react";
+import { FC } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 

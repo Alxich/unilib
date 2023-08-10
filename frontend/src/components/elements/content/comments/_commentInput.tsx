@@ -8,6 +8,8 @@ import {
   useState,
 } from "react";
 import classNames from "classnames";
+import { toast } from "react-hot-toast";
+
 import {
   useEditor,
   EditorContent,
@@ -17,7 +19,6 @@ import {
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import { Placeholder } from "@tiptap/extension-placeholder";
-import { toast } from "react-hot-toast";
 
 import {
   faBold,
@@ -37,6 +38,7 @@ import Button from "../../_button";
 
 import { useMutation } from "@apollo/client";
 import { Session } from "next-auth";
+
 import CommentOperations from "../../../../graphql/operations/comments";
 import {
   CommentCreateArguments,

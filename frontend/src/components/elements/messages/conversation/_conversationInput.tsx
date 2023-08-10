@@ -3,6 +3,19 @@ import classNames from "classnames";
 import toast from "react-hot-toast";
 import { ObjectId } from "bson";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBold,
+  faCode,
+  faItalic,
+  faList,
+  faListNumeric,
+  faPaperPlane,
+  faPlus,
+  faStrikethrough,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
+
 import {
   useEditor,
   EditorContent,
@@ -18,19 +31,6 @@ import { useMutation } from "@apollo/client";
 
 import MessageOperations from "../../../../graphql/operations/messages";
 import { MessagesData, SendMessageVariables } from "../../../../util/types";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBold,
-  faCode,
-  faItalic,
-  faList,
-  faListNumeric,
-  faPaperPlane,
-  faPlus,
-  faStrikethrough,
-  faXmark,
-} from "@fortawesome/free-solid-svg-icons";
 
 import Button from "../../_button";
 

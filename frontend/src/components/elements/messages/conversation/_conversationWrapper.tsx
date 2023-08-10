@@ -1,5 +1,7 @@
 import { FC, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
+import classNames from "classnames";
+
 import OhfailPage from "../_ohfailpage";
 
 import { useQuery } from "@apollo/client";
@@ -9,14 +11,11 @@ import {
   MessagesSubscriptionData,
   MessagesVariables,
 } from "../../../../util/types";
-import { formatTimeToPost } from "../../../../util/functions";
 
-import { generateHTML } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
+import { formatTimeToPost } from "../../../../util/functions";
+import ReturnMeContent from "../../../../util/functions/returnMeContent";
 
 import wizzardBorisCat from "../../../../../public/images/boris-wizzard.png";
-import classNames from "classnames";
 
 interface ConversationWrapperProps {
   userId: string;
@@ -75,14 +74,6 @@ const ConversationWrapper: FC<ConversationWrapperProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, messagesEndRef.current]);
 
-  const returnMeContent = (str: string) => {
-    const html = generateHTML(JSON.parse(str), [StarterKit, Image]);
-
-    return (
-      <div className="text" dangerouslySetInnerHTML={{ __html: html }}></div>
-    );
-  };
-
   if (error) {
     return null;
   }
@@ -98,7 +89,7 @@ const ConversationWrapper: FC<ConversationWrapperProps> = ({
             })}
             key={`${item}__${i}`}
           >
-            {returnMeContent(item.body)}
+            <ReturnMeContent className="text" content={item.body} />
             <p className="time">{formatTimeToPost(item.createdAt)}</p>
             <div className="triangle">
               <svg

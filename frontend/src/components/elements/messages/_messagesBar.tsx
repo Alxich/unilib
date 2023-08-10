@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { Session } from "next-auth";
 
 import MessagesBarChatsWrapper from "./messages/_messagesBarChatWrapper";
-
 import MessagesBarFilterItems from "./messages/_messagesBarFilterItems";
 
 interface MessagesBarProps {

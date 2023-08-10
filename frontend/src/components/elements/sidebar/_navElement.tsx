@@ -12,6 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { ContentViews } from "../../../util/types";
+import { useScrollToTop } from "../../../util/functions/useScrollToTop";
 
 interface NavElementProps {
   icon?: any;
@@ -32,13 +33,9 @@ const NavElement: FC<NavElementProps> = ({
 }: NavElementProps) => {
   const router = useRouter();
 
-  const scroolToTop = (e: any, link: string) => {
-    if (router.pathname === "/" && link === "/") {
-      e.preventDefault();
+  // Using useScrollToTop to allow scroll on click
 
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
+  const { scrollToTop } = useScrollToTop();
 
   const iconsFontAwesome: any = {
     faFire: faFire,
@@ -66,7 +63,7 @@ const NavElement: FC<NavElementProps> = ({
           router.pathname === "/" && e.preventDefault();
           setPeriod(link as ContentViews);
         }
-        scroolToTop(e, link);
+        scrollToTop(e, link);
       }}
     >
       <div className="fafont-icon big interactive">

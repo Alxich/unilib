@@ -24,6 +24,7 @@ import StarterKit from "@tiptap/starter-kit";
 import EditorBlock from "./elements/_editor";
 
 import { Button } from "./elements";
+import { useEscapeClose } from "../util/functions/useEscapeClose";
 
 export interface IWritterPostProps {
   session: Session;
@@ -94,24 +95,14 @@ const WritterPost: FC<IWritterPostProps> = ({
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
-  // If user pressed esq clore our editor
+  /**
+   * Using useEscapeClose function to close the element
+   */
 
-  const escFunction = useCallback(
-    (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        writterActive != false && setWritterActive(false);
-      }
-    },
-    [setWritterActive, writterActive]
-  );
-
-  useEffect(() => {
-    document.addEventListener("keydown", escFunction, false);
-
-    return () => {
-      document.removeEventListener("keydown", escFunction, false);
-    };
-  }, [escFunction]);
+  useEscapeClose({
+    activeElem: writterActive,
+    setActiveElem: setWritterActive,
+  });
 
   useEffect(() => {
     const timerId = setInterval(returnMeDate, 1000);
@@ -239,7 +230,7 @@ const WritterPost: FC<IWritterPostProps> = ({
                               title: item.title,
                               id: item.id,
                             });
-                            setOpenFilter(false)
+                            setOpenFilter(false);
                           }}
                         >
                           GameDev

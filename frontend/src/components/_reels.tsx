@@ -1,46 +1,48 @@
 import { FC, useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
 
-import { generateHTML } from "@tiptap/react";
-import TiptapImage from "@tiptap/extension-image";
-import StarterKit from "@tiptap/starter-kit";
+import { ReelsItem } from "./elements/reel";
 
 import { useQuery, useSubscription } from "@apollo/client";
 import CommentOperations from "../graphql/operations/comments";
 import { CommentPopulated } from "../../../backend/src/util/types";
 import { CommentsData, CommentsSubscriptionData } from "../util/types";
-import { Session } from "inspector";
 
-interface ReelsProps {
-  session: Session | null;
-}
-
-const Reels: FC = () => {
+interface ReelsProps {}
+const Reels: FC<ReelsProps> = ({}: ReelsProps) => {
   const [commentsData, setCommentsData] = useState<
     CommentPopulated[] | undefined
   >();
 
-  const {
-    data: reelsArray,
-    loading,
-  } = useQuery<CommentsData>(CommentOperations.Queries.queryComments, {
-    onCompleted: (commentArray) => {
-      if (commentArray.queryComments) {
-        // Update the component's state or trigger a refetch to update the data
-        setCommentsData(commentArray.queryComments);
-      } else {
-        setCommentsData([]);
-      }
-    },
-    onError: ({ message }) => {
-      console.error(message);
-    },
-  });
+  // Querying first 5 comment and set to state
+
+  const { data: reelsArray, loading } = useQuery<CommentsData>(
+    CommentOperations.Queries.queryComments,
+    {
+      onCompleted: (commentArray) => {
+        if (commentArray.queryComments) {
+          // Update the component's state or trigger a refetch to update the data
+          setCommentsData(commentArray.queryComments);
+        } else {
+          setCommentsData([]);
+        }
+      },
+      onError: ({ message }) => {
+        console.error(message);
+      },
+    }
+  );
+
+  // Using subscription to get every new comment
 
   const { data: newCommentData } = useSubscription<CommentsSubscriptionData>(
     CommentOperations.Subscriptions.commentsUpdated
   );
+
+  /**
+   * Stacking new comments to our reels
+   * It will shows up like new comment on top
+   * but on restart it will show last 5
+   */
 
   useEffect(() => {
     const newComment = newCommentData?.commentsUpdated;
@@ -56,55 +58,6 @@ const Reels: FC = () => {
     }
   }, [newCommentData]);
 
-  interface types {
-    author: {
-      image: string | null;
-      id: string;
-      username: string | null;
-    };
-    post: {
-      id: string;
-      title: string;
-    };
-    text: string;
-  }
-
-  const returnMeContent = (str: string) => {
-    const html = generateHTML(JSON.parse(str), [StarterKit, TiptapImage]);
-
-    return (
-      <div className="text-block" dangerouslySetInnerHTML={{ __html: html }} />
-    );
-  };
-
-  const ReturnReel = ({ author, post, text }: types) => {
-    return (
-      <Link href={`/post/${post.id}`} className="item container flex-left">
-        <div className="author-thread container flex-left flex-row">
-          <div className="icon">
-            {author?.image && (
-              <Image
-                src={author.image}
-                height={1080}
-                width={1920}
-                alt="author-background"
-              />
-            )}
-          </div>
-          <div className="info container flex-left">
-            <div className="nickname">
-              <p>{author.username}</p>
-            </div>
-            <div className="thematic">
-              <p>{post.title}</p>
-            </div>
-          </div>
-        </div>
-        {returnMeContent(text)}
-      </Link>
-    );
-  };
-
   return loading ? (
     <div>Loading</div>
   ) : (
@@ -116,7 +69,7 @@ const Reels: FC = () => {
         {commentsData?.map((item: CommentPopulated, i: number) => {
           const { author, post, text } = item;
           return (
-            <ReturnReel
+            <ReelsItem
               key={`${item.id}__${i}`}
               author={author}
               post={post}

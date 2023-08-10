@@ -2,6 +2,15 @@ import { FC, useEffect, useState } from "react";
 import classNames from "classnames";
 import toast from "react-hot-toast";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+
+import Button from "../../../_button";
+
+import Participants from "./_participants";
+import UserList from "./_userList";
+import MessagesItem from "../_messagesItem";
+
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import { useLazyQuery, useMutation } from "@apollo/client";
@@ -18,15 +27,6 @@ import {
   SearchUsersData,
   SearchUsersInputs,
 } from "../../../../../util/types";
-
-import Button from "../../../_button";
-
-import MessagesItem from "../_messagesItem";
-
-import Participants from "./_participants";
-import UserList from "./_userList";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 interface ConversationModalProps {
   isOpen: boolean;

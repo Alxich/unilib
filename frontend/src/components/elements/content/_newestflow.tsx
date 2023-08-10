@@ -1,5 +1,7 @@
 import { FC, useState } from "react";
 import Link from "next/link";
+import { toast } from "react-hot-toast";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
@@ -10,8 +12,6 @@ import {
 import { useQuery } from "@apollo/client";
 import { PostsByTagsData, PostsTagVariables } from "../../../util/types";
 import PostOperations from "../../../graphql/operations/posts";
-
-import { toast } from "react-hot-toast";
 
 interface FlowItemProps {
   id: string;

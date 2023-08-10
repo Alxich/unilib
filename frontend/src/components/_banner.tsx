@@ -13,6 +13,7 @@ import {
   UsernameCreate,
   BagReport,
 } from "./elements/banner";
+import { useEscapeClose } from "../util/functions/useEscapeClose";
 
 interface BannerProps {
   session: Session | null;
@@ -32,15 +33,6 @@ const Banner: FC<BannerProps> = ({
     undefined
   );
 
-  const escFunction = useCallback(
-    (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        bannerActive != false && setBannerActive(false);
-      }
-    },
-    [bannerActive, setBannerActive]
-  );
-
   useEffect(() => {
     if (session !== null && session !== undefined) {
       setUserData(session.user);
@@ -49,13 +41,14 @@ const Banner: FC<BannerProps> = ({
     userData !== undefined && !userData.username && setBannerActive(true);
   }, [session, setBannerActive, userData]);
 
-  useEffect(() => {
-    document.addEventListener("keydown", escFunction, false);
+  /**
+   * Using useEscapeClose function to close the element
+   */
 
-    return () => {
-      document.removeEventListener("keydown", escFunction, false);
-    };
-  }, [escFunction]);
+  useEscapeClose({
+    activeElem: bannerActive,
+    setActiveElem: setBannerActive,
+  });
 
   return (
     <div

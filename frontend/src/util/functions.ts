@@ -2,6 +2,11 @@ import { ParticipantPopulated } from "../../../backend/src/util/types";
 
 import { formatRelative } from "date-fns";
 import enUS from "date-fns/locale/en-US";
+import { useCallback, useEffect } from "react";
+
+/**
+ * Formate usernames for easy read
+ */
 
 export const formatUsernames = (
   participants: Array<ParticipantPopulated>,
@@ -13,6 +18,11 @@ export const formatUsernames = (
 
   return usernames.join(", ");
 };
+
+/**
+ * FUnction return the normal style of time
+ * for user understanding
+ */
 
 export function formatTimeToPost(createdAt: number | Date | undefined) {
   const formatRelativeLocale = {
@@ -35,6 +45,10 @@ export function formatTimeToPost(createdAt: number | Date | undefined) {
   return value;
 }
 
+/**
+ * Offer a user funny text errors
+ */
+
 export function returnMeFunnyError(): string {
   const texts = [
     "Ого, помилка! Щось зламалось. Ми вражені твоїм натхненням для знайомства з нашою чудовою сторінкою помилки. Тримайся, ми незабаром все поремонтуємо і повернемо тебе на правильний шлях. Зараз же ти маєш унікальну можливість подивитися нашу сторінку помилки зсередини!",
@@ -49,7 +63,7 @@ export function returnMeFunnyError(): string {
     "О, дякую, що зробив мене генієм програмування! Знову все зламав, як зазвичай. Так, це вже стало традицією – робити всьому хаос! 🙄",
     "Ой-ой! Щось ви не те натиснули, і сталася помилка. Вибачте, та швиденько поправлю!",
     "Винна ти, а не я! Страшно нестачає мемів, щоб виправити твої халепи. Ремонтуй швидше, а то нічого доброго не вийде! 😏🔧",
-    "Що за катастрофа тут сталася? Вибач, але це жахливо!"
+    "Що за катастрофа тут сталася? Вибач, але це жахливо!",
   ];
   const randomIndex = Math.floor(Math.random() * texts.length);
   const randomText = texts[randomIndex];

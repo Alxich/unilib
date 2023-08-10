@@ -508,6 +508,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
    */
   useEffect(() => {
     subscribeToNewConversations();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (conversationsError) {

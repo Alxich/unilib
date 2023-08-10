@@ -1,10 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { toast } from "react-hot-toast";
-
-import TiptapImage from "@tiptap/extension-image";
-import StarterKit from "@tiptap/starter-kit";
-import { generateHTML } from "@tiptap/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -27,12 +24,14 @@ import {
   CommentReply,
   CommentsSentSubscriptionData,
 } from "../../../../util/types";
-import { formatTimeToPost } from "../../../../util/functions";
+
 import { CommentPopulated } from "../../../../../../backend/src/util/types";
 import RecursiveCommentItem from "./_recursiveCommentItem";
 import CommentInput from "./_commentInput";
 import CommentInputEdit from "./_commentInputEdit";
-import Link from "next/link";
+
+import { formatTimeToPost } from "../../../../util/functions";
+import ReturnMeContent from "../../../../util/functions/returnMeContent";
 
 const CommentItem: FC<CommentItemProps> = ({
   session,
@@ -56,14 +55,6 @@ const CommentItem: FC<CommentItemProps> = ({
   const [comments, setComments] = useState<
     Comment[] | CommentReply[] | undefined
   >(replies as unknown as CommentReply[]);
-
-  const returnMeContent = (str: string) => {
-    const html = generateHTML(JSON.parse(str), [StarterKit, TiptapImage]);
-
-    return (
-      <div className="content" dangerouslySetInnerHTML={{ __html: html }} />
-    );
-  };
 
   const [addLikeToComment] = useMutation<
     { addLikeToComment: CommentPopulated },
@@ -309,7 +300,7 @@ const CommentItem: FC<CommentItemProps> = ({
             setEditActive={setEditActive}
           />
         ) : (
-          returnMeContent(text)
+          <ReturnMeContent className="content" content={text} />
         )}
         <div className="interactions">
           <div className="lt-side">

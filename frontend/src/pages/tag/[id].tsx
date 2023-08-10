@@ -2,17 +2,16 @@ import { FC, useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
-
-import { useSession } from "next-auth/react";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 import { AuthorInfo, Post } from "../../components";
 
+import { useSession } from "next-auth/react";
 import { useQuery } from "@apollo/client";
+
 import PostOperations from "../../graphql/operations/posts";
 import { PostsByTagsData, PostsTagVariables } from "../../util/types";
 import { PostPopulated } from "../../../../backend/src/util/types";
-
-import InfiniteScroll from "react-infinite-scroll-component";
 
 const TagPage: FC<NextPage> = () => {
   const [period, setPeriod] = useState<string>("popular"); // Initialize period as an empty string

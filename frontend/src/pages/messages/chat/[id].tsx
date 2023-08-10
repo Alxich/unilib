@@ -4,15 +4,13 @@ import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 
 import { useSession } from "next-auth/react";
+import { gql, useMutation, useQuery } from "@apollo/client";
 
 import { Conversation } from "../../../components";
 import { ConversationsData } from "../../../util/types";
-import { gql, useMutation, useQuery } from "@apollo/client";
 import ConversationOperations from "../../../graphql/operations/conversations";
-import {
-  ConversationPopulated,
-  ParticipantPopulated,
-} from "../../../../../backend/src/util/types";
+import { ParticipantPopulated } from "../../../../../backend/src/util/types";
+
 import ConversationModalProvider from "../../../context/ModalContent";
 
 interface MessagesChatProps {}

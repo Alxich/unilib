@@ -18,7 +18,6 @@ const MessagesBarFilterItems: FC<MessagesBarFilterItemsProps> = ({
   session,
 }: MessagesBarFilterItemsProps) => {
   const router = useRouter();
-  const isMessagesRoute = router.pathname.startsWith("/messages/chat");
   const isMessagesAllRoute = router.query.type === "all";
   const isMessagesUnreadRoute = router.query.type === "unread";
   const isMessagesMarkedRoute = router.query.type === "marked";
@@ -71,6 +70,7 @@ const MessagesBarFilterItems: FC<MessagesBarFilterItemsProps> = ({
     const countAllMessages =
       conversationsCountData?.conversationsCount.length || 0;
     setCountAllMessages(countAllMessages);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationsLoading]);
 
   return (

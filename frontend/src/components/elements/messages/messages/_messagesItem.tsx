@@ -1,12 +1,9 @@
 import { FC } from "react";
 import Link from "next/link";
 
-import { generateHTML } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
-
 import { ConversationPopulated } from "../../../../../../backend/src/util/types";
 import { formatTimeToPost, formatUsernames } from "../../../../util/functions";
+import ReturnMeContent from "../../../../util/functions/returnMeContent";
 
 interface MessagesItemProps {
   onClick: () => void;
@@ -23,14 +20,6 @@ const MessagesItem: FC<MessagesItemProps> = ({
   const { id, latestMessage, participants, updatedAt } = data;
   const messageBody = latestMessage?.body;
 
-  const returnMeContent = (str: string) => {
-    const html = generateHTML(JSON.parse(str), [StarterKit, Image]);
-
-    return (
-      <div className="text" dangerouslySetInnerHTML={{ __html: html }}></div>
-    );
-  };
-
   return (
     <Link href={`/messages/chat/${id}`} className="item">
       <div className="user-icon"></div>
@@ -45,7 +34,7 @@ const MessagesItem: FC<MessagesItemProps> = ({
         </div>
         <div className="information">
           {messageBody ? (
-            returnMeContent(messageBody)
+            <ReturnMeContent className="text" content={messageBody} />
           ) : (
             <p>Поки що цей чат порожній</p>
           )}

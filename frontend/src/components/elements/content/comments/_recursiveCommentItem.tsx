@@ -2,10 +2,6 @@ import { FC, useEffect, useState } from "react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 
-import TiptapImage from "@tiptap/extension-image";
-import StarterKit from "@tiptap/starter-kit";
-import { generateHTML } from "@tiptap/react";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faThumbsDown,
@@ -26,11 +22,13 @@ import {
   CommentsByCommentData,
   CommentsSentSubscriptionData,
   QueryCommentsByCommentArgs,
+  Comment,
 } from "../../../../util/types";
-import { formatTimeToPost } from "../../../../util/functions";
-import { Comment } from "../../../../util/types";
 import { CommentPopulated } from "../../../../../../backend/src/util/types";
 import CommentInputEdit from "./_commentInputEdit";
+
+import { formatTimeToPost } from "../../../../util/functions";
+import ReturnMeContent from "../../../../util/functions/returnMeContent";
 
 interface RecursiveCommentItemProps {
   session: any;
@@ -59,14 +57,6 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
   const { id, author, likes, text, createdAt, isDeleted } = commentData;
 
   const [comments, setComments] = useState<CommentPopulated[] | undefined>();
-
-  const returnMeContent = (str: string) => {
-    const html = generateHTML(JSON.parse(str), [StarterKit, TiptapImage]);
-
-    return (
-      <div className="content" dangerouslySetInnerHTML={{ __html: html }} />
-    );
-  };
 
   const { data: commentArray, loading } = useQuery<
     CommentsByCommentData,
@@ -328,7 +318,7 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
             setEditActive={setEditActive}
           />
         ) : (
-          returnMeContent(text)
+          <ReturnMeContent className="content" content={text} />
         )}
         <div className="interactions">
           <div className="lt-side">

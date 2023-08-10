@@ -1,10 +1,8 @@
-import React, { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import classNames from "classnames";
 
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/router";
-import toast from "react-hot-toast";
 
 import { Session } from "next-auth";
 
@@ -19,12 +17,8 @@ import {
 
 import { Button, Notification } from "./elements";
 import UserIcon from "../../public/images/user-icon.png";
-
-import { useMutation } from "@apollo/client";
-import { ObjectId } from "bson";
-
-import CategoriesOperations from "../graphql/operations/categories";
-import { CreateCategoryArguments } from "../util/types";
+import { useEscapeClose } from "../util/functions/useEscapeClose";
+import { useScrollToTop } from "../util/functions/useScrollToTop";
 
 interface HeaderProps {
   session: Session | null;
@@ -41,18 +35,26 @@ const Header: FC<HeaderProps> = ({
   setWritterActive,
   setSearchText,
 }: HeaderProps) => {
-  const router = useRouter();
+  const [activeNotify, setActiveNotfiy] = useState(false);
+  const [activeUser, setActiveUser] = useState(false);
 
-  const scroolToTop = (e: any) => {
-    if (router.pathname === "/") {
-      e.preventDefault();
+  // Using useScrollToTop to allow scroll on click
 
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
+  const { scrollToTop } = useScrollToTop();
 
-  const [activeNotify, setActiveNotfiy] = React.useState(false);
-  const [activeUser, setActiveUser] = React.useState(false);
+  // Using useEscapeClose to close notify elem via escape button
+
+  useEscapeClose({
+    activeElem: activeNotify,
+    setActiveElem: setActiveNotfiy,
+  });
+
+  // Using useEscapeClose to close user elem via escape button
+
+  useEscapeClose({
+    activeElem: activeUser,
+    setActiveElem: setActiveUser,
+  });
 
   const notifyItems = [
     {
@@ -105,57 +107,6 @@ const Header: FC<HeaderProps> = ({
     );
   };
 
-  // Starting working with backend and using hoo createCategory
-
-  const [createCategory] = useMutation<
-    { createCategory: boolean },
-    CreateCategoryArguments
-  >(CategoriesOperations.Mutations.createCategory);
-
-  const onCreateCategory = async () => {
-    if (session == null) {
-      console.error("onCreateCategory error: Not Authorized Session");
-
-      return null;
-    }
-
-    try {
-      const { username } = session.user;
-      const newId = new ObjectId().toString();
-
-      // Check if user exist to make post secure
-      if (!username) {
-        throw new Error("Not authorized user");
-      }
-
-      const category = {
-        id: newId,
-        banner:
-          "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.w3villa.com%2Fservices%2F39%2Foriginal%2Fgame-development-new.jpg&f=1&nofb=1&ipt=371746079e99f40125da9a4df347a7959b3769c8b4df9031e4fbfcd98a74f555&ipo=images",
-        icon: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fthumbs.dreamstime.com%2Fb%2Fgame-development-isolated-icon-simple-element-illustration-programming-concept-icons-editable-logo-sign-symbol-design-142291415.jpg&f=1&nofb=1&ipt=b09c6e17fc39f7160fbb51b23d055c796ef971f69f26a64f7680b5f01d1f5827&ipo=images",
-        title: "Gamedev",
-        desc: "It is a Gamedev cateogory bla bla bla welcome",
-      };
-
-      const { data, errors } = await createCategory({
-        variables: {
-          ...category,
-        },
-      });
-
-      if (!data?.createCategory || errors) {
-        throw new Error("Error creating category");
-      }
-
-      if (!errors) {
-        toast.success("Category was created!");
-      }
-    } catch (error: any) {
-      console.error("onCreateCategory error", error);
-      toast.error(error?.message);
-    }
-  };
-
   return (
     <header
       className={classNames("masthead", {
@@ -163,7 +114,7 @@ const Header: FC<HeaderProps> = ({
       })}
     >
       <div className="container full-height flex-space flex-row content-pad">
-        <Link href={"/"} className="logo" onClick={(e) => scroolToTop(e)}>
+        <Link href={"/"} className="logo" onClick={(e) => scrollToTop(e)}>
           <p>UNILIB</p>
         </Link>
         <div
@@ -196,16 +147,6 @@ const Header: FC<HeaderProps> = ({
           >
             {"Cтворити"}
           </Button>
-          <Button
-            iconIncluded
-            iconName={faPlus}
-            filled
-            big
-            onClick={() => onCreateCategory()}
-            disabled={!session?.user}
-          >
-            {"Cтворити категорію"}
-          </Button>
         </div>
         <div
           className={classNames(
@@ -218,7 +159,10 @@ const Header: FC<HeaderProps> = ({
         >
           <div className="fafont-icon big interactive">
             <FontAwesomeIcon
-              onClick={() => setActiveNotfiy(activeNotify ? false : true)}
+              onClick={() => {
+                setActiveUser(false);
+                setActiveNotfiy(activeNotify ? false : true);
+              }}
               icon={faBell}
               style={{ width: "100%", height: "100%", color: "inherit" }}
             />
@@ -232,7 +176,10 @@ const Header: FC<HeaderProps> = ({
             <div className="fafont-icon big interactive user">
               <div
                 className="user-icon"
-                onClick={() => setActiveUser(activeUser ? false : true)}
+                onClick={() => {
+                  setActiveNotfiy(false);
+                  setActiveUser(activeUser ? false : true);
+                }}
               >
                 <Image
                   src={session?.user?.image ? session?.user?.image : UserIcon}

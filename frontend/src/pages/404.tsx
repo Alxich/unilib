@@ -2,9 +2,9 @@ import type { NextPage } from "next";
 import Image from "next/image";
 
 import { Post } from "../components";
+import { PostFail } from "../../src/util/types";
 
 import image from "../../public/images/404.png";
-import { PostFail } from "../../src/util/types";
 
 const FourOhFour: NextPage = () => {
   const data: PostFail = {

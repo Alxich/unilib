@@ -5,7 +5,9 @@ import toast from "react-hot-toast";
 
 import { Messages } from "../../components";
 
+import { useSession } from "next-auth/react";
 import { useQuery, useMutation, useSubscription, gql } from "@apollo/client";
+
 import ConversationOperations from "../../graphql/operations/conversations";
 import MessageOperations from "../../graphql/operations/messages";
 import {
@@ -20,7 +22,6 @@ import {
   ParticipantPopulated,
 } from "../../../../backend/src/util/types";
 
-import { useSession } from "next-auth/react";
 import ConversationModalProvider from "../../context/ModalContent";
 
 interface MessagesPageProps {}
@@ -364,6 +365,7 @@ const MessagesPage: FC<NextPage> = (props: MessagesPageProps) => {
    */
   useEffect(() => {
     subscribeToNewConversations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (conversationsError) {
