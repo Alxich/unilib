@@ -138,7 +138,7 @@ const MessagesChat: FC<NextPage> = (props: MessagesChatProps) => {
         },
       });
     } catch (error) {
-      console.log("onViewConversation error", error);
+      console.error("onViewConversation error", error);
     }
   };
 

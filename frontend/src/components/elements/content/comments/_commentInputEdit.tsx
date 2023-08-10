@@ -35,26 +35,29 @@ const CommentInputEdit: FC<CommentInputProps> = ({
   setCommentData,
   setEditActive,
 }: CommentInputProps) => {
+  // Initialize the editor with specified extensions and configurations
   const editor = useEditor({
-    content: content,
+    content: content, // Initial content of the editor
     extensions: [
       StarterKit,
       Image,
       Placeholder.configure({
-        placeholder: "Написати свій коментар ...",
-        showOnlyCurrent: true,
+        placeholder: "Написати свій коментар ...", // Placeholder text
+        showOnlyCurrent: true, // Show the placeholder only in the current state
       }),
     ],
     injectCSS: false,
     onUpdate: ({ editor }) => {
       // @ts-ignore
-      setContent(editor.getJSON());
+      setContent(editor.getJSON()); // Update content with the editor's JSON data
     },
   });
 
+  // State variables for controlling image pop-up and its text
   const [openImagePop, setOpenImagePop] = useState(false);
   const [imagePopText, setImagePopText] = useState("");
 
+  // Mutation for editing a comment
   const [editComment] = useMutation<
     { editComment: CommentPopulated },
     CommentEditInteractionArguments
@@ -75,10 +78,11 @@ const CommentInputEdit: FC<CommentInputProps> = ({
     },
   });
 
+  // Function to edit a comment's content
   const onEditComment = async () => {
     /**
-     * This func allow author to delete a comment
-     * It will not delete at all but change the content
+     * This func allow author to edit a comment
+     * It will not edit at all but change the content
      */
     try {
       if (!session) {
@@ -92,7 +96,7 @@ const CommentInputEdit: FC<CommentInputProps> = ({
         throw new Error("Not authorized user");
       }
 
-      //Check if author id same as user id
+      // Check if the author's ID matches the user's ID
       if (authorId !== session?.user.id) {
         throw new Error("You are not the author!");
       }
@@ -100,7 +104,7 @@ const CommentInputEdit: FC<CommentInputProps> = ({
       const { data, errors } = await editComment({
         variables: {
           id: id,
-          text: JSON.stringify(content),
+          text: JSON.stringify(content), // Convert content to JSON and send it for editing
         },
       });
 
@@ -110,7 +114,7 @@ const CommentInputEdit: FC<CommentInputProps> = ({
 
       if (!errors) {
         toast.success("Comment was edited!");
-        setEditActive(false);
+        setEditActive(false); // Deactivate the edit mode
       }
     } catch (error: any) {
       console.error("onEditComment error", error);
@@ -118,12 +122,10 @@ const CommentInputEdit: FC<CommentInputProps> = ({
     }
   };
 
-  /**
-   * Using useEscapeClose function to close the element
-   */
+  // Use the useEscapeClose hook to handle escape key press and close the element
   useEscapeClose({
-    activeElem: true, // Always true no need to check the state
-    setActiveElem: setEditActive,
+    activeElem: true, // Always true, no need to check the state
+    setActiveElem: setEditActive, // Set the active element state
   });
 
   if (!editor) {

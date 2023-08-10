@@ -58,11 +58,13 @@ const Comments: FC<CommentsProps> = ({
     CommentOperations.Queries.queryPostComments,
     {
       variables: { postId: postId ? postId : "" },
-      skip: userId !== undefined && postId === undefined,
+      skip: userId !== undefined && postId === undefined, // Skip the query if certain conditions are met
       onCompleted(data) {
+        // Update the state with fetched comments
         setComments(data.queryPostComments);
       },
       onError: ({ message }) => {
+        // Handle errors that occur during the query
         console.error(message);
       },
     }
@@ -76,12 +78,15 @@ const Comments: FC<CommentsProps> = ({
     CommentOperations.Queries.queryUserComments,
     {
       variables: { userId: userId ? userId : "", take: 4, skip: 0 },
-      skip: userId !== undefined && postId !== undefined,
+      skip: userId !== undefined && postId !== undefined, // Skip the query under specific conditions
       onError: ({ message }) => {
+        // Handle errors that occur during the query
         console.error(message);
       },
     }
   );
+
+  // Subscription to new comment updates
 
   const { data: newCommentData } =
     useSubscription<CommentsSentSubscriptionData>(
@@ -90,32 +95,46 @@ const Comments: FC<CommentsProps> = ({
 
   useEffect(() => {
     if (newCommentData) {
+      // New comment from the subscription
       const newComment = newCommentData.commentsUpdated;
-      const oldComments = comments;
+      const oldComments = comments; // Existing comments in the component state
 
+      // Check conditions and update the comments array
       newComment &&
         oldComments &&
-        !newComment.parentId &&
-        setComments([...oldComments, newComment]);
+        !newComment.parentId && // Exclude child comments for this update
+        setComments([...oldComments, newComment]); // Add the new comment to the existing comments array
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newCommentData]);
 
   useEffect(() => {
     if (onceLoaded !== true && loading !== true) {
+      // When the component is not already loaded and not in a loading state
+
       if (userId !== undefined && postId !== undefined && commentArray) {
+        // If viewing a post's comments
+
+        // Set the comments based on the queried post comments
         setComments(commentArray.queryPostComments);
         setPostCommentsCount &&
-          setPostCommentsCount(commentArray.queryPostComments.length);
+          setPostCommentsCount(commentArray.queryPostComments.length); // Optionally update the post comments count
+
+        // Mark that the component has been loaded
         setOnceLoaded(true);
       } else if (
         userId !== undefined &&
         postId === undefined &&
         commentArrayUser
       ) {
+        // If viewing a user's comments
+        // Set the comments based on the queried user comments
         setComments(commentArrayUser.queryUserComments);
+
+        // Mark that the component has been loaded
         setOnceLoaded(true);
       } else {
+        // No relevant comments, set comments to an empty array
         setComments([]);
       }
     }
@@ -126,25 +145,31 @@ const Comments: FC<CommentsProps> = ({
 
   const getMoreComments = async () => {
     if (comments) {
+      // Only proceed if there are already existing comments
+
       if (userId !== undefined && postId !== undefined) {
+        // If viewing a post's comments
         const { data } = await fetchMore({
           variables: {
-            skip: comments.length,
-            take: 3,
+            skip: comments.length, // Specify how many comments to skip (based on the current number of comments)
+            take: 3, // Specify how many new comments to fetch
           },
         });
 
         if (data.queryPostComments.length === 0) {
+          // If there are no more comments to fetch, set hasMore to false
           setHasMore(false);
           return null;
         }
 
+        // Append the fetched comments to the existing comments array
         setComments((prevComments) => {
           return prevComments
             ? [...prevComments, ...data.queryPostComments]
             : data.queryPostComments;
         });
       } else if (userId !== undefined && postId === undefined) {
+        // If viewing a user's comments
         const { data } = await fetchMoreUserComments({
           variables: {
             skip: comments.length,
@@ -152,11 +177,14 @@ const Comments: FC<CommentsProps> = ({
           },
         });
 
+        // if there is no enough data to show
+        // set hasMore to false to block more querying
         if (data.queryUserComments.length === 0) {
           setHasMore(false);
           return null;
         }
 
+        // if there is data - we push new after old data
         setComments((prevComments) => {
           return prevComments
             ? [...prevComments, ...data.queryUserComments]
@@ -193,11 +221,7 @@ const Comments: FC<CommentsProps> = ({
       )}
 
       {userId !== undefined && postId !== undefined && (
-        <CommentInput
-          session={session}
-          postId={postId}
-          // subscribeToMoreComments={subscribeToMoreComments}
-        />
+        <CommentInput session={session} postId={postId} />
       )}
 
       {comments && (
@@ -217,7 +241,6 @@ const Comments: FC<CommentsProps> = ({
                 complainItems={complainItems}
                 postId={postId}
                 isUser={userId !== undefined && postId === undefined}
-                // subscribeToMoreComments={subscribeToMoreComments}
               />
             ))}
           </div>

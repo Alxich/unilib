@@ -61,20 +61,23 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
   const [userSubscribed, setUserSubscribed] = useState(false);
   const [blockContent, setBlockContent] = useState<AuthorInfoTypes>();
 
+  // Mutation to subscribe to a category
   const [subscribeToCategory] = useMutation<
     { subscribeToCategory: CategoryPopulated },
     SubscribeCategoryArguments
   >(CategoryOperations.Mutations.subscribeToCategory);
 
+  // Mutation to unsubscribe from a category
   const [unsubscribeToCategory] = useMutation<
     { unsubscribeToCategory: CategoryPopulated },
     SubscribeCategoryArguments
   >(CategoryOperations.Mutations.unsubscribeToCategory);
 
+  // Function to handle category subscription/unsubscription
   const onSubscribeCategory = async (type: boolean) => {
     /**
-     * When user smash the button we asign or
-     * remove from folowing the category
+     * When user clicks the button, we assign or
+     * remove them from following the category.
      */
 
     try {
@@ -84,7 +87,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
 
       const { username, id: userId } = session.user;
 
-      // Check if user exist to make post secure
+      // Check if user exists to ensure post security
       if (!username) {
         throw new Error("Not authorized user");
       }
@@ -94,6 +97,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
         userId,
       };
 
+      // If type is true, the user wants to subscribe to the category
       if (type === true) {
         const { data, errors } = await subscribeToCategory({
           variables: {
@@ -102,27 +106,37 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
         });
 
         if (!data?.subscribeToCategory || errors) {
-          throw new Error("Error subscribe category");
+          throw new Error("Error subscribing to category");
         }
 
         if (!errors) {
           toast.success("Category was subscribed!");
+
+          // Update the UI state to reflect the subscription
           setBlockContent(data.subscribeToCategory);
           setUserSubscribed(true);
         }
       } else {
+        // If type is false, the user wants to unsubscribe from the category
         const { data, errors } = await unsubscribeToCategory({
           variables: {
             ...subscribeData,
           },
         });
 
+        /**
+         * If we receive an empty data we show it like an error
+         * It is because we can`t use undefined data to our opperations
+         */
+
         if (!data?.unsubscribeToCategory || errors) {
-          throw new Error("Error unsubscribe category");
+          throw new Error("Error unsubscribing from category");
         }
 
         if (!errors) {
           toast.success("Category was unsubscribed!");
+
+          // Update the UI state to reflect the unsubscription
           setBlockContent(data.unsubscribeToCategory);
           setUserSubscribed(false);
         }
@@ -133,6 +147,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
     }
   };
 
+  // Query to fetch current user data
   const {
     data: currentUser,
     loading: currentUserLoading,
@@ -141,6 +156,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
     UserOperations.Queries.searchUser,
     {
       variables: {
+        // If the type is "author", use the provided id, otherwise use session user id
         id: type === "author" ? id : session?.user.id || "",
       },
       /**
@@ -152,15 +168,18 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
        */
       skip: type !== "author", // Skip the query if the type is not "group"
       onCompleted(data) {
+        // Update the block content with the fetched user data
         setBlockContent({ ...data.searchUser });
       },
       onError: (error) => {
+        // Display an error toast message and log the error
         toast.error(`Error loading user: ${error}`);
         console.error("Error in searchUser func", error);
       },
     }
   );
 
+  // Query to fetch category data
   const {
     data: categoryData,
     loading: categoryLoading,
@@ -169,65 +188,83 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
     CategoryOperations.Queries.queryCategory,
     {
       variables: {
-        id: id,
+        id: id, // The category ID to fetch
       },
-      skip: type !== "group", // Skip the query if the type is not "group"
+      // Skip the query when the type is not "group"
+      skip: type !== "group",
       onCompleted(data) {
+        // Update the block content with the fetched category data
         setBlockContent({ ...data.queryCategory });
       },
       onError: (error) => {
+        // Display an error toast message and log the error
         toast.error(`Error on loading category ${error}`);
         console.error("Error queryCategory func", error);
       },
     }
   );
 
+  // Query to fetch tag data
   const {
     data: tagData,
     loading: tagLoading,
     refetch: refetchTag,
   } = useQuery<TagData, TagsVariables>(TagOperations.Queries.queryTag, {
     variables: {
-      id: id,
+      id: id, // The tag ID to fetch
     },
-    skip: type !== "tag", // Skip the query if the type is not "tag"
+    // Skip the query when the type is not "tag"
+    skip: type !== "tag",
     onCompleted(data) {
+      // Update the block content with the fetched tag data
       setBlockContent({ ...data.queryTag });
     },
     onError: (error) => {
-      toast.error(`Error on loading category ${error}`);
-      console.error("Error queryCategory func", error);
+      // Display an error toast message and log the error
+      toast.error(`Error on loading tag ${error}`);
+      console.error("Error queryTag func", error);
     },
   });
 
+  // useEffect to manage data refetching based on the type parameter
   useEffect(() => {
     switch (type) {
+      // If type is "author", trigger a refetch of user data
       case "author": {
         refetchUser();
         break;
       }
+      // If type is "group", trigger a refetch of category data
       case "group": {
         refetchCategory();
         break;
       }
+      // If type is "tag", trigger a refetch of tag data
       case "tag": {
         refetchTag();
+        break;
+      }
+      // Default case: do nothing
+      default: {
         break;
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Mutation hook for following a user
   const [followUser] = useMutation<
     { followUser: FollowUserArguments },
     FollowUserArguments
   >(UserOperations.Mutations.followUser);
 
+  // Mutation hook for unfollowing a user
   const [unfollowUser] = useMutation<
     { unfollowUser: DeleteItemResoponse },
     FollowUserArguments
   >(UserOperations.Mutations.unfollowUser);
 
+  // Function to handle following or unfollowing a user
   const onFollowUser = async (type: boolean) => {
     try {
       if (!session) {
@@ -241,6 +278,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
         throw new Error("Not authorized user");
       }
 
+      // Check if user exist to make post secure
       if (!currentUser) {
         throw new Error("Not authorized user");
       }
@@ -250,79 +288,103 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
         followingId: currentUser.searchUser.id,
       };
 
+      // If the follow type is true, indicating the user wants to follow the user
       if (type === true) {
+        // Execute the followUser mutation
         const { data, errors } = await followUser({
           variables: {
             ...subscribeData,
           },
         });
 
+        // Check if there are errors or if data.followUser is falsy
         if (!data?.followUser || errors) {
-          throw new Error("Error follow user");
+          // If there are errors or followUser response is falsy, throw an error
+          throw new Error("Error following user");
         }
 
+        // If there are no errors, display a success toast message and update the user's subscription status
         if (!errors) {
           toast.success("User was followed!");
           setUserSubscribed(true);
         }
       } else {
+        // If the follow type is false, indicating the user wants to unfollow the user
+        // Execute the unfollowUser mutation
         const { data, errors } = await unfollowUser({
           variables: {
             ...subscribeData,
           },
         });
 
+        // Check if there are errors or if data.unfollowUser.success is falsy
         if (!data?.unfollowUser.success || errors) {
-          throw new Error("Error unfolow user");
+          // If there are errors or unfollowUser response is falsy, throw an error
+          throw new Error("Error unfollowing user");
         }
 
+        // If there are no errors, display a success toast message and update the user's subscription status
         if (!errors) {
-          toast.success("User was unfolowed!");
+          toast.success("User was unfollowed!");
           setUserSubscribed(false);
         }
       }
     } catch (error: any) {
+      // Catch all errors that can appear while operating
       console.error("onFollowUser error", error);
       toast.error(error?.message);
     }
   };
 
+  // useEffect to handle user subscription status based on the block content type
   useEffect(() => {
+    // If the type is not "author" and not "tag"
     if (type !== "author" && type !== "tag") {
-      if (categoryData && categoryLoading != true) {
+      // Check if category data is available and loading is not true
+      if (categoryData && categoryLoading !== true) {
+        // If there is an active session
         if (session) {
+          // Get the list of subscribed users from the category data
           const subscribedUsers = categoryData.queryCategory.subscribers;
           const { id } = session.user;
 
+          // Check if the current user is subscribed
           if (session && categoryData.queryCategory) {
             const isSubscribed = subscribedUsers.find(
               (follow) => follow.id === id
             );
-
             setUserSubscribed(isSubscribed ? true : false);
           } else {
+            // If the category data is not available or session is not authorized, set user as subscribed
             setUserSubscribed(true);
           }
         }
       } else {
+        // If category data is not available or session is not authorized, set user as unsubscribed
         console.error("Not authorized Session");
         setUserSubscribed(false);
       }
     } else if (type === "author") {
-      if (currentUser?.searchUser && currentUserLoading != true) {
+      // If the type is "author"
+      if (currentUser?.searchUser && currentUserLoading !== true) {
+        // Check if there is an active session
         if (session) {
+          // Get the list of users followed by the current user
           const subscribedUsers = currentUser.searchUser.followedBy;
           const { id } = session.user;
 
           if (subscribedUsers) {
+            // Check if the current user is following the author
             const isSubscribed = subscribedUsers.find(
               (follow) => follow.follower.id === id
             );
             setUserSubscribed(isSubscribed ? true : false);
           } else {
+            // If the subscribed users list is not available, set user as subscribed
             setUserSubscribed(true);
           }
         } else {
+          // If there is no active session, set user as unsubscribed
           console.error("Not authorized Session");
           setUserSubscribed(false);
         }
@@ -401,11 +463,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
             blockContent &&
             session?.user &&
             blockContent.id !== session.user.id && (
-              <AuthorinfoWrite
-                setConversationsLoading={setConversationsLoading}
-                blockContent={blockContent}
-                session={session}
-              />
+              <AuthorinfoWrite blockContent={blockContent} session={session} />
             )}
 
           {auhtorEdit && blockContent?.createdAt && (

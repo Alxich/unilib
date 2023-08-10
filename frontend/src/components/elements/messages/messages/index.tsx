@@ -16,6 +16,7 @@ import MessagesModal from "./modal/_messagesModal";
 import { IModalContext, ModalContext } from "../../../../context/ModalContent";
 
 import sadSaymonCat from "../../../../../public/images/sad-saymon.png";
+import { getUserParticipantObject } from "../../../../util/functions";
 
 interface MessagesProps {
   conversationsLoading: boolean;
@@ -40,12 +41,6 @@ const Messages: FC<MessagesProps> = ({
     useContext<IModalContext>(ModalContext);
   const [editingConversation, setEditingConversation] =
     useState<ConversationPopulated | null>(null);
-
-  const getUserParticipantObject = (conversation: ConversationPopulated) => {
-    return conversation.participants.find(
-      (p) => p.user.id === session.user.id
-    ) as ParticipantPopulated;
-  };
 
   const toggleClose = () => {
     setEditingConversation(null);
@@ -106,7 +101,10 @@ const Messages: FC<MessagesProps> = ({
           conversations &&
           conversations.length > 0 ? (
           conversations.map((item, i) => {
-            const { hasSeenLatestMessage } = getUserParticipantObject(item);
+            const { hasSeenLatestMessage } = getUserParticipantObject(
+              session,
+              item
+            );
 
             return (
               <MessagesItem

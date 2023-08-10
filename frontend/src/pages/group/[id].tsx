@@ -22,29 +22,38 @@ const Author: FC<NextPage> = () => {
   // Used as sting because knew that it will only be variable not array
   const id = router.query.id as string;
 
+  // Query for fetching posts by category using GraphQL and Apollo's useQuery hook
   const { data, loading, fetchMore } = useQuery<
     PostsByCatData,
     PostsCatVariables
   >(PostOperations.Queries.queryPostsByCat, {
     variables: {
       period: period !== "popular" ? period : "today",
-      popular: period === "popular", // Set the popular variable based on the selected period
+      popular: period === "popular", // Set the 'popular' variable based on the selected period
       catId: id,
       skip: 0,
       take: 3,
     },
+    // Callback when the query is completed successfully
     onCompleted(data) {
+      // Clear the existing posts and set the fetched posts
       setPosts([]);
       setPosts(data.queryPostsByCat);
     },
+    // Callback when an error occurs
     onError: ({ message }) => {
+      // Display an error message using a toast notification
       toast.error(message);
     },
   });
 
+  // Initialize state for posts, hasMore flag, and the fetchMore function
+  const [posts, setPosts] = useState<PostPopulated[] | undefined>();
+  const [hasMore, setHasMore] = useState(true);
+
+  // Fetch more posts when the 'period' or 'id' changes
   useEffect(() => {
-    setPosts([]);
-    // Call the queryPostsByCat function whenever the period changes
+    setPosts([]); // Clear existing posts
     fetchMore({
       variables: {
         period: period !== "popular" ? period : "today",
@@ -56,17 +65,16 @@ const Author: FC<NextPage> = () => {
     });
   }, [period, id, fetchMore]);
 
-  const [posts, setPosts] = useState<PostPopulated[] | undefined>();
-
+  // Update 'posts' state when the data is fetched
   useEffect(() => {
-    if (loading == false) {
+    if (loading === false) {
+      // If the query has loaded and data is available, update 'posts'
       data?.queryPostsByCat && setPosts(data.queryPostsByCat);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
-  const [hasMore, setHasMore] = useState(true);
-
+  // Function to fetch more posts when the user wants to load more
   const getMorePost = async () => {
     if (posts) {
       const newPosts = await fetchMore({
@@ -76,11 +84,13 @@ const Author: FC<NextPage> = () => {
         },
       });
 
+      // If no more new posts were fetched, set 'hasMore' to false
       if (newPosts.data.queryPostsByCat.length === 0) {
         setHasMore(false);
         return null;
       }
 
+      // Append the new fetched posts to the existing 'posts' array
       setPosts((post) => {
         return post && newPosts && [...post, ...newPosts.data.queryPostsByCat];
       });

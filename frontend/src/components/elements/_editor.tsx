@@ -39,10 +39,12 @@ const EditorBlock: FC<EditorProps> = ({
   const [openImagePop, setOpenImagePop] = useState(false);
   const [imagePopText, setImagePopText] = useState("");
 
+  // Callback function to add an image to the editor's content
   const addImage = useCallback(() => {
     if (imagePopText) {
+      // Chain commands to focus on the editor, set the image source, and run the commands
       editor?.chain().focus().setImage({ src: imagePopText }).run();
-      setOpenImagePop(false);
+      setOpenImagePop(false); // Close the image popup after adding the image
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);

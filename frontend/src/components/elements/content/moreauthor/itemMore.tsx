@@ -38,16 +38,19 @@ const ItemMore: FC<ItemProps> = ({
 }) => {
   const [subscribed, setSubscribed] = useState(false);
 
+  // Mutation hook for subscribing to a category
   const [subscribeToCategory] = useMutation<
     { subscribeToCategory: CategoryPopulated },
     SubscribeCategoryArguments
   >(CategoriesOperations.Mutations.subscribeToCategory);
 
+  // Mutation hook for unsubscribing from a category
   const [unsubscribeToCategory] = useMutation<
     { unsubscribeToCategory: CategoryPopulated },
     SubscribeCategoryArguments
   >(CategoriesOperations.Mutations.unsubscribeToCategory);
 
+  // Mutation hook for following a user
   const [followUser] = useMutation<
     { followUser: FollowUserArguments },
     FollowUserArguments
@@ -56,62 +59,79 @@ const ItemMore: FC<ItemProps> = ({
   /**
    * If type true its a category
    * or if false its a followers
+   *
+   * Effect to determine whether the current user
+   * is subscribed to a certain item (category or user)
    */
 
+  // Effect to determine whether the current user is subscribed to a certain item (category or user)
   useEffect(() => {
+    // Check if the item type is not "false"
     if (itemType !== false) {
-      // Skip the query if the type is not "group"
-      if (currentUser && currentUserLoading != true) {
+      // Skip the query if the item type is not "group"
+      if (currentUser && currentUserLoading !== true) {
+        // Get the array of subscribed category IDs from the current user
         const subscribedCategoryIDs =
           currentUser.searchUser.subscribedCategoryIDs;
+        // Check if the current item's ID is present in the subscribedCategoryIDs array
         const isSubscribed = subscribedCategoryIDs.find(
           (categoryId) => "id" in item && categoryId === item.id
         );
 
+        // Update the subscribed state based on whether the user is subscribed or not
         setSubscribed(isSubscribed ? true : false);
       }
     } else {
-      if (currentUser && currentUserLoading != true) {
+      // Handle the case when the item type is "false" (referring to user subscription)
+      if (currentUser && currentUserLoading !== true) {
+        // Get the array of subscribed user IDs from the current user
         const subscribedUserIDs = currentUser.searchUser.followedBy;
+        // Check if the current item's ID is present in the subscribedUserIDs array
         const isSubscribed = subscribedUserIDs?.find(
           (userId) => "id" in item && userId.follower.id === item.id
         );
 
+        // Update the subscribed state based on whether the user is subscribed or not
         setSubscribed(isSubscribed ? true : false);
       }
     }
   }, [currentUserLoading, currentUser, item, itemType]);
 
   /**
-   * When user subscribe to cateogory
+   * Function to handle subscription/unsubscriptio
    */
+
   const onSubscribe = async (type: boolean, elementId: string) => {
-    if (itemType != true) {
+    if (itemType !== true) {
       /**
        * When user smash the button we asign or remove from folowing the user
+       * If itemType is not true, it's a user subscription
        */
-
       try {
+        // Check if user is authenticated
         if (!session) {
           throw new Error("Not authorized Session");
         }
 
         const { username, id: userId } = session.user;
 
-        // Check if user exist to make post secure
+        // Check if user data exists to ensure post security
         if (!username) {
           throw new Error("Not authorized user");
         }
 
+        // Ensure currentUser data is available
         if (!currentUser) {
           throw new Error("Not authorized user");
         }
 
+        // Data for following a user
         const subscribeData: FollowUserArguments = {
           followerId: userId,
           followingId: elementId,
         };
 
+        // Follow the user
         const { data, errors } = await followUser({
           variables: {
             ...subscribeData,
@@ -119,7 +139,7 @@ const ItemMore: FC<ItemProps> = ({
         });
 
         if (!data?.followUser || errors) {
-          throw new Error("Error follow user");
+          throw new Error("Error following user");
         }
 
         if (!errors) {
@@ -133,33 +153,38 @@ const ItemMore: FC<ItemProps> = ({
     } else {
       /**
        * When user smash the button we asign or remove from folowing the category
+       * If itemType is true, it's a category subscription
        */
       try {
+        // Check if user is authenticated
         if (!session) {
           throw new Error("Not authorized Session");
         }
 
         const { username, id: userId } = session.user;
 
-        // Check if user exist to make post secure
+        // Check if user data exists to ensure post security
         if (!username) {
           throw new Error("Not authorized user");
         }
 
+        // Data for subscribing/unsubscribing to a category
         const subscribeData: SubscribeCategoryArguments = {
           categoryId: elementId,
           userId,
         };
 
         if (type === false) {
+          // Subscribe to the category
           const { data, errors } = await subscribeToCategory({
             variables: {
               ...subscribeData,
             },
           });
 
+          // We cant operate during we have not all the data we needed
           if (!data?.subscribeToCategory || errors) {
-            throw new Error("Error subscribe category");
+            throw new Error("Error subscribing to category");
           }
 
           if (!errors) {
@@ -167,14 +192,16 @@ const ItemMore: FC<ItemProps> = ({
             setSubscribed(true);
           }
         } else {
+          // Unsubscribe from the category
           const { data, errors } = await unsubscribeToCategory({
             variables: {
               ...subscribeData,
             },
           });
 
+          // We cant operate during we have not all the data we needed
           if (!data?.unsubscribeToCategory || errors) {
-            throw new Error("Error unsubscribe category");
+            throw new Error("Error unsubscribing from category");
           }
 
           if (!errors) {
@@ -183,13 +210,22 @@ const ItemMore: FC<ItemProps> = ({
           }
         }
       } catch (error: any) {
+        // If any error occures during this function we explain it to our user
         console.error("onSubscribeCategory error", error);
         toast.error(error?.message);
       }
     }
   };
 
+  // Function to handle subscription button click
   const handleSubscribe = () => {
+    /**
+     * If itemType is truthy (category or group),
+     * check if "id" is in item and call onSubscribe
+     *
+     * If itemType is falsy (user),
+     * check if subscribed is not true and call onSubscribe
+     */
     itemType
       ? itemType && "id" in item && onSubscribe(subscribed, item.id)
       : subscribed != true && onSubscribe(subscribed, session.user.id);

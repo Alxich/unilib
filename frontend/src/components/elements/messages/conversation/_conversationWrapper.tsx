@@ -26,6 +26,7 @@ const ConversationWrapper: FC<ConversationWrapperProps> = ({
   userId,
   conversationId,
 }: ConversationWrapperProps) => {
+  // Fetch messages using a GraphQL query
   const { data, loading, error, subscribeToMore } = useQuery<
     MessagesData,
     MessagesVariables
@@ -38,8 +39,10 @@ const ConversationWrapper: FC<ConversationWrapperProps> = ({
     },
   });
 
+  // Create a reference to the end of the messages container
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Subscribe to new messages in a conversation
   const subscribeToMoreMessages = (conversationId: string) => {
     return subscribeToMore({
       document: MessageOperations.Subscriptions.messageSent,
@@ -54,8 +57,8 @@ const ConversationWrapper: FC<ConversationWrapperProps> = ({
         return Object.assign({}, prev, {
           messages:
             newMessage.sender.id === userId
-              ? prev.messages
-              : [newMessage, ...prev.messages],
+              ? prev.messages // If the sender is the current user, no change is needed
+              : [newMessage, ...prev.messages], // Otherwise, add the new message to the list
         });
       },
     });

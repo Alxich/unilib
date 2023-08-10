@@ -28,7 +28,6 @@ const AuthorinfoEdit: FC<AuthorinfoEditProps> = ({
   /**
    * Edit variables for creating edit page
    */
-
   const [username, setUsername] = useState<string>("");
   const [desc, setDesc] = useState<string>("");
   const [image, setImage] = useState<string>("");
@@ -36,13 +35,20 @@ const AuthorinfoEdit: FC<AuthorinfoEditProps> = ({
   const [currentPassword, setCurrentPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
 
+  // Set up an effect to update component state when blockContent changes
   useEffect(() => {
+    // Check if there's any data in the blockContent
     if (blockContent) {
+      // Extract relevant data fields from blockContent
       const { username, aboutMe, banner, image } = blockContent;
 
+      // Update component state with username if available
       username && setUsername(username);
+      // Update component state with aboutMe if available
       aboutMe && setDesc(aboutMe);
+      // Update component state with image if available
       image && setImage(image);
+      // Update component state with banner if available
       banner && setBanner(banner);
     }
   }, [blockContent]);
@@ -52,57 +58,71 @@ const AuthorinfoEdit: FC<AuthorinfoEditProps> = ({
   const [cooldown, setCooldown] = useState<number>(cooldownTimeInSeconds);
   const [isCooldownActive, setIsCooldownActive] = useState<boolean>(false);
 
+  // Set up an effect to manage the cooldown interval
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
     if (isCooldownActive) {
+      // Set up an interval to decrement the cooldown every second
       interval = setInterval(() => {
         setCooldown((prevCooldown) => prevCooldown - 1);
       }, 1000);
     }
 
+    // Clean up the interval when the component unmounts or when isCooldownActive changes
     return () => clearInterval(interval);
   }, [isCooldownActive]);
 
+  // Set up an effect to stop the cooldown when it reaches 0
   useEffect(() => {
     cooldown === 0 && stopCooldown();
   }, [cooldown]);
 
-  // Start counting cooldown
+  // Function to start the cooldown
   const startCooldown = () => {
+    // Set the initial cooldown time
     setCooldown(cooldownTimeInSeconds);
+
+    // Activate the cooldown
     setIsCooldownActive(true);
   };
 
-  // End counting cooldown (For extra situation)
+  // Function to stop the cooldown
   const stopCooldown = () => {
+    // Deactivate the cooldown
     setIsCooldownActive(false);
   };
 
+  // Set up a mutation for updating user data
   const [updateUser] = useMutation<
     { updateUser: UpdateItemResoponse },
     UpdateUserArguments
   >(UserOperations.Mutations.updateUser);
 
+  // Function to handle user data update
   const onUpdateUser = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setUpdateProccessing(true);
+
     try {
       if (!session) {
         throw new Error("Not authorized Session");
       }
 
+      // Extract necessary data from the session
       const { username: sessionUsername, id: userId } = session.user;
 
-      // Check if user exist to make post secure
+      // Check if the session's user information is available
       if (!sessionUsername) {
         throw new Error("Not authorized user");
       }
 
+      // Check if the current user data is available
       if (!currentUser) {
         throw new Error("Not authorized user");
       }
 
+      // Send an update request to the server
       const { data, errors } = await updateUser({
         variables: {
           banner,
@@ -112,17 +132,20 @@ const AuthorinfoEdit: FC<AuthorinfoEditProps> = ({
         },
       });
 
+      // Handle update response and errors
       if (!data?.updateUser.success || errors) {
         setUpdateProccessing(false);
-        throw new Error("Error to update user");
+        throw new Error("Error updating user");
       }
 
+      // If successful, display a success toast and trigger cooldown
       if (!errors) {
         toast.success("User was updated!");
         setUpdateProccessing(false);
         startCooldown();
       }
     } catch (error: any) {
+      // If unsuccessful, display a error toast
       console.error("onFollowUser error", error);
       toast.error(error?.message);
     }

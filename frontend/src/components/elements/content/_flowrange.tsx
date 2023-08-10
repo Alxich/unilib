@@ -15,6 +15,7 @@ const Flowrange: FC<FlowrangeProps> = ({
 }: FlowrangeProps) => {
   const [openRange, setOpenRange] = useState(false);
 
+  // Function to format the current date into a specific format
   const formatDate = () => {
     const date = new Date();
     const day = date.getDate();
@@ -34,11 +35,14 @@ const Flowrange: FC<FlowrangeProps> = ({
     ];
     const month = monthNames[date.getMonth()];
 
+    // Return formatted date as "day month"
     return `${day} ${month}`;
   };
 
+  // Get the current year
   const year = new Date().getFullYear();
 
+  // Initialize state variable `rangeText` with default value as `${year} Рік`
   const [rangeText, setRangeText] = useState<string>(`${year} Рік`);
 
   return (
@@ -66,7 +70,7 @@ const Flowrange: FC<FlowrangeProps> = ({
                 onClick={() => {
                   setRangeText(`${year} Рік`);
                   setRangeValue("year");
-                  setOpenRange(false)
+                  setOpenRange(false);
                 }}
               >
                 {year} Рік
@@ -77,7 +81,7 @@ const Flowrange: FC<FlowrangeProps> = ({
                 onClick={() => {
                   setRangeText("Тиждень");
                   setRangeValue("week");
-                  setOpenRange(false)
+                  setOpenRange(false);
                 }}
               >
                 Тиждень
@@ -88,7 +92,7 @@ const Flowrange: FC<FlowrangeProps> = ({
                 onClick={() => {
                   setRangeText("Місяць");
                   setRangeValue("month");
-                  setOpenRange(false)
+                  setOpenRange(false);
                 }}
               >
                 Місяць
@@ -99,7 +103,7 @@ const Flowrange: FC<FlowrangeProps> = ({
                 onClick={() => {
                   setRangeText(formatDate);
                   setRangeValue("today");
-                  setOpenRange(false)
+                  setOpenRange(false);
                 }}
               >
                 {formatDate()}

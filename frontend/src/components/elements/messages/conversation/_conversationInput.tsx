@@ -45,6 +45,8 @@ const ConversationInput: FC<ConversationInputProps> = ({
 }: ConversationInputProps) => {
   const [content, setContent] = useState("");
 
+  // Initialize the editor with start-up config
+
   const editor = useEditor({
     content: content,
     extensions: [
@@ -78,6 +80,8 @@ const ConversationInput: FC<ConversationInputProps> = ({
     [editor, imagePopText]
   );
 
+  //. This mutation is used to send a message in a conversation.
+
   const [sendMessage] = useMutation<
     { sendMessage: boolean },
     SendMessageVariables
@@ -87,26 +91,30 @@ const ConversationInput: FC<ConversationInputProps> = ({
     event.preventDefault();
 
     try {
+      // Check if there's a valid conversation ID
       if (!conversationId) {
-        throw new Error("Error now conversation ID. Chat is corupted");
+        throw new Error("Error no conversation ID. Chat is corrupted");
       }
 
+      // Get the sender's ID from the session
       const { id: senderId } = session.user;
+
+      // Generate a new unique ID for the message
       const newId = new ObjectId().toString();
+
+      // Create the new message object
       const newMessage: SendMessageVariables = {
         id: newId,
         senderId,
         conversationId,
         body: JSON.stringify(content),
       };
-      
+
+      // Send the message using the sendMessage mutation
       const { data, errors } = await sendMessage({
         variables: {
           ...newMessage,
         },
-        /**
-         * Optimistically update UI
-         */
         optimisticResponse: {
           sendMessage: true,
         },
@@ -114,11 +122,13 @@ const ConversationInput: FC<ConversationInputProps> = ({
           setContent("");
           editor?.commands.setContent(``);
 
+          // Read the existing messages data from the cache
           const existing = cache.readQuery<MessagesData>({
             query: MessageOperations.Query.messages,
             variables: { conversationId },
           }) as MessagesData;
 
+          // Update the cache with the new message
           cache.writeQuery<MessagesData, { conversationId: string }>({
             query: MessageOperations.Query.messages,
             variables: { conversationId },
@@ -144,6 +154,7 @@ const ConversationInput: FC<ConversationInputProps> = ({
         },
       });
 
+      // Handle success and errors
       if (!data?.sendMessage || errors) {
         throw new Error("Error sending message");
       } else {

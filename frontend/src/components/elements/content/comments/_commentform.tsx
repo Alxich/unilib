@@ -33,13 +33,16 @@ const CommentForm: FC<CommentFormProps> = ({
   imagePopText,
   setImagePopText,
 }: CommentFormProps) => {
+  // Callback function to add an image to the editor
   const addImage = useCallback(
     (e?: MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      e?.preventDefault();
+      e?.preventDefault(); // Prevent default behavior if an event is provided
 
+      // Check if imagePopText is not empty
       if (imagePopText) {
+        // Use editor's chain to focus and set an image with the provided src
         editor?.chain().focus().setImage({ src: imagePopText }).run();
-        setOpenImagePop(false);
+        setOpenImagePop(false); // Close the image pop-up
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

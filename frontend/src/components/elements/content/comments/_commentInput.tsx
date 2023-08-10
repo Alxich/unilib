@@ -33,31 +33,35 @@ const CommentInput: FC<CommentInputProps> = ({
 }: CommentInputProps) => {
   const [content, setContent] = useState("");
 
+  // Initialize the editor with specified extensions and configurations
   const editor = useEditor({
-    content: content,
+    content: content, // Initial content of the editor
     extensions: [
       StarterKit,
       Image,
       Placeholder.configure({
-        placeholder: "Написати свій коментар ...",
-        showOnlyCurrent: true,
+        placeholder: "Написати свій коментар ...", // Placeholder text
+        showOnlyCurrent: true, // Show the placeholder only in the current state
       }),
     ],
     injectCSS: false,
     onUpdate: ({ editor }) => {
       // @ts-ignore
-      setContent(editor.getJSON());
+      setContent(editor.getJSON()); // Update content with the editor's JSON data
     },
   });
 
+  // State variables for controlling image pop-up and its text
   const [openImagePop, setOpenImagePop] = useState(false);
   const [imagePopText, setImagePopText] = useState("");
 
+  // Mutation for creating a new comment
   const [createComment] = useMutation<
     { createComment: CommentCreateArguments },
     CommentCreateVariables
   >(CommentOperations.Mutations.createComment);
 
+  // Function to create a new comment
   const onCreateComment = async () => {
     try {
       if (!session) {
@@ -65,20 +69,22 @@ const CommentInput: FC<CommentInputProps> = ({
       }
       const { username, id: userId } = session.user;
 
-      // Check if user exist to make post secure
+      // Check if user exists to make post secure
       if (!username) {
         throw new Error("Not authorized user");
       }
 
-      // Check if string not empty
+      // Check if the editor content is not empty
       if (editor === null || editor.isEmpty) {
         throw new Error("Trying to send an empty comment");
       }
 
+      // Check if postId is defined
       if (!postId) {
         throw new Error("Post is undefined");
       }
 
+      // Create the comment data
       const variable: CommentCreateArguments = {
         authorId: userId,
         postId,
@@ -100,10 +106,12 @@ const CommentInput: FC<CommentInputProps> = ({
         setContent("");
         editor?.commands.setContent(``);
 
+        // Subscribe to more comments if postId and subscribeToMoreComments function are available
         if (postId && subscribeToMoreComments) {
           subscribeToMoreComments(postId);
         }
 
+        // Set the answerShowActive state if available
         setAnswerShowActive && setAnswerShowActive(true);
 
         toast.success("Comment was created!");
@@ -114,6 +122,7 @@ const CommentInput: FC<CommentInputProps> = ({
     }
   };
 
+  // Subscribe to more comments when postId and subscribeToMoreComments function are available
   useEffect(() => {
     if (postId && subscribeToMoreComments) {
       subscribeToMoreComments(postId);

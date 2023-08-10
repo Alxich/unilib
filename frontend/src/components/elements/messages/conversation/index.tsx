@@ -10,10 +10,7 @@ import { Session } from "next-auth";
 
 import { useMutation, useQuery } from "@apollo/client";
 import ConversationOperations from "../../../../graphql/operations/conversations";
-import {
-  ConversationPopulated,
-  ParticipantPopulated,
-} from "../../../../../../backend/src/util/types";
+import { ConversationPopulated } from "../../../../../../backend/src/util/types";
 
 import ConversationWrapper from "./_conversationWrapper";
 import ConversationInput from "./_conversationInput";
@@ -21,9 +18,13 @@ import OhfailPage from "../_ohfailpage";
 
 import { IModalContext, ModalContext } from "../../../../context/ModalContent";
 
-import wizzardBorisCat from "../../../../../public/images/boris-wizzard.png";
-import { returnMeFunnyError } from "../../../../util/functions";
+import {
+  getUserParticipantObject,
+  returnMeFunnyError,
+} from "../../../../util/functions";
 import MessagesModal from "../messages/modal/_messagesModal";
+
+import wizzardBorisCat from "../../../../../public/images/boris-wizzard.png";
 
 interface ConversationProps {
   conversationId: string;
@@ -110,18 +111,22 @@ const Conversation: FC<ConversationProps> = ({
   >(ConversationOperations.Mutations.deleteConversation);
 
   const onLeaveConversation = async (conversation: ConversationPopulated) => {
+    // Extract participant IDs from the conversation excluding the current user
     const participantIds = conversation.participants
       .filter((p) => p.user.id !== userId)
       .map((p) => p.user.id);
 
     try {
+      // Using toast.promise to show loading, success, and error messages
       toast.promise(
+        // Call the updateParticipants mutation to update the conversation's participants
         updateParticipants({
           variables: {
             conversationId,
             participantIds,
           },
           update: () => {
+            // After updating, navigate the user back to the conversation list
             router.replace(
               typeof process.env.NEXT_PUBLIC_BASE_URL === "string"
                 ? process.env.NEXT_PUBLIC_BASE_URL
@@ -131,24 +136,27 @@ const Conversation: FC<ConversationProps> = ({
         }),
         {
           loading: "Leaving conversation",
-          success: "Conversation bye bye :)",
+          success: "Conversation left successfully",
           error: "Failed to leave conversation",
         }
       );
     } catch (error: any) {
-      console.log("onUpdateConversation error", error);
+      console.error("onUpdateConversation error", error);
       toast.error(error?.message);
     }
   };
 
   const onDeleteConversation = async (conversationId: string) => {
     try {
+      // Using toast.promise to show loading, success, and error messages
       toast.promise(
+        // Call the deleteConversation mutation to delete the conversation
         deleteConversation({
           variables: {
             conversationId,
           },
           update: () => {
+            // After deleting, navigate the user back to the conversation list
             router.replace(
               typeof process.env.NEXT_PUBLIC_BASE_URL === "string"
                 ? process.env.NEXT_PUBLIC_BASE_URL
@@ -158,32 +166,29 @@ const Conversation: FC<ConversationProps> = ({
         }),
         {
           loading: "Deleting conversation",
-          success: "Conversation deleted",
+          success: "Conversation deleted successfully",
           error: "Failed to delete conversation",
         }
       );
     } catch (error) {
-      console.log("onDeleteConversation error", error);
+      console.error("onDeleteConversation error", error);
     }
   };
 
   const onEditConversation = (conversation: ConversationPopulated) => {
+    // Set the conversation to be edited and open the modal
     setEditingConversation(conversation);
     openModal();
   };
 
   const toggleClose = () => {
+    // Clear the editingConversation state, close modal, and toggle conversation creation
     setEditingConversation(null);
     setOpenConversationCreation(false);
     closeModal();
 
+    // Reload the router (likely to reflect any changes made)
     router.reload();
-  };
-
-  const getUserParticipantObject = (conversation: ConversationPopulated) => {
-    return conversation.participants.find(
-      (p) => p.user.id === session.user.id
-    ) as ParticipantPopulated;
   };
 
   if (conversationError) {
@@ -221,15 +226,25 @@ const Conversation: FC<ConversationProps> = ({
                 onClick={() => {
                   setOpenConversationCreation(true);
                   onEditConversation(conversation);
-                  setOpenFilter(false)
+                  setOpenFilter(false);
                 }}
               >
                 Редагувати співрозмову
               </p>
-              <p onClick={() => {onDeleteConversation(conversationId); setOpenFilter(false)}}>
+              <p
+                onClick={() => {
+                  onDeleteConversation(conversationId);
+                  setOpenFilter(false);
+                }}
+              >
                 Видалити бесіду
               </p>
-              <p onClick={() => {onLeaveConversation(conversation); setOpenFilter(false)}}>
+              <p
+                onClick={() => {
+                  onLeaveConversation(conversation);
+                  setOpenFilter(false);
+                }}
+              >
                 Покинути співрозмову
               </p>
             </div>

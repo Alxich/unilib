@@ -12,53 +12,30 @@ import {
 import { useQuery } from "@apollo/client";
 import { PostsByTagsData, PostsTagVariables } from "../../../util/types";
 import PostOperations from "../../../graphql/operations/posts";
-
-interface FlowItemProps {
-  id: string;
-  title: string;
-  counter: number;
-}
-
-const FlowItem: FC<FlowItemProps> = ({ id, title, counter }: FlowItemProps) => {
-  return (
-    <div className="item">
-      <Link className="title" href={`/post/${id}`}>
-        {title}
-      </Link>
-      <Link className="comments" href={`/post/${id}`}>
-        <div className="fafont-icon comments">
-          <FontAwesomeIcon
-            icon={faComments}
-            style={{ width: "100%", height: "100%", color: "inherit" }}
-          />
-        </div>
-        <div className="counter">
-          <p>{counter}</p>
-        </div>
-      </Link>
-    </div>
-  );
-};
+import FlowItem from "./newesflow/_flowIiem";
 
 const NewestFlow: FC = () => {
   const lengthBeforeArray = 3; // Plus 1 because of 0
   const [openMore, setOpenMore] = useState(false);
 
+  // Query the data for flow items using useQuery hook
   const {
-    data: flowItems,
-    loading,
-    error,
+    data: flowItems, // Retrieved data
+    loading, // Loading status
+    error, // Error information
   } = useQuery<PostsByTagsData, PostsTagVariables>(
-    PostOperations.Queries.queryPostsByTag,
+    PostOperations.Queries.queryPostsByTag, // Query name
     {
       variables: {
-        period: "week",
-        popular: false, // Set the popular variable based on the selected period
-        tagId: "64b993322db7ecc9ab2b8663",
-        skip: 0,
-        take: 15,
+        period: "week", // Set the time period for filtering
+        popular: false, // Set the 'popular' variable based on the selected period
+        tagId: "64b993322db7ecc9ab2b8663", // The ID of the tag to filter by
+        skip: 0, // Number of items to skip
+        take: 15, // Number of items to fetch
       },
+      // Handle errors during the query
       onError: ({ message }) => {
+        // Display an error toast with the error message
         toast.error(message);
       },
     }

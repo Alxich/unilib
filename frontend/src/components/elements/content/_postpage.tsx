@@ -47,6 +47,10 @@ const PostPage: FC<PostPageProps> = ({ data, session, postCommentsCount }) => {
     views,
   } = postData;
 
+  /**
+   * Define mutations for adding likes and dislikes to a post
+   */
+
   const [addLikeToPost] = useMutation<
     { addLikeToPost: PostPopulated },
     PostInteractionArguments
@@ -87,81 +91,96 @@ const PostPage: FC<PostPageProps> = ({ data, session, postCommentsCount }) => {
     },
   });
 
+  // Function to handle liking or disliking a post
+
   const onPostInteraction = async (type: boolean) => {
     /**
-     * If it is true its means we want to like the post
-     * else if it is false its means to dislike the post
+     * If it is true, it means we want to like the post.
+     * If it is false, it means to dislike the post.
      */
     try {
+      // Check if the user is authenticated
       if (!session) {
         throw new Error("Not authorized Session");
       }
 
       const { username } = session.user;
 
-      // Check if user exist to make post secure
+      // Check if the user's username exists
       if (!username) {
         throw new Error("Not authorized user");
       }
 
-      if (type != false) {
+      if (type !== false) {
+        // Handle liking the post
         const { data, errors } = await addLikeToPost({
           variables: {
             id: postID,
           },
         });
 
+        // Check for errors during liking
         if (!data?.addLikeToPost || errors) {
           throw new Error("Error onLikePost when trying to like");
         }
 
+        // Display success message if liking is successful
         if (!errors) {
           toast.success("Post was liked!");
         }
       } else {
+        // Handle disliking the post
         const { data, errors } = await addDislikeToPost({
           variables: {
             id: postID,
           },
         });
 
+        // Check for errors during disliking
         if (!data?.addDislikeToPost || errors) {
           throw new Error("Error addDislikeToPost when trying to dislike");
         }
 
+        // Display success message if disliking is successful
         if (!errors) {
           toast.success("Post was disliked!");
         }
       }
     } catch (error: any) {
+      // Catch and log errors
       console.error("onPostInteraction error", error);
       toast.error(error?.message);
     }
   };
 
+  // Subscribe to a category mutation
   const [subscribeToCategory] = useMutation<
     { subscribeToCategory: CategoryPopulated },
     SubscribeCategoryArguments
   >(CategoryOperations.Mutations.subscribeToCategory);
 
+  // Use effect to determine if the user is subscribed to a category
   useEffect(() => {
-    if (session && category.id !== undefined && userSubscribed != true) {
+    // Check if the user is authenticated and the category ID is defined
+    if (session && category.id !== undefined && userSubscribed !== true) {
       const subscribedCategoryIDs = category.subscriberIDs;
+
+      // Check if the user's ID is in the list of subscribed IDs
       const isSubscribed = subscribedCategoryIDs.find(
         (item) => item === session.user.id
       );
+
+      // Update the user's subscription status
       setUserSubscribed(isSubscribed ? true : false);
     } else {
+      // If the user is not authenticated or the category ID is not defined,
+      // reset the subscription status to false
       userSubscribed !== true && setUserSubscribed(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
   const onSubscribeCategory = async () => {
-    /**
-     * When user smash the button we asign or remove from folowing the category
-     */
-
     try {
       if (!session) {
         throw new Error("Not authorized Session");
@@ -169,20 +188,23 @@ const PostPage: FC<PostPageProps> = ({ data, session, postCommentsCount }) => {
 
       const { username, id: userId } = session.user;
 
-      // Check if user exist to make post secure
+      // Check if the user is authorized
       if (!username) {
         throw new Error("Not authorized user");
       }
 
+      // Check if the user is already subscribed to the category
       if (userSubscribed) {
         throw new Error("You have already subscribed!");
       }
 
+      // Prepare the subscription data
       const subscribeData = {
         categoryId: category.id,
         userId,
       };
 
+      // Call the subscribeToCategory mutation
       const { data, errors } = await subscribeToCategory({
         variables: {
           ...subscribeData,
@@ -190,10 +212,11 @@ const PostPage: FC<PostPageProps> = ({ data, session, postCommentsCount }) => {
       });
 
       if (!data?.subscribeToCategory || errors) {
-        throw new Error("Error subscribe category");
+        throw new Error("Error subscribing to the category");
       }
 
       if (!errors) {
+        // Update the UI and state to reflect the subscription
         toast.success("Category was subscribed!");
         setUserSubscribed(true);
       }

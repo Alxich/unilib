@@ -217,6 +217,7 @@ const MessagesPage: FC<NextPage> = (props: MessagesPageProps) => {
     }
   );
 
+  // Subscribing to the 'conversationDeleted' subscription
   useSubscription<ConversationDeletedData, null>(
     ConversationOperations.Subscriptions.conversationDeleted,
     {
@@ -225,6 +226,7 @@ const MessagesPage: FC<NextPage> = (props: MessagesPageProps) => {
 
         if (!subscriptionData) return;
 
+        // Read the existing conversations data from the cache
         const existing = client.readQuery<ConversationsData>({
           query: ConversationOperations.Queries.conversations,
         });
@@ -236,6 +238,7 @@ const MessagesPage: FC<NextPage> = (props: MessagesPageProps) => {
           conversationDeleted: { id: deletedConversationId },
         } = subscriptionData;
 
+        // Write the updated conversations data back to the cache
         client.writeQuery<ConversationsData>({
           query: ConversationOperations.Queries.conversations,
           data: {
@@ -342,6 +345,7 @@ const MessagesPage: FC<NextPage> = (props: MessagesPageProps) => {
     }
   };
 
+  // Subscribing to the 'conversationCreated' subscription using GraphQL
   const subscribeToNewConversations = () => {
     subscribeToMore({
       document: ConversationOperations.Subscriptions.conversationCreated,
@@ -351,8 +355,10 @@ const MessagesPage: FC<NextPage> = (props: MessagesPageProps) => {
       ) => {
         if (!subscriptionData.data) return prev;
 
+        // Extract the newly created conversation from the subscription data
         const newConversation = subscriptionData.data.conversationCreated;
 
+        // Construct a new object with updated conversations array
         return Object.assign({}, prev, {
           conversations: [newConversation, ...prev.conversations],
         });

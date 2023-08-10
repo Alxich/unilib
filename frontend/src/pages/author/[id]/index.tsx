@@ -25,35 +25,42 @@ const Author: FC<NextPage> = () => {
   // Used as sting because knew that it will only be variable not array
   const id = router.query.id as string;
 
+  // Query for fetching posts by author using GraphQL and Apollo's useQuery hook
   const { data, loading, fetchMore } = useQuery<
     PostsByAuthorData,
     PostsAuthorVariables
   >(PostOperations.Queries.queryPostsByAuthor, {
     variables: {
       period: period !== "popular" ? period : "year",
-      popular: period === "popular", // Set the popular variable based on the selected period
+      popular: period === "popular", // Set the 'popular' variable based on the selected period
       authorId: id,
       skip: 0,
       take: 3,
     },
+    // Callback when an error occurs
     onError: ({ message }) => {
+      // Display an error message using a toast notification
       toast.error(message);
     },
   });
 
+  // Initialize state for 'onceLoaded', 'posts', and 'hasMore'
   const [onceLoaded, setOnceLoaded] = useState(false);
   const [posts, setPosts] = useState<PostPopulated[] | undefined>();
+  const [hasMore, setHasMore] = useState(true);
 
+  // Effect to handle initial loading and set the 'posts' state
   useEffect(() => {
-    if (onceLoaded != true && loading == false) {
+    // Check if loading is complete and the effect has not been triggered before
+    if (onceLoaded !== true && loading === false) {
+      // If data is available, update the 'posts' state and set 'onceLoaded' to true
       data?.queryPostsByAuthor && setPosts(data.queryPostsByAuthor);
       setOnceLoaded(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, onceLoaded, setOnceLoaded]);
 
-  const [hasMore, setHasMore] = useState(true);
-
+  // Function to fetch more posts when the user wants to load more
   const getMorePost = async () => {
     if (posts) {
       const newPosts = await fetchMore({
@@ -63,11 +70,13 @@ const Author: FC<NextPage> = () => {
         },
       });
 
+      // If no more new posts were fetched, set 'hasMore' to false
       if (newPosts.data.queryPostsByAuthor.length === 0) {
         setHasMore(false);
         return null;
       }
 
+      // Append the new fetched posts to the existing 'posts' array
       setPosts((post) => {
         return (
           post && newPosts && [...post, ...newPosts.data.queryPostsByAuthor]

@@ -47,11 +47,14 @@ const MessagesBarFilterItems: FC<MessagesBarFilterItemsProps> = ({
     }
   );
 
+  // Update counts for unread and total messages when conversations loading state changes
   useEffect(() => {
+    // Function to count unread messages based on conversation data
     const countUnreadedMessages = () => {
       const conversationsCount =
         conversationsCountData?.conversationsCount || [];
 
+      // Filter messages to find those that the current user hasn't seen
       const filteredMessages = conversationsCount.filter((item) => {
         const currentUserParticipant = item.participants.find(
           (participant) => participant.user.id === session.user.id
@@ -62,14 +65,19 @@ const MessagesBarFilterItems: FC<MessagesBarFilterItemsProps> = ({
 
       return filteredMessages;
     };
+
+    // Count unread messages
     const unreadMessages = countUnreadedMessages();
     const countUnreaded = unreadMessages.length;
 
+    // Update state with the count of all unread messages (minimum 0)
     setCountAllUnreadMessages(countUnreaded > 0 ? countUnreaded : 0);
 
+    // Count total messages
     const countAllMessages =
       conversationsCountData?.conversationsCount.length || 0;
     setCountAllMessages(countAllMessages);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationsLoading]);
 

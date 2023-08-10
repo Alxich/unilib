@@ -29,50 +29,66 @@ const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
 
   const itemInfo = [1, 2];
 
-  const { data: CategoriesByUserData, loading: categoriesLoading } =
-    useQuery<CategoriesByUserData>(
-      CategoriesOperations.Queries.queryCategoriesByUser,
-      {
-        variables: {
-          id,
-        },
-        onError: (error) => {
-          toast.error(`Error loading categories: ${error}`);
-          console.error("Error in queryCategoriesByUser func", error);
-        },
-      }
-    );
+  // Query data for categories by user using the useQuery hook
+  const {
+    data: CategoriesByUserData, // Retrieved data for categories
+    loading: categoriesLoading, // Loading status for categories data
+  } = useQuery<CategoriesByUserData>(
+    CategoriesOperations.Queries.queryCategoriesByUser, // The name of the query
+    {
+      variables: {
+        id, // The user ID variable for the query
+      },
+      // Handle errors during the query
+      onError: (error) => {
+        // Display an error toast message with the error details
+        toast.error(`Error loading categories: ${error}`);
+        // Log the error details to the console
+        console.error("Error in queryCategoriesByUser function", error);
+      },
+    }
+  );
 
+  // useEffect hook to update state when category data is available
   useEffect(() => {
+    // Check if category data is loaded and not in a loading state
     if (categoriesLoading !== true && CategoriesByUserData) {
+      // Set the categories state with the retrieved category data
       setCategories(CategoriesByUserData);
+      // Set the loading state to false since data is available
       setLoading(false);
     }
   }, [CategoriesByUserData, categoriesLoading]);
 
+  // Use the useQuery hook to fetch data about the current user
   const { data: currentUser, loading: currentUserLoading } = useQuery<
     SearchUserData,
     SearchUserVariables
   >(UserOperations.Queries.searchUser, {
     variables: {
-      id: session?.user.id || "",
+      id: session?.user.id || "", // Provide the user's ID from the session, or an empty string if no session
     },
-    skip: !session,
+    skip: !session, // Skip the query if there's no session
     onError: (error) => {
       toast.error(`Error loading user: ${error}`);
       console.error("Error in loading func", error);
     },
   });
 
+  // Use an effect to process the fetched user data and update the component's state
   useEffect(() => {
-    if (currentUser && currentUserLoading != true) {
+    if (currentUser && currentUserLoading !== true) {
       if (session) {
+        // Extract the list of subscribed users from the fetched user data
         const subscribedUsers = currentUser.searchUser.followedBy;
+
         if (subscribedUsers) {
+          // Update the component's state with the list of subscribed users
           setUsers(subscribedUsers);
         }
       } else {
         console.error("Not authorized Session");
+        // If there's no session, clear the list of users in the component's state
         setUsers([]);
       }
     }

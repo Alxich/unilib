@@ -18,34 +18,37 @@ const UsernameCreate: FC<IUsernameCreateProps> = ({
 }: IUsernameCreateProps) => {
   const [username, setUsername] = useState("");
 
+  // Set up a mutation for creating a username
   const [createUsername, { data, loading, error }] = useMutation<
     CreateUsernameData,
     CreateUsernameVariables
   >(userOperations.Mutations.createUsername);
 
+  // Function to handle form submission
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
+    // If username is not provided, exit the function
     if (!username) return;
 
     try {
-      /**
-       * Passing username from frontend to backend server and sumbiting it.
-       */
+      // Submit the provided username to the backend server
       await createUsername({ variables: { username } });
     } catch (error) {
-      console.error("Submiting username caused an error", error);
+      console.error("Submitting username caused an error", error);
     }
   };
 
+  // useEffect to handle response data and errors
   useEffect(() => {
     if (error) {
-      console.error("The error pop-ups from creating your username", error);
-
+      console.error("An error occurred while creating your username", error);
+      // Exit the useEffect
       return;
     }
 
     if (data?.createUsername.success) {
+      // If the username creation was successful, setBannerActive to false.
       setBannerActive(false);
     }
   }, [data, error, setBannerActive]);

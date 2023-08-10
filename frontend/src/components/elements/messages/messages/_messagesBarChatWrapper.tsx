@@ -20,6 +20,8 @@ import { ParticipantPopulated } from "../../../../../../backend/src/util/types";
 import { ConversationPopulated } from "../../../../../../backend/src/util/types";
 import MessagesBarChatItem from "./_messagesBarChatItem";
 
+import { getUserParticipantObject } from "../../../../util/functions";
+
 interface MessagesBarChatsWrapperProps {
   session: Session;
 }
@@ -215,25 +217,35 @@ const MessagesBarChatsWrapper: FC<MessagesBarChatsWrapperProps> = ({
     }
   );
 
+  // Subscribe to the conversationDeleted subscription
+
   useSubscription<ConversationDeletedData, null>(
     ConversationOperations.Subscriptions.conversationDeleted,
     {
       onData: ({ client, data }) => {
+        // Extract subscription data from the received data
         const { data: subscriptionData } = data;
 
+        // Return if there is no subscription data
         if (!subscriptionData) return;
 
+        // Read the existing conversations data from the cache
         const existing = client.readQuery<ConversationsData>({
           query: ConversationOperations.Queries.conversations,
         });
 
+        // Return if there is no existing data
+
         if (!existing) return;
 
+        // Extract conversationDeleted ID from the subscription data
         const { conversations } = existing;
         const {
           conversationDeleted: { id: deletedConversationId },
         } = subscriptionData;
 
+        // Filter out the deleted conversation from the existing conversations
+        // Write the updated conversations data back to the cache
         client.writeQuery<ConversationsData>({
           query: ConversationOperations.Queries.conversations,
           data: {
@@ -340,17 +352,22 @@ const MessagesBarChatsWrapper: FC<MessagesBarChatsWrapperProps> = ({
     }
   };
 
+  // Function to subscribe to new conversation creation
   const subscribeToNewConversations = () => {
+    // Subscribe to the conversationCreated subscription
     subscribeToMore({
       document: ConversationOperations.Subscriptions.conversationCreated,
       updateQuery: (
         prev,
         { subscriptionData }: ConversationCreatedSubscriptionData
       ) => {
+        // If there's no new data in the subscription, return the previous state
         if (!subscriptionData.data) return prev;
 
+        // Extract the new conversation from the subscription data
         const newConversation = subscriptionData.data.conversationCreated;
 
+        // Merge the new conversation with the previous conversations array
         return Object.assign({}, prev, {
           conversations: [newConversation, ...prev.conversations],
         });
@@ -371,12 +388,6 @@ const MessagesBarChatsWrapper: FC<MessagesBarChatsWrapperProps> = ({
     return null;
   }
 
-  const getUserParticipantObject = (conversation: ConversationPopulated) => {
-    return conversation.participants.find(
-      (p) => p.user.id === session.user.id
-    ) as ParticipantPopulated;
-  };
-
   return (
     <>
       <div className="header messages container full-width flex-row flex-space">
@@ -389,7 +400,10 @@ const MessagesBarChatsWrapper: FC<MessagesBarChatsWrapperProps> = ({
         {!conversationsLoading &&
           conversationArray &&
           conversationArray.map((item, i) => {
-            const { hasSeenLatestMessage } = getUserParticipantObject(item);
+            const { hasSeenLatestMessage } = getUserParticipantObject(
+              session,
+              item
+            );
 
             return (
               <MessagesBarChatItem

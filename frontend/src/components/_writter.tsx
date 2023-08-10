@@ -60,6 +60,8 @@ const WritterPost: FC<IWritterPostProps> = ({
     },
   });
 
+  // Format date in a specific way
+
   const returnMeDate = () => {
     const date = new Date();
 
@@ -89,6 +91,14 @@ const WritterPost: FC<IWritterPostProps> = ({
     setDateText(`${monthNames[month]} ${year} рік ${time}`);
   };
 
+  useEffect(() => {
+    const timerId = setInterval(returnMeDate, 1000);
+
+    return function cleanup() {
+      clearInterval(timerId);
+    };
+  }, []);
+
   // Helps to capitalize first letter in title
 
   const capitalize = (str: string) => {
@@ -103,14 +113,6 @@ const WritterPost: FC<IWritterPostProps> = ({
     activeElem: writterActive,
     setActiveElem: setWritterActive,
   });
-
-  useEffect(() => {
-    const timerId = setInterval(returnMeDate, 1000);
-
-    return function cleanup() {
-      clearInterval(timerId);
-    };
-  }, []);
 
   // Starting working with backend and using hoo createPost
 
@@ -167,6 +169,8 @@ const WritterPost: FC<IWritterPostProps> = ({
       toast.error(error?.message);
     }
   };
+
+  // UseQuery hook to fetch categories
 
   const { data: categories, loading: categoriesLoading } =
     useQuery<CategoriesData>(CategoriesOperations.Queries.queryCategories);

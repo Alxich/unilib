@@ -39,6 +39,7 @@ interface ConversationModalProps {
     hasSeenLatestMessage: boolean
   ) => void;
   getUserParticipantObject: (
+    session: Session,
     conversation: ConversationPopulated
   ) => ParticipantPopulated;
 }
@@ -63,6 +64,7 @@ const MessagesModal: FC<ConversationModalProps> = ({
     user: { id: userId },
   } = session;
 
+  // useLazyQuery for searching users
   const [
     searchUsers,
     {
@@ -74,11 +76,13 @@ const MessagesModal: FC<ConversationModalProps> = ({
     UserOperations.Queries.searchUsers
   );
 
+  // useMutation for creating a new conversation
   const [createConversation, { loading: createConversationLoading }] =
     useMutation<CreateConversationData, { participantIds: Array<string> }>(
       ConversationOperations.Mutations.createConversation
     );
 
+  // useMutation for updating participants in a conversation
   const [updateParticipants, { loading: updateParticipantsLoading }] =
     useMutation<
       { updateParticipants: boolean },
@@ -157,9 +161,13 @@ const MessagesModal: FC<ConversationModalProps> = ({
           participantIds,
         },
       });
+
+      // Check if there is no errors or empty data
+
       if (!data?.createConversation || errors) {
         throw new Error("Failed to create conversation");
       }
+
       const {
         createConversation: { conversationId },
       } = data;
@@ -173,7 +181,7 @@ const MessagesModal: FC<ConversationModalProps> = ({
       setUsername("");
       onClose();
     } catch (error: any) {
-      console.log("createConversations error", error);
+      console.error("createConversations error", error);
       toast.error(error?.message);
     }
   };
@@ -189,6 +197,8 @@ const MessagesModal: FC<ConversationModalProps> = ({
         },
       });
 
+      // Check if there is no errors or empty data
+
       if (!data?.updateParticipants || errors) {
         throw new Error("Failed to update participants");
       }
@@ -201,33 +211,42 @@ const MessagesModal: FC<ConversationModalProps> = ({
       setUsername("");
       onClose();
     } catch (error) {
-      console.log("onUpdateConversation error", error);
+      console.error("onUpdateConversation error", error);
       toast.error("Failed to update participants");
     }
   };
 
+  // Function triggered when the search form is submitted
   const onSearch = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    searchUsers({ variables: { username } });
+    event.preventDefault(); // Prevent the default form submission behavior
+    searchUsers({ variables: { username } }); // Call the searchUsers mutation with the provided username
   };
 
+  // Function to add a participant to the conversation
   const addParticipant = (user: SearchedUser) => {
-    setParticipants((prev) => [...prev, user]);
-    setUsername("");
+    setParticipants((prev) => [...prev, user]); // Update participants by adding the new user
+    setUsername(""); // Clear the username field
   };
 
+  // Function to remove a participant from the conversation
   const removeParticipant = (userId: string) => {
-    setParticipants((prev) => prev.filter((u) => u.id !== userId));
+    setParticipants((prev) => prev.filter((u) => u.id !== userId)); // Update participants by filtering out the user with the provided userId
   };
 
+  // Function triggered when a conversation is clicked
   const onConversationClick = () => {
-    if (!existingConversation) return;
+    if (!existingConversation) return; // If no existing conversation, return
 
-    const { hasSeenLatestMessage } =
-      getUserParticipantObject(existingConversation);
+    // Retrieve whether the current user has seen the latest message in the conversation
+    const { hasSeenLatestMessage } = getUserParticipantObject(
+      session,
+      existingConversation
+    );
 
+    // Call onViewConversation function with conversation details and whether the user has seen the latest message
     onViewConversation(existingConversation.id, hasSeenLatestMessage);
-    onClose();
+
+    onClose(); // Close the conversation window
   };
 
   /**

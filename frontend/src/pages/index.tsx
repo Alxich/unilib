@@ -45,12 +45,15 @@ const Home: NextPage = () => {
   );
 
   useEffect(() => {
-    // Call the queryPostsByCat function whenever the period changes
+    // Define an asynchronous function to update posts based on query parameters
     const updatedPostsByQuery = async (
       period: ContentViews,
       userSubscribed: string[] | undefined
     ) => {
+      // Clear the current posts array
       setPosts([]);
+
+      // Call the fetchMore function with updated variables
       const newData = await fetchMore({
         variables: {
           period:
@@ -64,43 +67,50 @@ const Home: NextPage = () => {
         },
       });
 
+      // Update the posts with the new data
       if (newData.data.queryPosts) {
         setPosts(newData.data.queryPosts);
       }
     };
 
+    // Call the function with the provided period and userSubscribed values
     updatedPostsByQuery(period, userSubscribed);
-  }, [fetchMore, period, userSubscribed]);
+  }, [fetchMore, period, userSubscribed]); 
+  
 
   const [hasMore, setHasMore] = useState(true);
 
-  const getMorePost = async () => {
-    if (posts) {
-      const newPosts = await fetchMore({
-        variables: {
-          period:
-            period !== "popular" && period === "follow" ? "follow" : period,
-          popular: period === "popular",
-          ...(userSubscribed && {
-            subscribedCategories: userSubscribed,
-          }),
-          skip: posts.length,
-          take: 1,
-        },
-      });
+const getMorePost = async () => {
+  // Check if there are already existing posts
+  if (posts) {
+    // Call the fetchMore function to get more posts
+    const newPosts = await fetchMore({
+      variables: {
+        period: period !== "popular" && period === "follow" ? "follow" : period,
+        popular: period === "popular",
+        ...(userSubscribed && {
+          subscribedCategories: userSubscribed,
+        }),
+        skip: posts.length, // Skip the number of existing posts
+        take: 1, // Fetch one more post
+      },
+    });
 
-      if (newPosts.data.queryPosts.length === 0) {
-        setHasMore(false);
-        return null;
-      }
-
-      setPosts((prevPosts) => {
-        return prevPosts ? [...prevPosts, ...newPosts.data.queryPosts] : [];
-      });
+    // If no new posts were fetched, set hasMore to false
+    if (newPosts.data.queryPosts.length === 0) {
+      setHasMore(false);
+      return null;
     }
 
-    return [];
-  };
+    // Append the new posts to the existing posts array
+    setPosts((prevPosts) => {
+      return prevPosts ? [...prevPosts, ...newPosts.data.queryPosts] : [];
+    });
+  }
+
+  return [];
+};
+
 
   return (
     <>

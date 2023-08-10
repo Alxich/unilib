@@ -28,58 +28,61 @@ const TagPage: FC<NextPage> = () => {
     PostsTagVariables
   >(PostOperations.Queries.queryPostsByTag, {
     variables: {
-      period: period !== "popular" ? period : "today",
+      period: period !== "popular" ? period : "today", // Set the period variable based on the selected period
       popular: period === "popular", // Set the popular variable based on the selected period
-      tagId: id,
-      skip: 0,
-      take: 3,
+      tagId: id, // The ID of the tag to filter posts by
+      skip: 0, // Number of posts to skip (starting from the first post)
+      take: 3, // Number of posts to fetch
     },
     onCompleted(data) {
-      setPosts(data.queryPostsByTag);
+      setPosts(data.queryPostsByTag); // Update the state with fetched posts
     },
     onError: ({ message }) => {
-      toast.error(message);
+      toast.error(message); // Display an error message using a toast
     },
   });
 
   useEffect(() => {
     // Call the queryPostsByTag function whenever the period changes
     const updatedPostsByQuery = async (period: string) => {
-      setPosts([]);
+      setPosts([]); // Clear the current posts to initiate a new fetch
       const newData = await fetchMore({
         variables: {
-          period: period !== "popular" ? period : "today",
+          period: period !== "popular" ? period : "today", // Set the period variable based on the selected period
           popular: period === "popular", // Set the popular variable based on the selected period
-          tagId: id,
-          skip: 0,
-          take: 3,
+          tagId: id, // The ID of the tag used to filter posts
+          skip: 0, // Number of posts to skip (starting from the first post)
+          take: 3, // Number of posts to fetch
         },
       });
 
       if (newData.data.queryPostsByTag) {
-        setPosts(newData.data.queryPostsByTag);
+        setPosts(newData.data.queryPostsByTag); // Update the state with fetched posts
       }
     };
 
-    updatedPostsByQuery(period);
+    updatedPostsByQuery(period); // Call the function with the initial period value
   }, [fetchMore, id, period]);
 
   const [hasMore, setHasMore] = useState(true);
 
   const getMorePost = async () => {
+    // Check if there are already posts in the state
     if (posts) {
       const newPosts = await fetchMore({
         variables: {
-          skip: posts.length,
-          take: 1,
+          skip: posts.length, // Set the skip count to the current number of posts
+          take: 1, // Fetch a single new post
         },
       });
 
+      // No more new posts, set hasMore to false
       if (newPosts.data.queryPostsByTag.length === 0) {
         setHasMore(false);
         return null;
       }
 
+      // Append new posts to the existing list
       setPosts((post) => {
         return post && newPosts && [...post, ...newPosts.data.queryPostsByTag];
       });
@@ -87,6 +90,7 @@ const TagPage: FC<NextPage> = () => {
 
     return [];
   };
+  
 
   return (
     <>

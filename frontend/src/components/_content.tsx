@@ -63,8 +63,12 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
 
   const { data: session } = useSession();
 
+  // Initialize Next.js router and check if the current route is related to messages
+
   const router = useRouter();
   const isMessagesRoute = router.pathname.startsWith("/messages");
+
+  // Apply CSS class based on writterActive state
 
   useEffect(() => {
     writterActive
@@ -72,9 +76,13 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
       : document.body.classList.remove("writter-active");
   }, [writterActive]);
 
+  // Set bannerActive based on user session
+
   useEffect(() => {
     setBannerActive(session?.user ? false : true);
   }, [session]);
+
+  // Content view change options
 
   const changeView: ContentViewChanger[] = [
     {
@@ -97,8 +105,12 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
     },
   ];
 
+  // Fetch categories using useQuery hook
+
   const { data: categories, loading: categoriesLoading } =
     useQuery<CategoriesData>(CategoriesOperations.Queries.queryCategories);
+
+  // Fetch user data and subscribed categories
 
   const { data: userFetch, loading: userLoading } = useQuery<
     SearchUserData,
@@ -122,10 +134,14 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
     },
   });
 
+  // Subscribe to user updates using useSubscription hook
+
   const { data: newUserData, loading: userUpdatedLoading } =
     useSubscription<UserSubscriptionData>(
       CategoriesOperations.Subscriptions.userUpdated
     );
+
+  // Update userSubscribed based on subscription data
 
   useEffect(() => {
     const userSubscribed = newUserData?.userUpdated.subscribedCategoryIDs;
@@ -146,6 +162,8 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   >([]);
   const [searchText, setSearchText] = useState<string | undefined>();
 
+  // Fetch posts based on search text
+
   const { data: postsSearch, loading: postLoading } = useQuery<
     PostsSearchgData,
     PostsSearchVariables
@@ -156,6 +174,7 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
     skip: !session || !searchText,
     onCompleted(data) {
       if (data.querySearchPosts) {
+        // Update searchResults based on received data
         setSearchResults(data.querySearchPosts);
       }
     },
@@ -165,13 +184,19 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
     },
   });
 
+  // Update loadingStatus based on categories loading state
+
   useEffect(() => {
     setLoadingStatus(categoriesLoading);
   }, [categoriesLoading]);
 
+  // Update loadingStatus based on user loading state
+
   useEffect(() => {
     setLoadingStatus(userLoading);
   }, [userLoading]);
+
+  // Update loadingStatus based on userUpdated loading state
 
   useEffect(() => {
     setLoadingStatus(userUpdatedLoading);

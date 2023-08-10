@@ -56,6 +56,7 @@ const CommentItem: FC<CommentItemProps> = ({
     Comment[] | CommentReply[] | undefined
   >(replies as unknown as CommentReply[]);
 
+  // Mutation to add a like to a comment
   const [addLikeToComment] = useMutation<
     { addLikeToComment: CommentPopulated },
     CommentInteractionArguments
@@ -76,6 +77,7 @@ const CommentItem: FC<CommentItemProps> = ({
     },
   });
 
+  // Mutation to add a dislike to a comment
   const [addDislikeToComment] = useMutation<
     { addDislikeToComment: CommentPopulated },
     CommentInteractionArguments
@@ -96,27 +98,26 @@ const CommentItem: FC<CommentItemProps> = ({
     },
   });
 
+  // Function to handle liking or disliking a comment
   const onCommentInteraction = async (type: boolean) => {
-    /**
-     * If it is true its means we want to like the comment
-     * else if it is false its means to dislike the comment
-     */
     try {
+      // Check if the user is authenticated
       if (!session) {
         throw new Error("Not authorized Session");
       }
 
       const { username } = session.user;
 
-      // Check if user exist to make comment secure
+      // Check if the user's information is available
       if (!username) {
         throw new Error("Not authorized user");
       }
 
-      if (type != false) {
+      if (type !== false) {
+        // If true, like the comment
         const { data, errors } = await addLikeToComment({
           variables: {
-            id: id,
+            id: id, // ID of the comment
           },
         });
 
@@ -128,9 +129,10 @@ const CommentItem: FC<CommentItemProps> = ({
           toast.success("Comment was liked!");
         }
       } else {
+        // If false, dislike the comment
         const { data, errors } = await addDislikeToComment({
           variables: {
-            id: id,
+            id: id, // ID of the comment
           },
         });
 
@@ -148,6 +150,7 @@ const CommentItem: FC<CommentItemProps> = ({
     }
   };
 
+  // Mutation to delete a comment
   const [deleteComment] = useMutation<
     { deleteComment: CommentPopulated },
     CommentInteractionArguments
@@ -168,64 +171,83 @@ const CommentItem: FC<CommentItemProps> = ({
     },
   });
 
+  // Function to delete a comment
   const onDeleteComment = async () => {
     /**
      * This func allow author to delete a comment
      * It will not delete at all but change the content
      */
     try {
+      // Check if user is authenticated
       if (!session) {
         throw new Error("Not authorized Session");
       }
 
+      // Get the username from the user's session
       const { username } = session.user;
 
-      // Check if user exist to make comment secure
+      // Check if username exists to ensure secure comment deletion
       if (!username) {
         throw new Error("Not authorized user");
       }
 
-      //Check if author id same as user id
+      // Check if the logged-in user is the author of the comment
       if (author.id !== session?.user.id) {
         throw new Error("You are not the author!");
       }
 
+      // Delete the comment using the deleteComment mutation
       const { data, errors } = await deleteComment({
         variables: {
           id: id,
         },
       });
 
+      // Handle errors during comment deletion
       if (!data?.deleteComment || errors) {
         throw new Error("Error onDeleteComment when trying to delete");
       }
 
+      // Display a success toast message upon successful comment deletion
       if (!errors) {
         toast.success("Comment was deleted!");
       }
     } catch (error: any) {
+      // Log and display any errors that occur during comment deletion
       console.error("onDeleteComment error", error);
       toast.error(error?.message);
     }
   };
 
+  // Subscribe to new comment updates using a subscription
   const { data: newCommentData } =
     useSubscription<CommentsSentSubscriptionData>(
       CommentOperations.Subscriptions.commentsUpdated
     );
 
+  // Update comments when a new comment is received through the subscription
   useEffect(() => {
     if (newCommentData) {
+      // Extract the new comment from the subscription data
       const newComment = newCommentData.commentsUpdated;
+
+      // Get the existing comments
       const oldComments = comments;
-      oldComments
-        ? newComment &&
-          newComment.parentId === id &&
+
+      // Check if there are existing comments
+      if (oldComments) {
+        // If the new comment is a reply to the current comment (parentId matches),
+        // append it to the existing replies
+        if (newComment && newComment.parentId === id) {
           setComments([
             ...(oldComments as CommentReply[]),
             newComment as unknown as Comment,
-          ])
-        : setComments([newComment as unknown as Comment]);
+          ]);
+        }
+      } else {
+        // If there are no existing comments, create a new array with the new comment
+        setComments([newComment as unknown as Comment]);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newCommentData]);

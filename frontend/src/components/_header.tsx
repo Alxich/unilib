@@ -101,7 +101,6 @@ const Header: FC<HeaderProps> = ({
 
     setSearchTimer(
       setTimeout(() => {
-        console.log(`Searching for: ${searchText}`);
         setSearchText(searchText);
       }, delay)
     );
