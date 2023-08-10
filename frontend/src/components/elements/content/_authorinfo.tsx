@@ -1,19 +1,10 @@
-import React, {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
-
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import classNames from "classnames";
 import Image from "next/image";
-import { useRouter } from "next/router";
-import background from "../../../../public/images/background.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAlignCenter, faPenClip } from "@fortawesome/free-solid-svg-icons";
+import { faAlignCenter } from "@fortawesome/free-solid-svg-icons";
 
 import { Session } from "next-auth";
 import { useMutation, useQuery } from "@apollo/client";
@@ -22,32 +13,24 @@ import {
   AuthorInfoTypes,
   CategoriesVariables,
   CategoryData,
-  ConversationCreatedSubscriptionData,
-  ConversationsData,
-  CreateConversationData,
   DeleteItemResoponse,
   FollowUserArguments,
   SearchUserData,
   SearchUserVariables,
-  SearchedUser,
   SubscribeCategoryArguments,
   TagData,
   TagsVariables,
-  UpdateItemResoponse,
-  UpdateUserArguments,
 } from "../../../util/types";
 
 import CategoryOperations from "../../../graphql/operations/categories";
 import TagOperations from "../../../graphql/operations/tags";
 import UserOperations from "../../../graphql/operations/users";
-import {
-  CategoryPopulated,
-  ConversationPopulated,
-} from "../../../../../backend/src/util/types";
-import Button from "../_button";
+import { CategoryPopulated } from "../../../../../backend/src/util/types";
 import { formatTimeToPost } from "../../../util/functions";
 
-import ConversationOperations from "../../../graphql/operations/conversations";
+import { AuthorinfoEdit, AuthorinfoWrite } from "./authorinfo";
+
+import background from "../../../../public/images/background.png";
 
 interface AuthorInfoProps {
   type: "group" | "tag" | "author";
@@ -90,7 +73,8 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
 
   const onSubscribeCategory = async (type: boolean) => {
     /**
-     * When user smash the button we asign or remove from folowing the category
+     * When user smash the button we asign or
+     * remove from folowing the category
      */
 
     try {
@@ -362,278 +346,11 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
   ];
 
   /**
-   * Edit variables for creating edit page
+   * Create conversation loading state
    */
 
-  const [username, setUsername] = useState<string>("");
-  const [desc, setDesc] = useState<string>("");
-  const [image, setImage] = useState<string>("");
-  const [banner, setBanner] = useState<string>("");
-  const [currentPassword, setCurrentPassword] = useState<string>("");
-  const [newPassword, setNewPassword] = useState<string>("");
-
-  useEffect(() => {
-    if (blockContent) {
-      const { username, aboutMe, banner, image } = blockContent;
-
-      username && setUsername(username);
-      aboutMe && setDesc(aboutMe);
-      image && setImage(image);
-      banner && setBanner(banner);
-    }
-  }, [blockContent]);
-
-  const [updateProccessing, setUpdateProccessing] = useState<boolean>(false);
-  const cooldownTimeInSeconds = 5; // Length of cooldown time
-  const [cooldown, setCooldown] = useState<number>(cooldownTimeInSeconds);
-  const [isCooldownActive, setIsCooldownActive] = useState<boolean>(false);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    if (isCooldownActive) {
-      interval = setInterval(() => {
-        setCooldown((prevCooldown) => prevCooldown - 1);
-      }, 1000);
-    }
-
-    return () => clearInterval(interval);
-  }, [isCooldownActive]);
-
-  useEffect(() => {
-    cooldown === 0 && stopCooldown();
-  }, [cooldown]);
-
-  // Start counting cooldown
-  const startCooldown = () => {
-    setCooldown(cooldownTimeInSeconds);
-    setIsCooldownActive(true);
-  };
-
-  // End counting cooldown (For extra situation)
-  const stopCooldown = () => {
-    setIsCooldownActive(false);
-  };
-
-  const [updateUser] = useMutation<
-    { updateUser: UpdateItemResoponse },
-    UpdateUserArguments
-  >(UserOperations.Mutations.updateUser);
-
-  const onUpdateUser = async (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    setUpdateProccessing(true);
-    try {
-      if (!session) {
-        throw new Error("Not authorized Session");
-      }
-
-      const { username: sessionUsername, id: userId } = session.user;
-
-      // Check if user exist to make post secure
-      if (!sessionUsername) {
-        throw new Error("Not authorized user");
-      }
-
-      if (!currentUser) {
-        throw new Error("Not authorized user");
-      }
-
-      const { data, errors } = await updateUser({
-        variables: {
-          banner,
-          desc,
-          image,
-          username,
-        },
-      });
-
-      if (!data?.updateUser.success || errors) {
-        setUpdateProccessing(false);
-        throw new Error("Error to update user");
-      }
-
-      if (!errors) {
-        toast.success("User was updated!");
-        setUpdateProccessing(false);
-        startCooldown();
-      }
-    } catch (error: any) {
-      console.error("onFollowUser error", error);
-      toast.error(error?.message);
-    }
-  };
-
-  /**
-   * Create conversation functions
-   */
-
-  /**
-   * Query all conversations to check existing conversations with user
-   */
-  const {
-    data: conversationsData,
-    loading: conversationsLoading,
-    error: conversationsError,
-    subscribeToMore,
-  } = useQuery<ConversationsData, null>(
-    ConversationOperations.Queries.conversations,
-    {
-      onError: ({ message }) => {
-        toast.error(message);
-      },
-    }
-  );
-
-  const subscribeToNewConversations = () => {
-    subscribeToMore({
-      document: ConversationOperations.Subscriptions.conversationCreated,
-      updateQuery: (
-        prev,
-        { subscriptionData }: ConversationCreatedSubscriptionData
-      ) => {
-        if (!subscriptionData.data) return prev;
-
-        const newConversation = subscriptionData.data.conversationCreated;
-
-        return Object.assign({}, prev, {
-          conversations: [newConversation, ...prev.conversations],
-        });
-      },
-    });
-  };
-
-  /**
-   * Execute subscription on mount
-   */
-  useEffect(() => {
-    subscribeToNewConversations();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (conversationsError) {
-    toast.error("There was an error fetching conversations");
-  }
-
-  const [participants, setParticipants] = useState<Array<SearchedUser>>([]);
-
-  const router = useRouter();
-
-  const [createConversation, { loading: createConversationLoading }] =
-    useMutation<CreateConversationData, { participantIds: Array<string> }>(
-      ConversationOperations.Mutations.createConversation
-    );
-
-  /**
-   * Verifies that a conversation with selected
-   * participants does not already exist
-   */
-  const findExistingConversation = (participantIds: Array<string>) => {
-    let existingConversation: ConversationPopulated | null = null;
-
-    if (!conversationsData) return true;
-
-    for (const conversation of conversationsData.conversations) {
-      const addedParticipants = conversation.participants.filter(
-        (p) => p.user.id !== session?.user.id
-      );
-
-      if (addedParticipants.length === participantIds.length) {
-        continue;
-      }
-
-      let allMatchingParticipants: boolean = false;
-      for (const participant of addedParticipants) {
-        const foundParticipant = participantIds.find(
-          (p) => p === participant.user.id
-        );
-
-        if (!foundParticipant) {
-          allMatchingParticipants = false;
-          break;
-        }
-
-        /**
-         * If we hit here,
-         * all match
-         */
-        allMatchingParticipants = true;
-      }
-
-      if (allMatchingParticipants) {
-        existingConversation = conversation;
-      }
-    }
-
-    return existingConversation;
-  };
-
-  const onCreateConversation = async () => {
-    try {
-      if (!session?.user.id)
-        throw new Error("Failed to create conversation | Not authorized");
-
-      const participantIds = [...participants.map((p) => p.id)];
-
-      const { data, errors } = await createConversation({
-        variables: {
-          participantIds,
-        },
-      });
-
-      if (!data?.createConversation || errors) {
-        throw new Error("Failed to create conversation");
-      }
-
-      const {
-        createConversation: { conversationId },
-      } = data;
-
-      router.push(`/messages/chat/${conversationId}`);
-    } catch (error: any) {
-      console.error("createConversations error", error);
-      toast.error(error?.message);
-    }
-  };
-
-  const addParticipant = (users: SearchedUser[]) => {
-    setParticipants(users);
-  };
-
-  useEffect(() => {
-    if (blockContent?.username && blockContent?.id && session?.user) {
-      addParticipant([
-        {
-          id: blockContent.id,
-          username: blockContent.username,
-        },
-        {
-          id: session.user.id,
-          username: session.user.username,
-        },
-      ]);
-    }
-  }, [blockContent, session]);
-
-  const onSubmit = () => {
-    if (!participants.length) {
-      toast.error("Error to create a new conversation");
-      return;
-    }
-
-    const participantIds = participants.map((p) => p.id);
-
-    const existing = findExistingConversation(
-      participantIds
-    ) as ConversationPopulated | null;
-
-    if (existing) {
-      router.push(`/messages/chat/${existing.id}`);
-      return;
-    }
-
-    onCreateConversation();
-  };
+  const [conversationsLoading, setConversationsLoading] =
+    useState<boolean>(false);
 
   return categoryLoading || conversationsLoading ? (
     <div>Loading</div>
@@ -684,18 +401,11 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
             blockContent &&
             session?.user &&
             blockContent.id !== session.user.id && (
-              <Button
-                filled
-                small
-                writeAuthor
-                loading={createConversationLoading}
-                iconIncluded
-                disabled={!participants}
-                iconName={faPenClip}
-                onClick={() => onSubmit()}
-              >
-                Написати
-              </Button>
+              <AuthorinfoWrite
+                setConversationsLoading={setConversationsLoading}
+                blockContent={blockContent}
+                session={session}
+              />
             )}
 
           {auhtorEdit && blockContent?.createdAt && (
@@ -825,7 +535,12 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
                     className={classNames("item", {
                       active: showComments !== false,
                     })}
-                    onClick={() => setShowComments && setShowComments(true)}
+                    onClick={() => {
+                      if (setShowMore && setShowComments) {
+                        setShowComments(true);
+                        setShowMore(true);
+                      }
+                    }}
                   >
                     <p>Коментарі</p>
                   </div>
@@ -887,92 +602,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
             )}
           </div>
         ) : (
-          currentUser?.searchUser !== null && (
-            <div className="edit">
-              <div className="title">
-                <h5>Настройки користувача</h5>
-              </div>
-              <form>
-                <div className="item">
-                  <div className="title">
-                    <p>Змінити ім{"`"}я користувача</p>
-                  </div>
-                  <input
-                    placeholder={`Your current username: ${currentUser?.searchUser.username}`}
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
-                </div>
-                <div className="item">
-                  <div className="title">
-                    <p>Змінити опис користувача</p>
-                  </div>
-                  <textarea
-                    value={desc}
-                    onChange={(e) => setDesc(e.target.value)}
-                  />
-                </div>
-                <div className="item">
-                  <div className="title">
-                    <p>Ваш email до якого привязаний аккаунт</p>
-                  </div>
-                  <input value={currentUser?.searchUser.email} disabled />
-                </div>
-                <div className="item">
-                  <div className="title">
-                    <p>Змінити іконку користувача</p>
-                  </div>
-                  <input
-                    placeholder={`Your current image: ${currentUser?.searchUser.image}`}
-                    value={image}
-                    onChange={(e) => setImage(e.target.value)}
-                  />
-                </div>
-                <div className="item">
-                  <div className="title">
-                    <p>Змінити баннер користувача</p>
-                  </div>
-                  <input
-                    placeholder={`Your current banner: ${currentUser?.searchUser.banner}`}
-                    value={banner}
-                    onChange={(e) => setBanner(e.target.value)}
-                  />
-                </div>
-                <div className="item">
-                  <div className="title">
-                    <p>Змінити пороль користувача</p>
-                  </div>
-                  <div>
-                    <input
-                      placeholder={"Please write your current password"}
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                    />
-                    <input
-                      placeholder={"Write your new password"}
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="item update">
-                  <div className="title">
-                    <p>Оновити ваші нові дані користувача</p>
-                  </div>
-                  <Button
-                    filled
-                    big
-                    onClick={(e: any) => {
-                      onUpdateUser(e);
-                    }}
-                    disabled={isCooldownActive || updateProccessing}
-                  >
-                    {isCooldownActive ? `Оновити (${cooldown}сек)` : "Оновити"}
-                  </Button>
-                </div>
-              </form>
-            </div>
-          )
+          currentUser?.searchUser !== null && <AuthorinfoEdit />
         )}
       </div>
     </div>

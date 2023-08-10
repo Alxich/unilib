@@ -1,8 +1,7 @@
-import { ParticipantPopulated } from "../../../backend/src/util/types";
-
 import { formatRelative } from "date-fns";
 import enUS from "date-fns/locale/en-US";
-import { useCallback, useEffect } from "react";
+
+import { ParticipantPopulated } from "../../../backend/src/util/types";
 
 /**
  * Formate usernames for easy read
