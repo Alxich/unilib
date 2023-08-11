@@ -11,6 +11,14 @@
     margin-bottom: $reels_title_gap;
   }
 
+  .item:not(.loading-component) {
+    .item {
+      .icon {
+        background-color: $color;
+      }
+    }
+  }
+
   .item {
     cursor: pointer;
 
@@ -20,14 +28,13 @@
 
     .author-thread {
       .icon {
-        background-color: $color;
         border-radius: 50%;
         height: $reels_user_logo;
         width: $reels_user_logo;
         min-width: $reels_user_logo;
         margin-right: $reels_user_gap;
         overflow: hidden;
-        
+
         img {
           display: flex;
           height: 100%;
@@ -78,6 +85,26 @@
           -webkit-line-clamp: 3;
           overflow: hidden;
         }
+      }
+    }
+
+    &.loading-component {
+      span:not(.icon, .text-block) {
+        height: $p_font_size;
+      }
+
+      .info {
+        div {
+          width: 100%;
+
+          &:not(:last-child) {
+            margin-bottom: 4px;
+          }
+        }
+      }
+
+      .text-block {
+        height: $p_font_size * 3;
       }
     }
   }

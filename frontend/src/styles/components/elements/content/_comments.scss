@@ -1,5 +1,4 @@
 #comments {
-
   &.post-wrapper > div {
     width: 100%;
   }
@@ -28,6 +27,8 @@
   .comment {
     margin-bottom: $post_inn_pad;
   }
+
+  &:not(.loading-component) .item { .main-content {.user-author { .author {.user-icon { background: $color;}}}}}
 
   .item {
     background: $elem_over_bg;
@@ -86,7 +87,6 @@
           align-items: center;
 
           .user-icon {
-            background: $color;
             border-radius: 50%;
             height: $user_icon_small;
             width: $user_icon_small;
@@ -262,6 +262,55 @@
         &:last-child {
           padding-bottom: $comm_item_pad;
         }
+      }
+    }
+  }
+
+  &.loading-component {
+    .title {
+      span {
+        height: $h3_font_size * 1.5;
+        max-width: 250px;
+      }
+    }
+
+    .comment {
+      span {
+        height: 5vw;
+      }
+    }
+
+    .item {
+      .user-author {
+        .author {
+          justify-content: flex-start;
+          width: 100%;
+
+          .author-names {
+            width: 100%;
+
+            .name {
+              max-width: 135px;
+              margin-bottom: 4px;
+
+              span {
+                height: $p_font_size;
+              }
+            }
+
+            .time {
+              max-width: 60px;
+              span {
+                height: $p_font_size_small;
+              }
+            }
+          }
+        }
+      }
+
+      .content {
+        height: $p_font_size * 3.5;
+        margin-bottom: $comm_item_pad;
       }
     }
   }

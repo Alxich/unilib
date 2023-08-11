@@ -11,6 +11,8 @@ import { useSession } from "next-auth/react";
 import { PostData, PostVariables } from "../../util/types";
 import { useQuery } from "@apollo/client";
 import PostOperations from "../../graphql/operations/posts";
+import { Postloading } from "../../components/skeletons";
+import classNames from "classnames";
 
 const Post: FC<NextPage> = () => {
   const router = useRouter();
@@ -51,11 +53,15 @@ const Post: FC<NextPage> = () => {
     toast.error("There is no id for the post");
   }
 
-  return loading ? (
-    <div>LOADING...</div>
-  ) : (
-    <div className="posts-container container">
-      {postData ? (
+  return (
+    <div
+      className={classNames("posts-container container", {
+        "loading-component": loading,
+      })}
+    >
+      {loading ? (
+        <Postloading />
+      ) : postData ? (
         <>
           <PostPage
             data={postData}

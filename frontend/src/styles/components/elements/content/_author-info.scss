@@ -61,7 +61,7 @@
       }
     }
   }
-  
+
   .banner {
     display: flex;
     justify-content: center;
@@ -83,6 +83,14 @@
     }
   }
 
+  &:not(.loading-component) {
+    .info {
+      .icon {
+        background: $color;
+      }
+    }
+  }
+
   .info {
     border-radius: 0 0 $reg_radius $reg_radius;
     margin: 0;
@@ -91,7 +99,6 @@
 
     .icon {
       position: relative;
-      background: $color;
       width: $post_author_icon;
       height: $post_author_icon;
       border: $post_author_icon_border;
@@ -216,6 +223,57 @@
             }
           }
         }
+      }
+    }
+  }
+
+  &.loading-component {
+    .info {
+      span {
+        margin-bottom: 12px;
+      }
+
+      .name {
+        height: $h2_font_size;
+        max-width: 220px;
+      }
+
+      .disription {
+        height: $p_font_size * 3;
+        max-width: 345px;
+      }
+
+      .author-counters {
+        justify-content: flex-start;
+        width: 100%;
+
+        span {
+          height: $p_font_size;
+          max-width: 120px;
+          margin-bottom: 0;
+   
+
+          &:first-child {
+            max-width: $p_font_size;
+            margin-right: 4px;
+          }
+        }
+      }
+      
+      .actions {
+        .list-of-actions {
+          span {
+            height: $p_font_size;
+            width: 80px;
+            margin-bottom: 0;
+          }
+        }
+      }
+
+      .changer {
+        height: $p_font_size;
+        max-width: 40px;
+        
       }
     }
   }

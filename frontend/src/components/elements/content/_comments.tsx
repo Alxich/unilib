@@ -14,6 +14,7 @@ import {
   QueryUserCommentsArgs,
 } from "../../../util/types";
 import { CommentPopulated } from "../../../../../backend/src/util/types";
+import { CommentItemLoading } from "../../skeletons";
 
 interface CommentsProps {
   session: Session;
@@ -197,7 +198,19 @@ const Comments: FC<CommentsProps> = ({
   };
 
   return loading === true || loadingUserComments === true ? (
-    <div>Loading</div>
+    <div id="comments" className="post-wrapper container loading-component">
+      <div className="title">
+        <span />
+      </div>
+      <div className="comment">
+        <span />
+      </div>
+      <div className="container comments-flow">
+        <CommentItemLoading />
+        <CommentItemLoading />
+        <CommentItemLoading />
+      </div>
+    </div>
   ) : (
     <div id="comments" className="post-wrapper container">
       {/* Render comments from commentArray */}
@@ -229,7 +242,13 @@ const Comments: FC<CommentsProps> = ({
           dataLength={comments.length}
           next={getMoreComments}
           hasMore={hasMore}
-          loader={<p>Loading...</p>}
+          loader={
+            <div className="container comments-flow">
+              <CommentItemLoading />
+              <CommentItemLoading />
+              <CommentItemLoading />
+            </div>
+          }
           key={comments.map((item) => item.id).join("-")} // Unique key for comments array
         >
           <div className="container comments-flow">

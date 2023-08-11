@@ -2,8 +2,10 @@ import { FC, useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 import { AuthorInfo, Comments, MoreAuthor, Post } from "../../../components";
+import { Postloading } from "../../../components/skeletons";
 
 import { useSession } from "next-auth/react";
 import { useQuery } from "@apollo/client";
@@ -11,8 +13,6 @@ import { useQuery } from "@apollo/client";
 import PostOperations from "../../../graphql/operations/posts";
 import { PostsByAuthorData, PostsAuthorVariables } from "../../../util/types";
 import { PostPopulated } from "../../../../../backend/src/util/types";
-
-import InfiniteScroll from "react-infinite-scroll-component";
 
 const Author: FC<NextPage> = () => {
   const [showMore, setShowMore] = useState<boolean>(false);
@@ -107,14 +107,24 @@ const Author: FC<NextPage> = () => {
       ) : (
         <div className="posts-container container">
           {loading ? (
-            <h3> Loading...</h3>
+            <>
+              <Postloading />
+              <Postloading />
+              <Postloading />
+            </>
           ) : (
             posts && (
               <InfiniteScroll
                 dataLength={posts.length}
                 next={getMorePost}
                 hasMore={hasMore}
-                loader={<h3> Loading...</h3>}
+                loader={
+                  <>
+                    <Postloading />
+                    <Postloading />
+                    <Postloading />
+                  </>
+                }
                 key={posts.map((item) => item.id).join("-")} // Unique key for posts array
                 endMessage={
                   <p>

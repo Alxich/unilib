@@ -6,6 +6,7 @@ import { useQuery, useSubscription } from "@apollo/client";
 import CommentOperations from "../graphql/operations/comments";
 import { CommentPopulated } from "../../../backend/src/util/types";
 import { CommentsData, CommentsSubscriptionData } from "../util/types";
+import { ReelsItemLoading } from "./skeletons";
 
 interface ReelsProps {}
 const Reels: FC<ReelsProps> = ({}: ReelsProps) => {
@@ -58,25 +59,33 @@ const Reels: FC<ReelsProps> = ({}: ReelsProps) => {
     }
   }, [newCommentData]);
 
-  return loading ? (
-    <div>Loading</div>
-  ) : (
+  return (
     <div id="reels" className="container flex-left to-right full-height">
       <div className="title">
         <p>Наразі обговорюють</p>
       </div>
       <div className="container flex-left">
-        {commentsData?.map((item: CommentPopulated, i: number) => {
-          const { author, post, text } = item;
-          return (
-            <ReelsItem
-              key={`${item.id}__${i}`}
-              author={author}
-              post={post}
-              text={text}
-            />
-          );
-        })}
+        {loading ? (
+          <>
+            <ReelsItemLoading />
+            <ReelsItemLoading />
+            <ReelsItemLoading />
+            <ReelsItemLoading />
+            <ReelsItemLoading />
+          </>
+        ) : (
+          commentsData?.map((item: CommentPopulated, i: number) => {
+            const { author, post, text } = item;
+            return (
+              <ReelsItem
+                key={`${item.id}__${i}`}
+                author={author}
+                post={post}
+                text={text}
+              />
+            );
+          })
+        )}
       </div>
     </div>
   );

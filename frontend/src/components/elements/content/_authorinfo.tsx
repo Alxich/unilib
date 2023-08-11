@@ -31,6 +31,7 @@ import { formatTimeToPost } from "../../../util/functions";
 import { AuthorinfoEdit, AuthorinfoWrite } from "./authorinfo";
 
 import background from "../../../../public/images/background.png";
+import { AuthorInfoLoading } from "../../skeletons";
 
 interface AuthorInfoProps {
   type: "group" | "tag" | "author";
@@ -407,15 +408,8 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
     { key: "year", text: "Рік" },
   ];
 
-  /**
-   * Create conversation loading state
-   */
-
-  const [conversationsLoading, setConversationsLoading] =
-    useState<boolean>(false);
-
-  return categoryLoading || conversationsLoading ? (
-    <div>Loading</div>
+  return categoryLoading || currentUserLoading || tagLoading ? (
+    <AuthorInfoLoading type={type} />
   ) : (
     <div
       id="author-info"

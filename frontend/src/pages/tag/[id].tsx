@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import { AuthorInfo, Post } from "../../components";
+import { Postloading } from "../../components/skeletons";
 
 import { useSession } from "next-auth/react";
 import { useQuery } from "@apollo/client";
@@ -90,7 +91,6 @@ const TagPage: FC<NextPage> = () => {
 
     return [];
   };
-  
 
   return (
     <>
@@ -103,14 +103,24 @@ const TagPage: FC<NextPage> = () => {
       />
       <div className="posts-container container">
         {loading ? (
-          <h3> Loading...</h3>
+          <>
+            <Postloading />
+            <Postloading />
+            <Postloading />
+          </>
         ) : (
           posts && (
             <InfiniteScroll
               dataLength={posts.length}
               next={getMorePost}
               hasMore={hasMore}
-              loader={<h3> Loading...</h3>}
+              loader={
+                <>
+                  <Postloading />
+                  <Postloading />
+                  <Postloading />
+                </>
+              }
               key={posts.map((item) => item.id).join("-")} // Unique key for posts array
               endMessage={
                 <p>

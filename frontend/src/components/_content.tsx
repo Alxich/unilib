@@ -30,6 +30,7 @@ import {
   UserSubscriptionData,
 } from "../util/types";
 import { PostPopulated } from "../../../backend/src/util/types";
+import { Postloading } from "./skeletons";
 
 interface ContentProps {
   children: any;
@@ -225,61 +226,56 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
             })}
           >
             <div className="container main-content flex-row flex-space">
-              {loadingStatus ? (
-                "loading"
-              ) : (
-                <>
-                  <Sidebar
-                    categories={changeView}
-                    fandoms={categories?.queryCategories}
-                    setPeriod={setPeriod}
-                    userSigned={userSigned}
-                    setBannerActive={setBannerActive}
-                    setBagReportActive={setBagReportActive}
-                  />
-                  <div
-                    id="content"
-                    className={classNames("container", {
-                      "full-height full-width flex-row flex-space is-messages":
-                        isMessagesRoute,
-                    })}
+              <Sidebar
+                categories={changeView}
+                fandoms={categories?.queryCategories}
+                setPeriod={setPeriod}
+                userSigned={userSigned}
+                setBannerActive={setBannerActive}
+                setBagReportActive={setBagReportActive}
+                loadingStatus={loadingStatus}
+              />
+              <div
+                id="content"
+                className={classNames("container", {
+                  "full-height full-width flex-row flex-space is-messages":
+                    isMessagesRoute,
+                })}
+              >
+                <ContentContext.Provider value={[period, setPeriod]}>
+                  <UserContext.Provider
+                    value={[userSubscribed, setUserSubscribed]}
                   >
-                    <ContentContext.Provider value={[period, setPeriod]}>
-                      <UserContext.Provider
-                        value={[userSubscribed, setUserSubscribed]}
-                      >
-                        {searchText ? (
-                          postLoading ? (
-                            <h3> Loading...</h3>
-                          ) : (
-                            <div className="posts-container container">
-                              {searchResults &&
-                                searchResults.map(
-                                  (item: PostPopulated, i: number) => {
-                                    return (
-                                      <Post
-                                        session={session}
-                                        data={item}
-                                        key={`${item}__${i}`}
-                                      />
-                                    );
-                                  }
-                                )}
-                            </div>
-                          )
-                        ) : (
-                          children
-                        )}
-                      </UserContext.Provider>
-                    </ContentContext.Provider>
-                  </div>
-                  {isMessagesRoute ? (
-                    <MessagesBar session={session} />
-                  ) : (
-                    <Reels />
-                  )}
-                </>
-              )}
+                    {searchText ? (
+                      postLoading ? (
+                        <div className="posts-container container">
+                          <Postloading />
+                          <Postloading />
+                          <Postloading />
+                        </div>
+                      ) : (
+                        <div className="posts-container container">
+                          {searchResults &&
+                            searchResults.map(
+                              (item: PostPopulated, i: number) => {
+                                return (
+                                  <Post
+                                    session={session}
+                                    data={item}
+                                    key={`${item}__${i}`}
+                                  />
+                                );
+                              }
+                            )}
+                        </div>
+                      )
+                    ) : (
+                      children
+                    )}
+                  </UserContext.Provider>
+                </ContentContext.Provider>
+              </div>
+              {isMessagesRoute ? <MessagesBar session={session} /> : <Reels />}
             </div>
           </main>
         </>

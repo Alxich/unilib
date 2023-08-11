@@ -4,6 +4,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { toast } from "react-hot-toast";
 
 import { Flowrange, Newestflow, Post } from "../components";
+import { Postloading } from "../components/skeletons";
 
 import { useSession } from "next-auth/react";
 import { useQuery } from "@apollo/client";
@@ -75,42 +76,41 @@ const Home: NextPage = () => {
 
     // Call the function with the provided period and userSubscribed values
     updatedPostsByQuery(period, userSubscribed);
-  }, [fetchMore, period, userSubscribed]); 
-  
+  }, [fetchMore, period, userSubscribed]);
 
   const [hasMore, setHasMore] = useState(true);
 
-const getMorePost = async () => {
-  // Check if there are already existing posts
-  if (posts) {
-    // Call the fetchMore function to get more posts
-    const newPosts = await fetchMore({
-      variables: {
-        period: period !== "popular" && period === "follow" ? "follow" : period,
-        popular: period === "popular",
-        ...(userSubscribed && {
-          subscribedCategories: userSubscribed,
-        }),
-        skip: posts.length, // Skip the number of existing posts
-        take: 1, // Fetch one more post
-      },
-    });
+  const getMorePost = async () => {
+    // Check if there are already existing posts
+    if (posts) {
+      // Call the fetchMore function to get more posts
+      const newPosts = await fetchMore({
+        variables: {
+          period:
+            period !== "popular" && period === "follow" ? "follow" : period,
+          popular: period === "popular",
+          ...(userSubscribed && {
+            subscribedCategories: userSubscribed,
+          }),
+          skip: posts.length, // Skip the number of existing posts
+          take: 1, // Fetch one more post
+        },
+      });
 
-    // If no new posts were fetched, set hasMore to false
-    if (newPosts.data.queryPosts.length === 0) {
-      setHasMore(false);
-      return null;
+      // If no new posts were fetched, set hasMore to false
+      if (newPosts.data.queryPosts.length === 0) {
+        setHasMore(false);
+        return null;
+      }
+
+      // Append the new posts to the existing posts array
+      setPosts((prevPosts) => {
+        return prevPosts ? [...prevPosts, ...newPosts.data.queryPosts] : [];
+      });
     }
 
-    // Append the new posts to the existing posts array
-    setPosts((prevPosts) => {
-      return prevPosts ? [...prevPosts, ...newPosts.data.queryPosts] : [];
-    });
-  }
-
-  return [];
-};
-
+    return [];
+  };
 
   return (
     <>
@@ -118,18 +118,29 @@ const getMorePost = async () => {
       <Newestflow />
       <div className="posts-container container">
         {loading ? (
-          <h3> Loading...</h3>
+          <>
+            <Postloading />
+            <Postloading />
+            <Postloading />
+          </>
         ) : (
           posts && (
             <InfiniteScroll
               dataLength={posts.length}
               next={getMorePost}
               hasMore={hasMore}
-              loader={<h3> Loading...</h3>}
+              loader={
+                <>
+                  <Postloading />
+                  <Postloading />
+                  <Postloading />
+                </>
+              }
               key={posts.map((item) => item.id).join("-")} // Unique key for posts array
               endMessage={
                 <p>
-                  Вот і все. Ви переглянули весь інтернет і можете відпочити {":)"}
+                  Вот і все. Ви переглянули весь інтернет і можете відпочити{" "}
+                  {":)"}
                 </p>
               }
             >

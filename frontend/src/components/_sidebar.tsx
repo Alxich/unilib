@@ -6,6 +6,7 @@ import { NavElement } from "./elements";
 import { CategoryPopulated } from "../../../backend/src/util/types";
 import { ContentViewChanger, ContentViews } from "../util/types";
 import Link from "next/link";
+import { SidebarItemLoading } from "./skeletons";
 
 interface SidebarProps {
   categories?: Array<ContentViewChanger>;
@@ -14,6 +15,7 @@ interface SidebarProps {
   setPeriod: Dispatch<SetStateAction<ContentViews>>;
   setBannerActive: Dispatch<SetStateAction<boolean>>;
   setBagReportActive: Dispatch<SetStateAction<boolean>>;
+  loadingStatus: boolean;
 }
 
 const Sidebar: FC<SidebarProps> = ({
@@ -23,6 +25,7 @@ const Sidebar: FC<SidebarProps> = ({
   setPeriod,
   setBannerActive,
   setBagReportActive,
+  loadingStatus,
 }: SidebarProps) => {
   const fandomsLengthBefore = 5;
   const [themeOption, setThemeOption] = useState(false); // False - black / True - white theme
@@ -43,18 +46,16 @@ const Sidebar: FC<SidebarProps> = ({
   return (
     <div id="sidebar" className="container full-height flex-left to-left">
       <div className="nav-user nav">
-        {categories?.map((item: any, i: number) =>
-          item.link !== "follow" ? (
-            <NavElement
-              key={`${item}__${i}`}
-              iconTypeFaFont
-              icon={item.icon}
-              title={item.title}
-              link={item.link}
-              setPeriod={setPeriod}
-            />
-          ) : (
-            userSigned !== false && (
+        {loadingStatus ? (
+          <>
+            <SidebarItemLoading />
+            <SidebarItemLoading />
+            <SidebarItemLoading />
+            <SidebarItemLoading />
+          </>
+        ) : (
+          categories?.map((item: any, i: number) =>
+            item.link !== "follow" ? (
               <NavElement
                 key={`${item}__${i}`}
                 iconTypeFaFont
@@ -63,22 +64,34 @@ const Sidebar: FC<SidebarProps> = ({
                 link={item.link}
                 setPeriod={setPeriod}
               />
+            ) : (
+              userSigned !== false && (
+                <NavElement
+                  key={`${item}__${i}`}
+                  iconTypeFaFont
+                  icon={item.icon}
+                  title={item.title}
+                  link={item.link}
+                  setPeriod={setPeriod}
+                />
+              )
             )
           )
         )}
       </div>
       <div className="nav-usual nav">
-        {fandoms?.map((item: CategoryPopulated, i: number) =>
-          openAllFandom ? (
-            <NavElement
-              key={`${item}__${i}`}
-              iconTypeImage
-              icon={item.icon}
-              title={item.title}
-              link={`group/${item.id}`}
-            />
-          ) : (
-            i <= fandomsLengthBefore && (
+        {loadingStatus ? (
+          <>
+            <SidebarItemLoading />
+            <SidebarItemLoading />
+            <SidebarItemLoading />
+            <SidebarItemLoading />
+            <SidebarItemLoading />
+            <SidebarItemLoading />
+          </>
+        ) : (
+          fandoms?.map((item: CategoryPopulated, i: number) =>
+            openAllFandom ? (
               <NavElement
                 key={`${item}__${i}`}
                 iconTypeImage
@@ -86,10 +99,20 @@ const Sidebar: FC<SidebarProps> = ({
                 title={item.title}
                 link={`group/${item.id}`}
               />
+            ) : (
+              i <= fandomsLengthBefore && (
+                <NavElement
+                  key={`${item}__${i}`}
+                  iconTypeImage
+                  icon={item.icon}
+                  title={item.title}
+                  link={`group/${item.id}`}
+                />
+              )
             )
           )
         )}
-        {fandoms && fandoms.length > 6 && (
+        {!loadingStatus && fandoms && fandoms.length > 6 && (
           <div
             className={classNames("open", {
               active: openAllFandom,

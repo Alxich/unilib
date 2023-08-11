@@ -56,6 +56,13 @@
           background-color: $overhigh_bg;
         }
 
+        &.loading-component {
+          .title {
+            height: $p_font_size;
+          }
+        }
+
+        .fafont,
         .image {
           position: relative;
           display: block;
