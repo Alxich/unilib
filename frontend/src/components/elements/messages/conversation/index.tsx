@@ -25,6 +25,7 @@ import {
 import MessagesModal from "../messages/modal/_messagesModal";
 
 import wizzardBorisCat from "../../../../../public/images/boris-wizzard.png";
+import { ConversationLoading } from "../../../skeletons";
 
 interface ConversationProps {
   conversationId: string;
@@ -195,8 +196,8 @@ const Conversation: FC<ConversationProps> = ({
     return null;
   }
 
-  return conversationLoading ? (
-    <p>loading</p>
+  return !conversationLoading ? (
+    <ConversationLoading />
   ) : conversation ? (
     <div id="conversation">
       <div className="header container flex-row flex-space full-width">

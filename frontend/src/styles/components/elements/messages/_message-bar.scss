@@ -57,6 +57,14 @@
       padding: $msg_item_gap;
       margin-bottom: $msg_item_gap;
 
+      &:not(.loading-component) {
+        &.message {
+          .user-icon {
+            background: $color;
+          }
+        }
+      }
+
       &.message {
         &.active {
           opacity: 0.8;
@@ -65,7 +73,6 @@
         }
 
         .user-icon {
-          background: $color;
           border-radius: 50%;
           height: $user_icon_small;
           width: $user_icon_small;
@@ -188,6 +195,34 @@
         .count {
           font-size: $p_font_size_small;
           font-weight: 300;
+        }
+      }
+
+      &.loading-component {
+        .container {
+          .user-titles {
+            .username {
+              max-width: 120px;
+
+              span {
+                height: $p_font_size;
+              }
+            }
+            .time {
+              max-width: 50px;
+              width: 100%;
+
+              span {
+                height: $p_font_size_small;
+              }
+            }
+          }
+        }
+
+        .information {
+          span.text {
+            height: $p_font_size * 1.65;
+          }
         }
       }
     }

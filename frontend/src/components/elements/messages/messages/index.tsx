@@ -7,16 +7,14 @@ import MessagesItem from "./_messagesItem";
 import OhfailPage from "../_ohfailpage";
 
 import { Session } from "next-auth";
-import {
-  ConversationPopulated,
-  ParticipantPopulated,
-} from "../../../../../../backend/src/util/types";
+import { ConversationPopulated } from "../../../../../../backend/src/util/types";
 
 import MessagesModal from "./modal/_messagesModal";
 import { IModalContext, ModalContext } from "../../../../context/ModalContent";
 
 import sadSaymonCat from "../../../../../public/images/sad-saymon.png";
 import { getUserParticipantObject } from "../../../../util/functions";
+import MessagesItemLoading from "../../../skeletons/_messagesItemLoading";
 
 interface MessagesProps {
   conversationsLoading: boolean;
@@ -37,8 +35,7 @@ const Messages: FC<MessagesProps> = ({
   const [openFilter, setOpenFilter] = useState(false);
   const [openConversationCreation, setOpenConversationCreation] =
     useState(false);
-  const { modalOpen, openModal, closeModal } =
-    useContext<IModalContext>(ModalContext);
+  const { modalOpen, closeModal } = useContext<IModalContext>(ModalContext);
   const [editingConversation, setEditingConversation] =
     useState<ConversationPopulated | null>(null);
 
@@ -97,9 +94,14 @@ const Messages: FC<MessagesProps> = ({
             onViewConversation={onViewConversation}
             getUserParticipantObject={getUserParticipantObject}
           />
-        ) : !conversationsLoading &&
-          conversations &&
-          conversations.length > 0 ? (
+        ) : conversationsLoading ? (
+          <>
+            <MessagesItemLoading />
+            <MessagesItemLoading />
+            <MessagesItemLoading />
+            <MessagesItemLoading />
+          </>
+        ) : conversations && conversations.length > 0 ? (
           conversations.map((item, i) => {
             const { hasSeenLatestMessage } = getUserParticipantObject(
               session,

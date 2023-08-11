@@ -10,6 +10,36 @@
   padding: $msg_item_gap;
   margin-bottom: $msg_item_gap;
 
+  &.loading-component {
+    .container {
+      align-items: flex-start;
+
+      .user-titles {
+        width: 100%;
+
+        span {
+          height: $p_font_size;
+          max-width: 150px;
+        }
+
+        .time {
+          max-width: 35px;
+          width: 100%;
+
+          span {
+            height: $p_font_size_small;
+          }
+        }
+      }
+
+      .information {
+        .text {
+          height: $p_font_size * 2.45;
+        }
+      }
+    }
+  }
+
   .user-icon {
     background: $color;
     border-radius: 50%;

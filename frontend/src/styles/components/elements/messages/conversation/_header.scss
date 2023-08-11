@@ -9,7 +9,6 @@
     align-items: center;
 
     .user-icon {
-      background: $color;
       border-radius: 50%;
       height: $user_icon_small;
       width: $user_icon_small;
@@ -42,6 +41,39 @@
       top: 15px;
       right: -6px;
       bottom: auto;
+    }
+  }
+}
+
+&:not(.loading-component) {
+  .header {
+    .infromation {
+      .user-icon {
+        background: $color;
+      }
+    }
+  }
+}
+
+&.loading-component {
+  .header {
+    .infromation {
+      justify-content: flex-start;
+      width: 100%;
+
+      .username {
+        max-width: 250px;
+        width: 100%;
+
+        span {
+          height: $h2_font_size;
+        }
+      }
+    }
+
+    .changer {
+      height: 30px;
+      max-width: 45px;
     }
   }
 }

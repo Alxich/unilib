@@ -73,4 +73,23 @@
       }
     }
   }
+
+  &.loading-component {
+    .item {
+      max-width: 175px;
+      width: 100%;
+
+      .text {
+          height: $p_font_size *1.75;
+        
+      }
+
+      .time {
+        max-width: 35px;
+        height: $p_font_size_small;
+        margin-left: auto;
+        margin-top: 8px;
+      }
+    }
+  }
 }

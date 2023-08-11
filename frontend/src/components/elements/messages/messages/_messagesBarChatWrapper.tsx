@@ -21,6 +21,7 @@ import { ConversationPopulated } from "../../../../../../backend/src/util/types"
 import MessagesBarChatItem from "./_messagesBarChatItem";
 
 import { getUserParticipantObject } from "../../../../util/functions";
+import { MessageBarItemLoading } from "../../../skeletons";
 
 interface MessagesBarChatsWrapperProps {
   session: Session;
@@ -397,7 +398,14 @@ const MessagesBarChatsWrapper: FC<MessagesBarChatsWrapperProps> = ({
         <Link href={"/messages/all"}>Показати усі</Link>
       </div>
       <div className="container full-width">
-        {!conversationsLoading &&
+        {conversationsLoading ? (
+          <>
+            <MessageBarItemLoading />
+            <MessageBarItemLoading />
+            <MessageBarItemLoading />
+            <MessageBarItemLoading />
+          </>
+        ) : (
           conversationArray &&
           conversationArray.map((item, i) => {
             const { hasSeenLatestMessage } = getUserParticipantObject(
@@ -417,7 +425,8 @@ const MessagesBarChatsWrapper: FC<MessagesBarChatsWrapperProps> = ({
                 data={item}
               />
             );
-          })}
+          })
+        )}
       </div>
     </>
   );
