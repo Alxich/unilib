@@ -91,11 +91,13 @@ const main = async () => {
   });
   await server.start();
 
+  // Define CORS options
   const corsOptions = {
     origin: process.env.CLIENT_ORIGIN,
     credentials: true,
   };
 
+  // Set up Express middleware
   app.use(
     "/graphql",
     cors<cors.CorsRequest>(corsOptions),

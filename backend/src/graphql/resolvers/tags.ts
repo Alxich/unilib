@@ -8,6 +8,9 @@ import { GraphQLError } from "graphql";
 
 const resolvers = {
   Query: {
+    /**
+     * Query a specific tag by its ID.
+     */
     queryTag: async function (
       _: any,
       args: { id: string },
@@ -22,9 +25,10 @@ const resolvers = {
 
       try {
         if (!tagID) {
-          throw new GraphQLError("Not id inserted");
+          throw new GraphQLError("No ID inserted");
         }
 
+        // Query the tag by its ID and include additional information using tagPopulated
         const tag = await prisma.tag.findUnique({
           where: {
             id: tagID,
@@ -33,7 +37,7 @@ const resolvers = {
         });
 
         if (!tag) {
-          throw new GraphQLError("No such a tag 404");
+          throw new GraphQLError("Tag not found");
         }
 
         return tag;
@@ -43,6 +47,9 @@ const resolvers = {
       }
     },
 
+    /**
+     * Query tags based on the provided tag IDs.
+     */
     queryTags: async function (
       _: any,
       args: { id: string },
@@ -56,6 +63,7 @@ const resolvers = {
       }
 
       try {
+        // Query tags based on the provided tag IDs and include additional information using tagPopulated
         const tags = await prisma.tag.findMany({
           where: {
             id: tagID,
@@ -74,23 +82,24 @@ const resolvers = {
     },
   },
   Mutation: {
+    /**
+     * Create a new tag.
+     */
     createTag: async function (
       _: any,
       args: CreateTagArguments,
       context: GraphQLContext
-    ): Promise<CreateTagArguments> {
+    ): Promise<TagPopulated> {
       const { session, prisma } = context;
 
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
 
-      const { id, title} = args;
+      const { id, title } = args;
 
       try {
-        /**
-         * Create new tag entity
-         */
+        // Create a new tag entity in the database
         const newTag = await prisma.tag.create({
           data: {
             id,
@@ -110,6 +119,10 @@ const resolvers = {
   },
 };
 
+/**
+ * Validator for including additional information when querying a tag.
+ * Includes information about the posts associated with the tag.
+ */
 export const tagPopulated = Prisma.validator<Prisma.TagInclude>()({
   posts: {
     select: {
@@ -117,5 +130,6 @@ export const tagPopulated = Prisma.validator<Prisma.TagInclude>()({
     },
   },
 });
+
 
 export default resolvers;

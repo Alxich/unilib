@@ -5,7 +5,6 @@ import {
   GraphQLContext,
   CommentPopulated,
   CommentInteractionArguments,
-  DeleteItemResoponse,
   QueryPostCommentsArgs,
   QueryUserCommentsArgs,
   CreateItemResoponse,
@@ -17,6 +16,7 @@ import { withFilter } from "graphql-subscriptions";
 
 const resolvers = {
   Query: {
+    // Define a GraphQL query resolver for fetching a populated comment by its ID
     queryComment: async function (
       _: any,
       args: { id: string },
@@ -26,24 +26,29 @@ const resolvers = {
       const { id } = args;
 
       try {
+        // Query a comment by its ID and include the populated comment data
         const comment = await prisma.comment.findUnique({
-          include: commentPopulated,
+          include: commentPopulated, // Including the populated comment data
           where: {
             id: id,
           },
         });
 
         if (!comment) {
+          // Throw an error if the comment doesn't exist
           throw new Error("There is no such a comment");
         }
 
+        // Return the fetched and populated comment
         return comment;
       } catch (error: any) {
+        // Log the error and throw a GraphQLError with the error message
         console.error("queryComment error", error);
         throw new GraphQLError(error?.message);
       }
     },
 
+    // Query to fetch an array of comments
     queryComments: async function (
       _: any,
       __: any,
@@ -52,19 +57,20 @@ const resolvers = {
       const { prisma } = context;
 
       try {
+        // Fetch comments from the database
         const comments = await prisma.comment.findMany({
-          include: commentPopulated,
+          include: commentPopulated, // Include related data using commentPopulated
           where: {
-            isDeleted: false,
+            isDeleted: false, // Only fetch comments that are not deleted
           },
           orderBy: {
-            createdAt: "desc",
+            createdAt: "desc", // Order comments by createdAt in descending order
           },
-          take: 5,
+          take: 5, // Limit the number of fetched comments to 5
         });
 
         if (!comments) {
-          throw new Error("There is no much comments");
+          throw new Error("There are no comments available");
         }
 
         return comments;
@@ -74,6 +80,7 @@ const resolvers = {
       }
     },
 
+    // Query to fetch an array of comments for a specific post
     queryPostComments: async function (
       _: any,
       args: QueryPostCommentsArgs,
@@ -83,21 +90,22 @@ const resolvers = {
       const { postId: id, skip, take } = args;
 
       try {
+        // Fetch comments from the database for a specific post
         const comments = await prisma.comment.findMany({
-          include: commentPopulated,
+          include: commentPopulated, // Include related data using commentPopulated
           where: {
-            postId: id,
-            parent: null,
+            postId: id, // Fetch comments only for the specified post
+            parent: null, // Fetch only top-level comments (not replies to other comments)
           },
           orderBy: {
-            createdAt: "asc",
+            createdAt: "asc", // Order comments by createdAt in ascending order
           },
-          ...(skip && { skip }),
-          ...(take && { take }),
+          ...(skip && { skip }), // If skip is provided, apply skipping
+          ...(take && { take }), // If take is provided, apply taking (limit)
         });
 
         if (!comments) {
-          throw new Error("There is no much comments");
+          throw new Error("There are no comments available");
         }
 
         return comments;
@@ -107,6 +115,7 @@ const resolvers = {
       }
     },
 
+    // Query to fetch an array of comments authored by a specific user
     queryUserComments: async function (
       _: any,
       args: QueryUserCommentsArgs,
@@ -116,20 +125,21 @@ const resolvers = {
       const { userId: id, skip, take } = args;
 
       try {
+        // Fetch comments from the database authored by the specified user
         const comments = await prisma.comment.findMany({
-          include: commentPopulated,
+          include: commentPopulated, // Include related data using commentPopulated
           where: {
-            authorId: id,
+            authorId: id, // Fetch comments only authored by the specified user
           },
           orderBy: {
-            createdAt: "asc",
+            createdAt: "asc", // Order comments by createdAt in ascending order
           },
-          ...(skip && { skip }),
-          ...(take && { take }),
+          ...(skip && { skip }), // If skip is provided, apply skipping
+          ...(take && { take }), // If take is provided, apply taking (limit)
         });
 
         if (!comments) {
-          throw new Error("There is no much comments");
+          throw new Error("There are no comments available");
         }
 
         return comments;
@@ -139,6 +149,7 @@ const resolvers = {
       }
     },
 
+    // Query to fetch an array of comments that are replies to a specific comment
     queryCommentsByComment: async function (
       _: any,
       args: QueryCommentsByCommentArgs,
@@ -148,30 +159,32 @@ const resolvers = {
       const { commentId: id, skip, take } = args;
 
       try {
+        // Fetch comments from the database that are replies to the specified comment
         const comments = await prisma.comment.findMany({
-          include: commentPopulated,
+          include: commentPopulated, // Include related data using commentPopulated
           where: {
-            parentId: id,
+            parentId: id, // Fetch comments that have the specified comment as parent
           },
           orderBy: {
-            createdAt: "asc",
+            createdAt: "asc", // Order comments by createdAt in ascending order
           },
-          ...(skip && { skip }),
-          ...(take && { take }),
+          ...(skip && { skip }), // If skip is provided, apply skipping
+          ...(take && { take }), // If take is provided, apply taking (limit)
         });
 
         if (!comments) {
-          throw new Error("There is no much comments");
+          throw new Error("There are no comments available");
         }
 
         return comments;
       } catch (error: any) {
-        console.error("queryUserComments error", error);
+        console.error("queryCommentsByComment error", error);
         throw new GraphQLError(error?.message);
       }
     },
   },
   Mutation: {
+    // Mutation to create a new comment
     createComment: async function (
       _: any,
       args: CommentCreateVariables,
@@ -179,6 +192,7 @@ const resolvers = {
     ): Promise<CreateItemResoponse> {
       const { session, prisma, pubsub } = context;
 
+      // Check if the user is authorized
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
@@ -194,9 +208,9 @@ const resolvers = {
             authorId,
             postId,
             text,
-            ...(parentId && { parentId }),
+            ...(parentId && { parentId }), // Include parentId if provided
           },
-          include: commentPopulated,
+          include: commentPopulated, // Include related data using commentPopulated
         });
 
         if (newComment) {
@@ -224,6 +238,7 @@ const resolvers = {
       }
     },
 
+    // Mutation to delete a comment
     deleteComment: async function (
       _: any,
       args: { id: string },
@@ -231,20 +246,15 @@ const resolvers = {
     ): Promise<CommentPopulated> {
       const { session, prisma } = context;
 
+      // Check if the user is authorized
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
 
       const { id } = args;
 
-      if (!session?.user) {
-        throw new Error("Not authorized");
-      }
-
       try {
-        /**
-         * Create new comment entity
-         */
+        // Update the specified comment's text and isDeleted status
         const comment = await prisma.comment.update({
           where: {
             id: id,
@@ -264,11 +274,12 @@ const resolvers = {
           throw new Error("Something went wrong");
         }
       } catch (error) {
-        console.error("createComment error", error);
-        throw new GraphQLError("Error creating message");
+        console.error("deleteComment error", error);
+        throw new GraphQLError("Error deleting comment");
       }
     },
 
+    // Mutation to edit a comment
     editComment: async function (
       _: any,
       args: { id: string; text: string },
@@ -276,20 +287,15 @@ const resolvers = {
     ): Promise<CommentPopulated> {
       const { session, prisma } = context;
 
+      // Check if the user is authorized
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
 
       const { id, text } = args;
 
-      if (!session?.user) {
-        throw new Error("Not authorized");
-      }
-
       try {
-        /**
-         * Create new comment entity
-         */
+        // Update the specified comment's text
         const comment = await prisma.comment.update({
           where: {
             id: id,
@@ -308,11 +314,12 @@ const resolvers = {
           throw new Error("Something went wrong");
         }
       } catch (error) {
-        console.error("createComment error", error);
-        throw new GraphQLError("Error creating message");
+        console.error("editComment error", error);
+        throw new GraphQLError("Error editing comment");
       }
     },
 
+    // Mutation to add a like to a comment
     addLikeToComment: async function (
       _: any,
       args: CommentInteractionArguments,
@@ -320,6 +327,7 @@ const resolvers = {
     ) {
       const { session, prisma } = context;
 
+      // Check if the user is authorized
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
@@ -328,18 +336,21 @@ const resolvers = {
       const userId = session.user.id;
 
       try {
+        // Find the specified comment
         const comment = await prisma.comment.findUnique({
           where: { id: commentId },
         });
 
         if (!comment) {
-          throw new Error("Comment is not exist");
+          throw new Error("Comment does not exist");
         }
 
+        // Check if the user has already liked the comment
         if (comment.likedByUserIDs.includes(userId)) {
           throw new Error("You have already liked this comment.");
         }
 
+        // Update the comment with the new like
         const updatedComment = await prisma.comment.update({
           where: { id: commentId },
           data: {
@@ -363,10 +374,11 @@ const resolvers = {
         return updatedComment;
       } catch (error) {
         console.error("addLikeToComment error", error);
-        throw new GraphQLError("Error to like the comment");
+        throw new GraphQLError("Error while trying to like the comment");
       }
     },
 
+    // Mutation to add a dislike to a comment
     addDislikeToComment: async function (
       _: any,
       args: CommentInteractionArguments,
@@ -374,6 +386,7 @@ const resolvers = {
     ) {
       const { session, prisma } = context;
 
+      // Check if the user is authorized
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
@@ -382,22 +395,25 @@ const resolvers = {
       const userId = session.user.id;
 
       try {
+        // Find the specified comment
         const comment = await prisma.comment.findUnique({
           where: { id: commentId },
         });
 
         if (!comment) {
-          throw new Error("Comment is not exist");
+          throw new Error("Comment does not exist");
         }
 
+        // Check if the user has already disliked the comment
         if (comment.dislikedByUserIDs.includes(userId)) {
           throw new Error("You have already disliked this comment.");
         }
 
+        // Update the comment with the new dislike
         const updatedComment = await prisma.comment.update({
           where: { id: commentId },
           data: {
-            dislikedByUserIDs: [userId], // заміна на масив [userId]
+            dislikedByUserIDs: [userId], // Replace with an array containing userId
             likedByUserIDs: {
               set: comment.likedByUserIDs.filter((id) => id !== userId),
             },
@@ -419,18 +435,22 @@ const resolvers = {
         return updatedComment;
       } catch (error) {
         console.error("addDislikeToComment error", error);
-        throw new GraphQLError("Error to dislike the comment");
+        throw new GraphQLError("Error while trying to dislike the comment");
       }
     },
   },
   Subscription: {
+    // Subscription for a newly sent comment
     commentSent: {
+      // Use the withFilter function to filter subscriptions based on arguments
       subscribe: withFilter(
+        // Subscribe to the COMMENT_SENT channel
         (_: any, __: any, context: GraphQLContext) => {
           const { pubsub } = context;
-
+          
           return pubsub.asyncIterator("COMMENT_SENT");
         },
+        // Define a filter function that checks if the postId matches
         (
           payload: SendCommentSubscriptionPayload,
           args: { postId: string },
@@ -440,11 +460,16 @@ const resolvers = {
         }
       ),
       // Resolve the subscription payload
-      resolve: (payload: { commentSent: CommentPopulated }): CommentPopulated => {
+      resolve: (payload: {
+        commentSent: CommentPopulated;
+      }): CommentPopulated => {
         return payload.commentSent;
       },
     },
+
+    // Subscription for updated comments
     commentsUpdated: {
+      // Subscribe to the ALL_COMMENTS_SENT channel
       subscribe: (_: any, __: any, context: GraphQLContext) => {
         const { pubsub } = context;
 
@@ -454,7 +479,9 @@ const resolvers = {
   },
 };
 
+// Definition of the commentPopulated object using Prisma's validator
 export const commentPopulated = Prisma.validator<Prisma.CommentInclude>()({
+  // Select properties of the author
   author: {
     select: {
       id: true,
@@ -462,29 +489,32 @@ export const commentPopulated = Prisma.validator<Prisma.CommentInclude>()({
       username: true,
     },
   },
+  // Select properties of the associated post
   post: {
     select: {
       id: true,
       title: true,
     },
   },
+  // Select properties of the parent comment, if exists
   parent: {
     select: {
       id: true,
       text: true,
     },
   },
+  // Include properties of the replies and their nested properties
   replies: {
     include: {
-      author: true,
+      author: true, // Author of the reply
       post: {
         select: {
           id: true,
           title: true,
         },
-      },
-      parent: true,
-      replies: true,
+      }, // Associated post of the reply
+      parent: true, // Parent comment of the reply
+      replies: true, // Replies to the reply
     },
   },
 });

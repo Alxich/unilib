@@ -20,6 +20,8 @@ const resolvers = {
       const { session, prisma } = context;
       const { conversationId } = args;
 
+      // Check if the user is authorized
+
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
@@ -50,6 +52,8 @@ const resolvers = {
       if (!allowedToView) {
         throw new Error("Not Authorized");
       }
+
+      // Fetch messages for the conversation
 
       try {
         const messages = await prisma.message.findMany({
@@ -144,7 +148,7 @@ const resolvers = {
 
         const conversation = await prisma.conversation.update({
           where: {
-            id: conversationId.toString(), // Передайте відповідне id батьківського об'єкту
+            id: conversationId.toString(), // Pass the corresponding id of the parent object
           },
           data: {
             latestMessageId: newMessage.id,
@@ -172,7 +176,10 @@ const resolvers = {
           include: conversationPopulated,
         });
 
+        // Publish the newly sent message to the corresponding channel
         pubsub.publish("MESSAGE_SENT", { messageSent: newMessage });
+
+        // Publish an update to the conversation to the corresponding channel
         pubsub.publish("CONVERSATION_UPDATED", {
           conversationUpdated: {
             conversation,
@@ -187,11 +194,13 @@ const resolvers = {
     },
   },
   Subscription: {
+    // Subscribe to the "MESSAGE_SENT" channel with filtering
     messageSent: {
       subscribe: withFilter(
         (_: any, __: any, context: GraphQLContext) => {
           const { pubsub } = context;
 
+          // Subscribe to the "MESSAGE_SENT" channel
           return pubsub.asyncIterator(["MESSAGE_SENT"]);
         },
         (
@@ -199,6 +208,7 @@ const resolvers = {
           args: { conversationId: string },
           context: GraphQLContext
         ) => {
+          // Filter based on conversationId
           return payload.messageSent.conversationId === args.conversationId;
         }
       ),
@@ -206,6 +216,7 @@ const resolvers = {
   },
 };
 
+// Define the messagePopulated validator
 export const messagePopulated = Prisma.validator<Prisma.MessageInclude>()({
   sender: {
     select: {
@@ -214,5 +225,6 @@ export const messagePopulated = Prisma.validator<Prisma.MessageInclude>()({
     },
   },
 });
+
 
 export default resolvers;

@@ -11,6 +11,11 @@ import {
 
 const resolvers = {
   Query: {
+    /**
+     * Search for users based on a provided username.
+     * This function searches for users whose username contains the provided text,
+     * excluding the current user's own username.
+     */
     searchUsers: async function searchUsers(
       _: any,
       args: { username: string },
@@ -19,15 +24,18 @@ const resolvers = {
       const { username: searchedUsername } = args;
       const { prisma, session } = context;
 
+      // Check if the user is authorized
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
 
+      // Get the current user's username
       const {
         user: { username: myUsername },
       } = session;
 
       try {
+        // Search for users with matching usernames, excluding the current user
         const users = await prisma.user.findMany({
           where: {
             username: {
@@ -40,11 +48,17 @@ const resolvers = {
 
         return users;
       } catch (error: any) {
+        // Handle errors and throw a GraphQLError
         console.error("Error", error);
         throw new GraphQLError(error?.message);
       }
     },
 
+    /**
+     * Search for a user by their ID.
+     * This function retrieves user information including populated data,
+     * based on the provided user ID.
+     */
     searchUser: async function searchUser(
       _: any,
       args: { id: string },
@@ -53,11 +67,13 @@ const resolvers = {
       const { id } = args;
       const { prisma, session } = context;
 
+      // Check if the user is authorized
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
 
       try {
+        // Search for the user by ID and retrieve populated data
         const user = await prisma.user.findUnique({
           where: {
             id: id,
@@ -65,18 +81,24 @@ const resolvers = {
           include: userPopulated,
         });
 
+        // If user not found, throw an error
         if (!user) {
           throw new GraphQLError("No user found");
         }
 
         return user;
       } catch (error: any) {
+        // Handle errors and throw a GraphQLError
         console.error("Error", error);
         throw new GraphQLError(error?.message);
       }
     },
   },
   Mutation: {
+    /**
+     * Create a new username for the authenticated user.
+     * This function allows the authenticated user to create a new username.
+     */
     createUsername: async function createUsername(
       _: any,
       args: { username: string },
@@ -84,18 +106,25 @@ const resolvers = {
     ): Promise<CreateItemResoponse> {
       const { session, prisma } = context;
 
+      // Check if the user is authorized
       if (!session?.user) {
         return {
           error: "Not authorized",
         };
       }
 
+      // Extract user ID and desired username from the arguments
       const { id } = session.user;
       const { username } = args;
 
+      // Use the verifyAndCreateUsername function to handle username creation
       return await verifyAndCreateUsername({ userId: id, username }, prisma);
     },
 
+    /**
+     * Update user information.
+     * This function allows an authenticated user to update their profile information.
+     */
     updateUser: async function updateUser(
       _: any,
       args: {
@@ -110,6 +139,7 @@ const resolvers = {
       const { session, prisma } = context;
       const { username, desc, image, banner } = args;
 
+      // Check if the user is authorized
       if (!session?.user) {
         return {
           error: "Not authorized",
@@ -118,6 +148,7 @@ const resolvers = {
 
       const { id: sessionId, username: sessionUsername } = session.user;
 
+      // Find the user's existing information
       const user = await prisma.user.findUnique({
         where: {
           id: sessionId,
@@ -127,15 +158,17 @@ const resolvers = {
 
       if (!user) {
         return {
-          error: "Not user found",
+          error: "User not found",
         };
       }
 
+      // Initialize the result object for the update operation
       let updateUserResult: CreateItemResoponse = {
         success: false,
         error: undefined,
       };
 
+      // Function to update other user values (aboutMe, image, banner)
       const updateOtherUserValues = async (newValues: {
         aboutMe?: string;
         image?: string;
@@ -166,10 +199,11 @@ const resolvers = {
             };
           }
         } else {
-          return { error: "Not provided with new data" };
+          return { error: "No new data provided" };
         }
       };
 
+      // Check if the provided username is different from the current session username
       if (username && username !== sessionUsername) {
         updateUserResult = await verifyAndCreateUsername(
           { userId: sessionId, username },
@@ -177,6 +211,7 @@ const resolvers = {
         );
       }
 
+      // Update other user values if they are provided
       if (user) {
         updateUserResult = await updateOtherUserValues({
           aboutMe: desc,
@@ -185,9 +220,10 @@ const resolvers = {
         });
       }
 
+      // Handle and return the result of the update operation
       if (updateUserResult.success !== true) {
         console.error(
-          "Error occured while updating user",
+          "An error occurred while updating the user",
           updateUserResult.error
         );
         return updateUserResult;
@@ -196,6 +232,11 @@ const resolvers = {
       }
     },
 
+    /**
+ * Follow a user.
+ * This function allows an authenticated user to follow another user.
+
+ */
     followUser: async function name(
       _: any,
       args: { followerId: string; followingId: string },
@@ -204,10 +245,12 @@ const resolvers = {
       const { followerId, followingId } = args;
       const { session, prisma } = context;
 
+      // Check if the user is authorized
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
 
+      // Create the follow relationship
       const follow = await prisma.follows.create({
         data: {
           followerId: followerId,
@@ -218,6 +261,10 @@ const resolvers = {
       return follow;
     },
 
+    /**
+     * Unfollow a user.
+     * This function allows an authenticated user to unfollow another user.
+     */
     unfollowUser: async function name(
       _: any,
       args: { followerId: string; followingId: string },
@@ -226,12 +273,14 @@ const resolvers = {
       const { followerId, followingId } = args;
       const { session, prisma } = context;
 
+      // Check if the user is authorized
       if (!session?.user) {
         return {
           error: "Not authorized",
         };
       }
 
+      // Delete the follow relationship
       const follow = await prisma.follows.delete({
         where: {
           followerId_followingId: {
@@ -241,6 +290,7 @@ const resolvers = {
         },
       });
 
+      // Check if the follow relationship was successfully deleted
       if (follow) {
         return {
           success: true,
@@ -254,7 +304,9 @@ const resolvers = {
   },
 };
 
+// Define the userPopulated Prisma validator to include specific fields and relationships when querying users
 export const userPopulated = Prisma.validator<Prisma.UserInclude>()({
+  // Include information about users who are following the current user
   followedBy: {
     select: {
       id: true,
@@ -274,6 +326,7 @@ export const userPopulated = Prisma.validator<Prisma.UserInclude>()({
       },
     },
   },
+  // Include information about users who the current user is following
   following: {
     select: {
       id: true,

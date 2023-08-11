@@ -140,6 +140,7 @@ const resolvers = {
     },
   },
   Mutation: {
+    // A GraphQL mutation to create a new conversation
     createConversation: async function (
       _: any,
       args: { participantIds: Array<string> },
@@ -148,6 +149,7 @@ const resolvers = {
       const { session, prisma, pubsub } = context;
       const { participantIds } = args;
 
+      // Check if the user is authorized
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
@@ -155,33 +157,34 @@ const resolvers = {
       const { id: userId } = session.user;
 
       try {
-        /**
-         * create Conversation entity
-         */
+        // Create a new Conversation entity with the specified participants
         const conversation = await prisma.conversation.create({
           data: {
             participants: {
               createMany: {
                 data: participantIds.map((id) => ({
                   userId: id,
-                  hasSeenLatestMessage: id === userId,
+                  hasSeenLatestMessage: id === userId, // Set 'hasSeenLatestMessage' based on the user
                 })),
               },
             },
           },
-          include: conversationPopulated,
+          include: conversationPopulated, // Include populated data for the conversation
         });
 
+        // Publish the newly created conversation
         pubsub.publish("CONVERSATION_CREATED", {
           conversationCreated: conversation,
         });
 
-        return { conversationId: conversation.id };
+        return { conversationId: conversation.id }; // Return the ID of the created conversation
       } catch (error) {
         console.error("createConversation error", error);
         throw new GraphQLError("Error creating conversation");
       }
     },
+
+    // A GraphQL mutation to mark a conversation as read for a specific user
     markConversationAsRead: async function (
       _: any,
       args: { userId: string; conversationId: string },
@@ -190,11 +193,13 @@ const resolvers = {
       const { userId, conversationId } = args;
       const { session, prisma } = context;
 
+      // Check if the user is authorized
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
 
       try {
+        // Update the 'hasSeenLatestMessage' field for the conversation participant
         await prisma.conversationParticipant.updateMany({
           where: {
             userId,
@@ -205,12 +210,14 @@ const resolvers = {
           },
         });
 
-        return true;
+        return true; // Indicate the successful marking as read
       } catch (error: any) {
         console.error("markConversationAsRead error", error);
         throw new GraphQLError(error.message);
       }
     },
+
+    // A GraphQL mutation to delete a conversation and related entities
     deleteConversation: async function (
       _: any,
       args: { conversationId: string },
@@ -219,14 +226,13 @@ const resolvers = {
       const { session, prisma, pubsub } = context;
       const { conversationId } = args;
 
+      // Check if the user is authorized
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
 
       try {
-        /**
-         * Delete conversation and all related entities
-         */
+        // Delete conversation and its related entities within a transaction
         const [deletedConversation] = await prisma.$transaction([
           prisma.conversation.delete({
             where: {
@@ -246,16 +252,19 @@ const resolvers = {
           }),
         ]);
 
+        // Publish a conversation deleted event to notify subscribers
         pubsub.publish("CONVERSATION_DELETED", {
           conversationDeleted: deletedConversation,
         });
 
-        return true;
+        return true; // Indicate the successful deletion
       } catch (error: any) {
         console.error("deleteConversation error", error);
         throw new GraphQLError(error?.message);
       }
     },
+
+    // A GraphQL mutation to update conversation participants
     updateParticipants: async function (
       _: any,
       args: { conversationId: string; participantIds: Array<string> },
@@ -264,6 +273,7 @@ const resolvers = {
       const { session, prisma, pubsub } = context;
       const { conversationId, participantIds } = args;
 
+      // Check if the user is authorized
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
@@ -273,6 +283,7 @@ const resolvers = {
       } = session;
 
       try {
+        // Fetch existing participants of the conversation
         const participants = await prisma.conversationParticipant.findMany({
           where: {
             conversationId,
@@ -281,6 +292,7 @@ const resolvers = {
 
         const existingParticipants = participants.map((p) => p.userId);
 
+        // Determine participants to delete and participants to create
         const participantsToDelete = existingParticipants.filter(
           (id) => !participantIds.includes(id)
         );
@@ -289,6 +301,7 @@ const resolvers = {
           (id) => !existingParticipants.includes(id)
         );
 
+        // Prepare an array of transaction statements to perform updates atomically
         const transactionStatements = [
           prisma.conversation.update({
             where: {
@@ -329,10 +342,12 @@ const resolvers = {
           );
         }
 
+        // Execute the transaction statements
         const [deleteUpdate, addUpdate] = await prisma.$transaction(
           transactionStatements
         );
 
+        // Publish a conversation updated event to notify subscribers
         pubsub.publish("CONVERSATION_UPDATED", {
           conversationUpdated: {
             conversation: addUpdate || deleteUpdate,
@@ -341,7 +356,7 @@ const resolvers = {
           },
         });
 
-        return true;
+        return true; // Indicate the successful update
       } catch (error: any) {
         console.error("updateParticipants error", error);
         throw new GraphQLError(error?.message);
@@ -349,11 +364,13 @@ const resolvers = {
     },
   },
   Subscription: {
+    // Subscription to listen for newly created conversations
     conversationCreated: {
       subscribe: withFilter(
         (_: any, __: any, context: GraphQLContext) => {
           const { pubsub } = context;
 
+          // Subscribe to the "CONVERSATION_CREATED" channel
           return pubsub.asyncIterator(["CONVERSATION_CREATED"]);
         },
         (
@@ -363,6 +380,7 @@ const resolvers = {
         ) => {
           const { session } = context;
 
+          // Check if the user is authorized
           if (!session?.user) {
             throw new GraphQLError("Not authorized");
           }
@@ -372,15 +390,19 @@ const resolvers = {
             conversationCreated: { participants },
           } = payload;
 
+          // Use a helper function to determine if the user is a participant of the conversation
           return userIsConversationParticipant(participants, userId);
         }
       ),
     },
+
+    // Subscription to listen for updates to existing conversations
     conversationUpdated: {
       subscribe: withFilter(
         (_: any, __: any, context: GraphQLContext) => {
           const { pubsub } = context;
 
+          // Subscribe to the "CONVERSATION_UPDATED" channel
           return pubsub.asyncIterator(["CONVERSATION_UPDATED"]);
         },
         (
@@ -390,6 +412,7 @@ const resolvers = {
         ) => {
           const { session } = context;
 
+          // Check if the user is authorized
           if (!session?.user) {
             throw new GraphQLError("Not authorized");
           }
@@ -403,6 +426,7 @@ const resolvers = {
             },
           } = payload;
 
+          // Check various conditions to determine if the user should receive the subscription
           const userIsParticipant = userIsConversationParticipant(
             participants,
             userId
@@ -424,11 +448,14 @@ const resolvers = {
         }
       ),
     },
+
+    // Subscription to listen for deleted conversations
     conversationDeleted: {
       subscribe: withFilter(
         (_: any, __: any, context: GraphQLContext) => {
           const { pubsub } = context;
 
+          // Subscribe to the "CONVERSATION_DELETED" channel
           return pubsub.asyncIterator(["CONVERSATION_DELETED"]);
         },
         (
@@ -438,6 +465,7 @@ const resolvers = {
         ) => {
           const { session } = context;
 
+          // Check if the user is authorized
           if (!session?.user) {
             throw new GraphQLError("Not authorized");
           }
@@ -447,6 +475,7 @@ const resolvers = {
             conversationDeleted: { participants },
           } = payload;
 
+          // Use a helper function to determine if the user is a participant of the conversation
           return userIsConversationParticipant(participants, userId);
         }
       ),
@@ -454,6 +483,7 @@ const resolvers = {
   },
 };
 
+// Define the structure of the 'participantPopulated' object
 export const participantPopulated =
   Prisma.validator<Prisma.ConversationParticipantInclude>()({
     user: {
@@ -464,9 +494,11 @@ export const participantPopulated =
     },
   });
 
+// Define the structure of the 'conversationPopulated' object
 export const conversationPopulated =
   Prisma.validator<Prisma.ConversationInclude>()({
     participants: {
+      // Include participant information using the 'participantPopulated' structure
       include: participantPopulated,
     },
     latestMessage: {
@@ -480,5 +512,6 @@ export const conversationPopulated =
       },
     },
   });
+
 
 export default resolvers;

@@ -97,13 +97,18 @@ export async function verifyAndCreateUsername(
   }
 }
 
+// A function to check if a user is a participant in a conversation
 export function userIsConversationParticipant(
   participants: Array<ParticipantPopulated>,
   userId: string
 ): boolean {
+  // Using the Array.prototype.find() method to look for a participant with a matching userId
+  // If a matching participant is found, the function will return true
+  // If no matching participant is found, the function will return false
   return !!participants.find((participant) => participant.userId === userId);
 }
 
+// A function to calculate the start and end dates based on a selected period
 export function getDateQueryRange(period: string) {
   const currentDate = new Date();
 

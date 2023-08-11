@@ -10,6 +10,9 @@ import { getDateQueryRange } from "../../util/functions";
 
 const resolvers = {
   Query: {
+    /**
+     * Retrieve posts based on the specified criteria.
+     */
     queryPosts: async function (
       _: any,
       args: {
@@ -24,15 +27,19 @@ const resolvers = {
       const { prisma } = context;
       const { popular, period, skip, take, subscribedCategories } = args;
 
+      // Get the start and end date based on the specified period
       const { startDate, endDate } = getDateQueryRange(period);
 
       try {
-        if (period === "follow") {
-          if (!subscribedCategories || subscribedCategories.length <= 0) {
-            return [];
-          }
+        // Handle the case where period is "follow" and no subscribed categories are provided
+        if (
+          period === "follow" &&
+          (!subscribedCategories || subscribedCategories.length <= 0)
+        ) {
+          return [];
         }
 
+        // Construct the query based on the provided arguments
         const posts = await prisma.post.findMany({
           include: postPopulated,
           orderBy: popular !== true ? { createdAt: "asc" } : { views: "desc" },
@@ -61,6 +68,9 @@ const resolvers = {
       }
     },
 
+    /**
+     * Retrieve posts based on the specified tag, popular status, and period.
+     */
     queryPostsByTag: async function (
       _: any,
       args: {
@@ -75,19 +85,14 @@ const resolvers = {
       const { prisma } = context;
       const { popular, period, tagId, skip, take } = args;
 
+      // Get the start and end date based on the specified period
       const { startDate, endDate } = getDateQueryRange(period);
 
       try {
+        // Construct the query based on the provided arguments
         const posts = await prisma.post.findMany({
           include: postPopulated,
-          orderBy:
-            popular !== true
-              ? {
-                  createdAt: "asc",
-                }
-              : {
-                  views: "desc",
-                },
+          orderBy: popular !== true ? { createdAt: "asc" } : { views: "desc" },
           ...(period && {
             where: {
               tagIDs: { equals: tagId },
@@ -96,8 +101,8 @@ const resolvers = {
               }),
             },
           }),
-          skip, // Skip post to query (not copy the result)
-          take, // First 10 posts
+          skip, // Skip posts in the query (not copy the result)
+          take, // Limit the number of posts returned
         });
 
         return posts;
@@ -107,6 +112,9 @@ const resolvers = {
       }
     },
 
+    /**
+     * Retrieve posts based on the specified category, popular status, and period.
+     */
     queryPostsByCat: async function (
       _: any,
       args: {
@@ -121,19 +129,14 @@ const resolvers = {
       const { prisma } = context;
       const { popular, period, catId, skip, take } = args;
 
+      // Get the start and end date based on the specified period
       const { startDate, endDate } = getDateQueryRange(period);
 
       try {
+        // Construct the query based on the provided arguments
         const posts = await prisma.post.findMany({
           include: postPopulated,
-          orderBy:
-            popular !== true
-              ? {
-                  createdAt: "asc",
-                }
-              : {
-                  views: "desc",
-                },
+          orderBy: popular !== true ? { createdAt: "asc" } : { views: "desc" },
           ...(period && {
             where: {
               category: {
@@ -144,8 +147,8 @@ const resolvers = {
               }),
             },
           }),
-          skip, // Skip post to query (not copy the result)
-          take, // First 10 posts
+          skip, // Skip posts in the query (not copy the result)
+          take, // Limit the number of posts returned
         });
 
         return posts;
@@ -155,6 +158,9 @@ const resolvers = {
       }
     },
 
+    /**
+     * Retrieve posts based on the specified author, popular status, and period.
+     */
     queryPostsByAuthor: async function (
       _: any,
       args: {
@@ -169,9 +175,11 @@ const resolvers = {
       const { prisma } = context;
       const { popular, period, authorId, skip, take } = args;
 
+      // Get the start and end date based on the specified period
       const { startDate, endDate } = getDateQueryRange(period);
 
       try {
+        // Construct the query where clause based on the provided arguments
         const where = {
           author: {
             id: authorId,
@@ -184,12 +192,13 @@ const resolvers = {
           });
         }
 
+        // Fetch posts based on the constructed query
         const posts = await prisma.post.findMany({
           include: postPopulated,
           orderBy: popular !== true ? { createdAt: "asc" } : { views: "desc" },
           where,
-          skip, // Skip post to query (not copy the result)
-          take, // First 3 posts
+          skip, // Skip posts in the query (not copy the result)
+          take, // Limit the number of posts returned
         });
 
         return posts;
@@ -199,6 +208,9 @@ const resolvers = {
       }
     },
 
+    /**
+     * Retrieve a single post by its ID and increment its view count.ated post.
+     */
     queryPost: async function (
       _: any,
       args: { id: string },
@@ -209,12 +221,10 @@ const resolvers = {
 
       try {
         if (!id) {
-          throw new GraphQLError("Not id inserted");
+          throw new GraphQLError("No ID inserted");
         }
 
-        /**
-         * Query post by its id
-         */
+        // Query the post by its ID
         const post = await prisma.post.findUnique({
           where: {
             id: id,
@@ -223,10 +233,10 @@ const resolvers = {
         });
 
         if (!post) {
-          throw new GraphQLError("No such a post 404");
+          throw new GraphQLError("No such post found (404)");
         }
 
-        // Increment the viewsCount property
+        // Increment the view count of the post
         const updatedPost = await prisma.post.update({
           where: { id },
           data: { views: post.views + 1 },
@@ -240,9 +250,12 @@ const resolvers = {
       }
     },
 
+    /**
+     * Search for posts based on a provided search text, either in the title or content. results.
+     */
     querySearchPosts: async function (
       _: any,
-      args: { searchText: string }, // Додайте поле searchText для передачі тексту для пошуку
+      args: { searchText: string },
       context: GraphQLContext
     ): Promise<Array<PostPopulated>> {
       const { prisma } = context;
@@ -250,12 +263,10 @@ const resolvers = {
 
       try {
         if (!searchText) {
-          throw new GraphQLError("Please provide either id or searchText");
+          throw new GraphQLError("Please provide either an ID or searchText");
         }
 
-        /**
-         * Search post by title or content
-         */
+        // Search for posts matching the provided search text in title or content
         const searchResult = await prisma.post.findMany({
           where: {
             OR: [
@@ -267,7 +278,7 @@ const resolvers = {
         });
 
         if (!searchResult) {
-          throw new GraphQLError("No matching post found");
+          throw new GraphQLError("No matching posts found");
         }
 
         return searchResult;
@@ -278,6 +289,9 @@ const resolvers = {
     },
   },
   Mutation: {
+    /**
+     * Create a new post.sful.
+     */
     createPost: async function (
       _: any,
       args: CreatePostArguments,
@@ -292,9 +306,7 @@ const resolvers = {
       const { id, title, content, authorId, categoryId, tagsId } = args;
 
       try {
-        /**
-         * Create new post entity
-         */
+        // Create a new post entity
         const newPost = await prisma.post.create({
           data: {
             id,
@@ -314,10 +326,13 @@ const resolvers = {
         return true;
       } catch (error) {
         console.error("createPost error", error);
-        throw new GraphQLError("Error creating message");
+        throw new GraphQLError("Error creating post");
       }
     },
 
+    /**
+     * Add a like to a post.
+     */
     addLikeToPost: async function (
       _: any,
       args: PostInteractionArguments,
@@ -336,7 +351,7 @@ const resolvers = {
         const post = await prisma.post.findUnique({ where: { id: postId } });
 
         if (!post) {
-          throw new Error("Post is not exist");
+          throw new Error("Post does not exist");
         }
 
         if (post.likedByUserIDs.includes(userId)) {
@@ -366,10 +381,13 @@ const resolvers = {
         return updatedPost;
       } catch (error) {
         console.error("addLikeToPost error", error);
-        throw new GraphQLError("Error to like the post");
+        throw new GraphQLError("Error adding a like to the post");
       }
     },
 
+    /**
+     * Add a dislike to a post.
+     */
     addDislikeToPost: async function (
       _: any,
       args: PostInteractionArguments,
@@ -388,7 +406,7 @@ const resolvers = {
         const post = await prisma.post.findUnique({ where: { id: postId } });
 
         if (!post) {
-          throw new Error("Post is not exist");
+          throw new Error("Post does not exist");
         }
 
         if (post.dislikedByUserIDs.includes(userId)) {
@@ -398,7 +416,7 @@ const resolvers = {
         const updatedPost = await prisma.post.update({
           where: { id: postId },
           data: {
-            dislikedByUserIDs: [userId], // заміна на масив [userId]
+            dislikedByUserIDs: [userId], // Replace with an array containing userId
             likedByUserIDs: {
               set: post.likedByUserIDs.filter((id) => id !== userId),
             },
@@ -414,12 +432,15 @@ const resolvers = {
         return updatedPost;
       } catch (error) {
         console.error("addDislikeToPost error", error);
-        throw new GraphQLError("Error to dislike the post");
+        throw new GraphQLError("Error adding a dislike to the post");
       }
     },
   },
 };
 
+/**
+ * Validator for including additional fields when querying a post.
+ */
 export const postPopulated = Prisma.validator<Prisma.PostInclude>()({
   author: {
     select: {
@@ -442,5 +463,6 @@ export const postPopulated = Prisma.validator<Prisma.PostInclude>()({
     },
   },
 });
+
 
 export default resolvers;

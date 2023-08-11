@@ -8,6 +8,9 @@ import tagResolvers from "./tags";
 import commentResolvers from "./comments";
 import scalarResolvers from "./scalars";
 
+// Combine resolver functions from different modules into a single object
+
+
 const resolvers = merge(
   {},
   userResolvers,
