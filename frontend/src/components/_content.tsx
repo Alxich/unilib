@@ -1,4 +1,11 @@
-import { FC, SetStateAction, createContext, useEffect, useState } from "react";
+import {
+  FC,
+  SetStateAction,
+  createContext,
+  useEffect,
+  useState,
+  Dispatch,
+} from "react";
 import type { NextPageContext } from "next";
 import Head from "next/head";
 import classNames from "classnames";
@@ -30,7 +37,10 @@ import {
   UserSubscriptionData,
 } from "../util/types";
 import { PostPopulated } from "../../../backend/src/util/types";
+
 import { Postloading } from "./skeletons";
+
+import { AdminHeader } from "./admin";
 
 interface ContentProps {
   children: any;
@@ -38,7 +48,7 @@ interface ContentProps {
 
 type ContentContextValue = [
   ContentViews,
-  React.Dispatch<SetStateAction<ContentViews>>
+  Dispatch<SetStateAction<ContentViews>>
 ];
 
 export const ContentContext = createContext<ContentContextValue>([
@@ -47,15 +57,17 @@ export const ContentContext = createContext<ContentContextValue>([
 ]);
 
 export const UserContext = createContext<
-  [
-    string[] | undefined,
-    React.Dispatch<React.SetStateAction<string[] | undefined>>
-  ]
+  [string[] | undefined, Dispatch<SetStateAction<string[] | undefined>>]
 >([[], () => {}]);
+
+export const CreatePostContext = createContext<
+  [boolean, Dispatch<SetStateAction<boolean>>]
+>([false, () => {}]);
 
 const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   const [loadingStatus, setLoadingStatus] = useState(false);
   const [bannerActive, setBannerActive] = useState(false);
+  const [writterAdminActive, setWritterAdminActive] = useState<boolean>(false);
   const [writterActive, setWritterActive] = useState(false);
   const [userSigned, setUserSigned] = useState(false);
   const [bagReportActive, setBagReportActive] = useState(false);
@@ -68,6 +80,7 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
 
   const router = useRouter();
   const isMessagesRoute = router.pathname.startsWith("/messages");
+  const isAdminRoute = router.pathname.startsWith("/admin");
 
   // Apply CSS class based on writterActive state
 
@@ -76,6 +89,18 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
       ? document.body.classList.add("writter-active")
       : document.body.classList.remove("writter-active");
   }, [writterActive]);
+
+  // Apply CSS class based on isAdminRoute state
+
+  useEffect(() => {
+    if (isAdminRoute) {
+      // '0' to assign the first (and only `HTML` tag)
+      const root = document.getElementsByTagName("html")[0];
+
+      root.classList.add("white-themed");
+      root.classList.remove("black-themed");
+    }
+  }, [isAdminRoute]);
 
   // Set bannerActive based on user session
 
@@ -213,69 +238,85 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
       </Head>
       {session && (
         <>
-          <Header
-            setBannerActive={setBannerActive}
-            session={session}
-            writterActive={writterActive}
-            setWritterActive={setWritterActive}
-            setSearchText={setSearchText}
-          />
+          {isAdminRoute ? (
+            <AdminHeader />
+          ) : (
+            <Header
+              setBannerActive={setBannerActive}
+              session={session}
+              writterActive={writterActive}
+              setWritterActive={setWritterActive}
+              setSearchText={setSearchText}
+            />
+          )}
           <main
             className={classNames("main", {
               "writter-active": writterActive,
             })}
           >
-            <div className="container main-content flex-row flex-space">
-              <Sidebar
-                categories={changeView}
-                fandoms={categories?.queryCategories}
-                setPeriod={setPeriod}
-                userSigned={userSigned}
-                setBannerActive={setBannerActive}
-                setBagReportActive={setBagReportActive}
-                loadingStatus={loadingStatus}
-              />
+            <div className="container main-content flex-row flex-space flex-top">
+              {!isAdminRoute && (
+                <Sidebar
+                  categories={changeView}
+                  fandoms={categories?.queryCategories}
+                  setPeriod={setPeriod}
+                  userSigned={userSigned}
+                  setBannerActive={setBannerActive}
+                  setBagReportActive={setBagReportActive}
+                  loadingStatus={loadingStatus}
+                />
+              )}
               <div
                 id="content"
                 className={classNames("container", {
                   "full-height full-width flex-row flex-space is-messages":
                     isMessagesRoute,
+                  "full-height full-width flex-row flex-space is-admin":
+                    isAdminRoute,
                 })}
               >
                 <ContentContext.Provider value={[period, setPeriod]}>
                   <UserContext.Provider
                     value={[userSubscribed, setUserSubscribed]}
                   >
-                    {searchText ? (
-                      postLoading ? (
-                        <div className="posts-container container">
-                          <Postloading />
-                          <Postloading />
-                          <Postloading />
-                        </div>
+                    <CreatePostContext.Provider
+                      value={[writterAdminActive, setWritterAdminActive]}
+                    >
+                      {searchText ? (
+                        postLoading ? (
+                          <div className="posts-container container">
+                            <Postloading />
+                            <Postloading />
+                            <Postloading />
+                          </div>
+                        ) : (
+                          <div className="posts-container container">
+                            {searchResults &&
+                              searchResults.map(
+                                (item: PostPopulated, i: number) => {
+                                  return (
+                                    <Post
+                                      session={session}
+                                      data={item}
+                                      key={`${item}__${i}`}
+                                    />
+                                  );
+                                }
+                              )}
+                          </div>
+                        )
                       ) : (
-                        <div className="posts-container container">
-                          {searchResults &&
-                            searchResults.map(
-                              (item: PostPopulated, i: number) => {
-                                return (
-                                  <Post
-                                    session={session}
-                                    data={item}
-                                    key={`${item}__${i}`}
-                                  />
-                                );
-                              }
-                            )}
-                        </div>
-                      )
-                    ) : (
-                      children
-                    )}
+                        children
+                      )}
+                    </CreatePostContext.Provider>
                   </UserContext.Provider>
                 </ContentContext.Provider>
               </div>
-              {isMessagesRoute ? <MessagesBar session={session} /> : <Reels />}
+              {!isAdminRoute && isMessagesRoute ? (
+                <MessagesBar session={session} />
+              ) : (
+                !isAdminRoute && <Reels />
+              )}
             </div>
           </main>
         </>
@@ -289,8 +330,10 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
       {session && (
         <WritterPost
           session={session}
-          writterActive={writterActive}
+          writterActive={writterActive || writterAdminActive}
           setWritterActive={setWritterActive}
+          writterAdminActive={writterAdminActive}
+          setWritterAdminActive={setWritterAdminActive}
         />
       )}
 

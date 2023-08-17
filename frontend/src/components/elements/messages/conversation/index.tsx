@@ -196,7 +196,7 @@ const Conversation: FC<ConversationProps> = ({
     return null;
   }
 
-  return !conversationLoading ? (
+  return conversationLoading ? (
     <ConversationLoading />
   ) : conversation ? (
     <div id="conversation">

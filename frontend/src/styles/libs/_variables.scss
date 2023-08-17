@@ -42,42 +42,6 @@ $triangle: 3px 0px 0px 0px;
 $user_icon_small: 36px;
 $user_icon_big: 46px;
 
-// Set default colors
-
-$background: #313131 !default;
-$writter-bg: #f7f7f7 !default;
-$writter-color: #525252 !default;
-$writter-placeholder-title: rgba(82, 82, 82, 0.778);
-$writter-placeholder: #d9d9d9 !default;
-$writter-interact-bg: rgba(49, 49, 49, 0.75);
-$overhigh_bg: #3a3a3a !default;
-$notif_bg: #2e2e2e !default;
-$notif_hov: #343434 !default;
-$elem_over_bg: rgba(87, 92, 111, 0.3) !default;
-$outbox_bg: #525252 !default;
-$outbox_hover: #454545 !default;
-$placeholder: #717171 !default;
-$error: #ff8686 !default;
-$border_action: rgba(201, 204, 207, 0.75) !default;
-$tag_writter_input: rgba(201, 204, 207, 0.15) !default;
-$tag_writter_input_over: rgba(201, 204, 207, 0.85) !default;
-$active_elem: #b1a5ff !default;
-$light_border: rgba(201, 204, 208, 0.05) !default;
-$color: #d9d9d9 !default;
-
-// Logo
-
-@mixin logo($font_size: 2rem) {
-  font-family: "Tourney";
-  font-weight: 400;
-  font-size: $font_size;
-  line-height: 1.2;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: $color;
-  margin: 0;
-}
-
 // button values
 
 $button_gap: 12px 12px;
@@ -159,7 +123,7 @@ $post_gap: 12px;
 $post_item_gap: 12px;
 $post_author_gap: 8px;
 $post_author_icon: 80px;
-$post_author_icon_border: 3px solid $active_elem;
+$post_author_icon_border: 3px solid;
 $post_add_info_gap: 8px;
 $post_hash_gap: 3px;
 $post_initem_gap: 3px;
@@ -186,7 +150,7 @@ $list_inner_pad: 55px;
 $list_add_info_gap: 8px;
 $list_item_height: 50px;
 $list_item_pad: 0 10px 10px 10px;
-$list_item_border: 2px solid $light_border;
+$list_item_border: 2px solid;
 $list_items_gap: 15px;
 $list_items_gap_btw: 12.5px;
 $list_filter_mrg_btm: 10px;
@@ -220,26 +184,3 @@ $msg_sdbar_width: 300px;
 $msg_sdbar_item_height: 42px;
 $msg_item_gap: 12px;
 
-// There is @mixin for other staff of website
-
-@mixin placeholder($color, $size: "") {
-  &[data-placeholder] {
-    position: relative;
-    display: flex;
-    color: $color !important;
-
-    &::before {
-      position: relative;
-      display: block;
-      content: attr(data-placeholder);
-    }
-
-    // br {
-    //   display: none;
-    // }
-
-    @if $size != "" {
-      font-size: $size;
-    }
-  }
-}

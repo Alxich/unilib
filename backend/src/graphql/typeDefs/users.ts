@@ -13,6 +13,7 @@ const typeDefs = gql`
     subscribedCategoryIDs: [String]
     followedBy: [Follow]
     createdAt: Date
+    posts: [Post]
   }
 
   type Follow {
@@ -24,6 +25,7 @@ const typeDefs = gql`
   type Query {
     searchUsers(username: String!): [User]
     searchUser(id: String!): User
+    queryUsers: [User]
   }
 
   type Mutation {

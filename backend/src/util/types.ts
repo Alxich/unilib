@@ -184,6 +184,11 @@ export interface CreateTagArguments {
   title: string;
 }
 
+export interface UpdateTagArguments {
+  id: string;
+  title: string;
+}
+
 export type TagPopulated = Prisma.TagGetPayload<{
   include: typeof tagPopulated;
 }>;
@@ -197,6 +202,14 @@ export interface CreateCategoryArguments {
   icon: string;
   title: string;
   desc: string;
+}
+
+export interface UpdateCategoryArguments {
+  id: string;
+  banner?: string;
+  icon?: string;
+  title?: string;
+  desc?: string;
 }
 
 export interface SubscribeCategoryArguments {

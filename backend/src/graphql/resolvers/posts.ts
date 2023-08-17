@@ -331,6 +331,63 @@ const resolvers = {
     },
 
     /**
+     * Create a new post.sful.
+     */
+    updatePost: async function (
+      _: any,
+      args: CreatePostArguments,
+      context: GraphQLContext
+    ): Promise<PostPopulated> {
+      const { session, prisma } = context;
+
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      const { id, title, content, tagsId } = args;
+
+      try {
+        // Create a new post entity
+        const newPost = await prisma.post.update({
+          where: {
+            id,
+          },
+          data: {
+            title,
+            content,
+            tags: {
+              set: [],
+            },
+          },
+          include: {
+            ...postPopulated,
+          },
+        });
+
+        const updatedTagPost = await prisma.post.update({
+          where: {
+            id,
+          },
+          data: {
+            tags: {
+              connect: tagsId.map((tagId) => ({ id: tagId.id })),
+            },
+          },
+          include: {
+            ...postPopulated,
+          },
+        });
+
+        console.log(updatedTagPost);
+
+        return updatedTagPost;
+      } catch (error) {
+        console.error("createPost error", error);
+        throw new GraphQLError("Error creating post");
+      }
+    },
+
+    /**
      * Add a like to a post.
      */
     addLikeToPost: async function (

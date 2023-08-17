@@ -6,6 +6,7 @@ import {
   MessagePopulated,
   PostPopulated,
   TagPopulated,
+  TagPostCreateArguments,
   UserPopulated,
 } from "../../../backend/src/util/types";
 import { User } from "@prisma/client";
@@ -30,8 +31,13 @@ export interface ContentViewChanger {
   link: string;
 }
 
-export type ContentViews = "popular" | "follow" | "today" | "week" | "month" | "year";
-
+export type ContentViews =
+  | "popular"
+  | "follow"
+  | "today"
+  | "week"
+  | "month"
+  | "year";
 
 /**
  * Users
@@ -57,6 +63,10 @@ export interface SearchUserVariables {
 
 export interface SearchUserData {
   searchUser: SearchedUserById;
+}
+
+export interface queryUsersData {
+  queryUsers: Array<UserPopulated>;
 }
 
 export interface SearchUsersData {
@@ -104,10 +114,10 @@ export interface FollowUserArguments {
 
 export interface UpdateUserArguments {
   username?: string;
-        desc?: string;
-        image?: string;
-        banner?: string;
-        password?: string;
+  desc?: string;
+  image?: string;
+  banner?: string;
+  password?: string;
 }
 
 export interface UserSubscriptionData {
@@ -193,6 +203,15 @@ export interface CreatePostArguments {
   tagId?: string[] | string;
 }
 
+export interface UpdatePostArguments {
+  id: string;
+  title: string;
+  content: string;
+  authorId?: string;
+  categoryId?: string;
+  tagsId: Array<TagPostCreateArguments>;
+}
+
 export interface PostsVariables {
   popular?: boolean;
   period?: string;
@@ -262,6 +281,11 @@ export interface PostData {
 
 export interface PostFail {
   title: string;
+}
+
+export interface PostItemProps {
+  session: Session;
+  item: PostPopulated;
 }
 
 /**
@@ -365,6 +389,11 @@ export interface CommentsSentSubscriptionData {
   commentsUpdated: CommentPopulated;
 }
 
+export interface CommentAdminItemProps {
+  session: Session;
+  item: CommentPopulated;
+}
+
 export type CommentReply = Comment & {
   author: User;
   post: {
@@ -381,11 +410,25 @@ export type CommentReply = Comment & {
 export interface TagArguments {
   id: string;
   title: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  postIDs?: string[];
+  posts?: Array<Object>;
 }
 
 export interface CreateTagArguments {
   id: string;
   title: string;
+}
+
+export interface UpdateTagArguments {
+  id: string;
+  title: string;
+}
+
+export interface TagItemProps {
+  session: Session;
+  item: TagArguments;
 }
 
 export interface TagsVariables {
@@ -407,10 +450,33 @@ export interface TagsData {
  */
 export interface CreateCategoryArguments {
   id: string;
+  banner?: string;
+  icon?: string;
+  title: string;
+  desc?: string;
+}
+
+export interface onCreateCategoryArgs {
   banner: string;
   icon: string;
   title: string;
   desc: string;
+}
+
+export interface UpdateCategoryArguments {
+  id: string;
+  banner?: string;
+  icon?: string;
+  title?: string;
+  desc?: string;
+}
+
+export interface CatFormInput {
+  id: string;
+  title?: string;
+  banner?: string;
+  desc?: string;
+  icon?: string;
 }
 
 export interface SubscribeCategoryArguments {
@@ -422,8 +488,23 @@ export interface CategoriesVariables {
   id: string;
 }
 
+export interface CategoryArguments {
+  id: string;
+  banner: string;
+  icon: string;
+  title: string;
+  desc: string;
+  createdAt: Date;
+  updatedAt: Date;
+  posts: Array<Object>;
+}
+
 export interface CategoryData {
   queryCategory: CategoryPopulated;
+}
+
+export interface CreateCategoryData {
+  createCategory: CategoryPopulated;
 }
 
 export interface CategoriesByUserData {

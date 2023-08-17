@@ -7,13 +7,13 @@ import tagTypeDefs from "./tags";
 import commentTypeDefs from "./comments";
 
 const typeDefs = [
-  userTypeDefs,
   conversationTypeDefs,
   messageTypeDefs,
   tagTypeDefs,
   postTypeDefs,
   categoryTypeDefs,
   commentTypeDefs,
+  userTypeDefs,
 ];
 
 export default typeDefs;

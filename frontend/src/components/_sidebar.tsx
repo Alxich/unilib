@@ -33,13 +33,15 @@ const Sidebar: FC<SidebarProps> = ({
   const [openAllThemes, setOpenAllThemes] = useState(false);
 
   useEffect(() => {
+    // '0' to assign the first (and only `HTML` tag)
+    const root = document.getElementsByTagName("html")[0];
     // True - white / false - black
     if (themeOption) {
-      document.body.classList.add("white-themed");
-      document.body.classList.remove("black-themed");
+      root.classList.add("white-themed");
+      root.classList.remove("black-themed");
     } else {
-      document.body.classList.add("black-themed");
-      document.body.classList.remove("white-themed");
+      root.classList.add("black-themed");
+      root.classList.remove("white-themed");
     }
   }, [themeOption]);
 

@@ -118,6 +118,16 @@
       height: 100%;
     }
   }
+}
 
-  @import "./writter/tag-editor";
+@import "./writter/tag-editor";
+
+&.black-themed {
+  #tag-editor {
+    .available-tags {
+      button {
+        color: $outbox_bg !important;
+      }
+    }
+  }
 }

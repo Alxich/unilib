@@ -1,0 +1,311 @@
+.table {
+  border: 1px solid $color_form_highlight;
+  width: 100%;
+
+  p {
+    margin: 0;
+  }
+}
+
+.table-header {
+  background: $black_bg;
+  display: flex;
+  width: 100%;
+  padding: ($half_spacing_unit * 1.5) 0;
+
+  &.create {
+    background: $color_form_highlight;
+
+    .filter__text {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      color: $color;
+    }
+  }
+}
+
+.table-content {
+  &:not(.no-edits) {
+    .table-row {
+      padding: ($half_spacing_unit * 1.5) 0 0 0;
+    }
+  }
+
+  .table-row {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: ($half_spacing_unit * 1.5) 0;
+
+    .information {
+      display: flex;
+      width: 100%;
+      padding-bottom: ($half_spacing_unit * 1.5);
+    }
+
+    .update-current-item {
+      background: $color_form_highlight;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid $outbox_bg;
+      max-height: 0;
+      height: 100%;
+      width: 100%;
+      transition: $transition_normal;
+      overflow: hidden;
+
+      &.active {
+        max-height: 200px;
+      }
+
+      form {
+        padding: 20px 0;
+      }
+
+      .edit-post-content,
+      textarea,
+      input {
+        background: $background;
+        max-width: 290px;
+        margin: 0 auto;
+      }
+    }
+
+    .big-form {
+      &.active {
+        max-height: 420px;
+      }
+    }
+
+    &:nth-of-type(odd) {
+      background: $color_form_highlight;
+
+      .update-current-item {
+        background: $background;
+
+        .edit-post-content,
+        textarea,
+        input {
+          background: $color_form_highlight;
+        }
+      }
+    }
+  }
+}
+
+.table-data,
+.header__item {
+  flex: 1 1 20%;
+  text-align: center;
+
+  &.action {
+    p {
+      cursor: pointer;
+    }
+  }
+
+  .button {
+    margin: 0 auto;
+    max-width: 180px;
+    width: 100%;
+  }
+
+  a,
+  &.edit {
+    transition: $transition_normal;
+    cursor: pointer;
+
+    &:hover {
+      color: $active_elem;
+    }
+  }
+
+  span {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+
+    .separator {
+      margin: 0 4px;
+    }
+  }
+}
+
+.create__form {
+  max-height: 0;
+  height: 100%;
+  width: 100%;
+  transition: $transition_normal;
+  overflow: hidden;
+
+  &:not(.no-edits) {
+    padding: 0;
+  }
+
+  &.active {
+    max-height: 200px;
+  }
+
+  .header__item {
+    padding-bottom: ($half_spacing_unit * 1.5);
+
+    .edit-post-content,
+    textarea,
+    input {
+      max-width: 290px;
+      margin: 0 auto;
+    }
+  }
+
+  &.big-form {
+    &.active {
+      max-height: 700px;
+    }
+
+    .header__item {
+      padding-bottom: ($half_spacing_unit * 1.5);
+
+      .edit-post-content,
+      textarea,
+      input {
+        max-width: 100%;
+      }
+
+      .button {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.big-form {
+  display: flex;
+  flex-direction: column;
+
+  input:nth-child(1),
+  input:nth-child(2) {
+    margin-bottom: 15px !important;
+  }
+
+  form {
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    &.has-content {
+      align-items: stretch
+    }
+
+    *:not(.edit-post-content *, #tag-editor *, .column__item *) {
+      max-width: 100% !important;
+      width: calc(50% - 2.5vw);
+      margin: 0 auto;
+    }
+
+    .column__item {
+      flex-direction: column;
+
+      input {
+        max-width: 100% !important;
+        margin-bottom: 40px !important;
+      }
+    }
+
+    .edit-post-content {
+      max-height: 300px;
+      text-align: left;
+      padding: 20px;
+      overflow: scroll;
+      overflow-x: hidden;
+    }
+
+    #tag-editor {
+      padding-bottom: 0;
+
+      .tags {
+        display: flex;
+        flex-direction: row;
+
+        .tag {
+          &:not(:first-child) {
+            margin-left: 2px;
+          }
+        }
+      }
+
+      .add-tag {
+        justify-content: flex-start;
+        margin: 0;
+
+        input {
+          margin-bottom: 0 !important;
+        }
+
+        .button {
+          margin-left: 8px;
+        }
+
+        * {
+          margin: 0;
+        }
+      }
+
+      .title {
+        text-align: left;
+        margin-bottom: 0;
+        margin-top: 8px;
+      }
+
+      .available-tags {
+        button {
+          width: auto;
+          margin: 0;
+
+          &:not(:last-child) {
+            margin-right: 6px;
+          }
+        }
+      }
+    }
+  }
+
+  .button {
+    margin-bottom: ($half_spacing_unit * 1.5);
+  }
+}
+
+.header__item {
+  text-transform: uppercase;
+}
+
+.filter__text,
+.filter__link {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+  color: $color_form_highlight;
+  padding-left: $base_spacing_unit;
+  padding-right: $base_spacing_unit;
+
+  &::after {
+    position: absolute;
+    content: "";
+    top: 50%;
+    right: -($half_spacing_unit * 1.5);
+    font-size: $half_spacing_unit;
+    color: $color;
+    transform: translateY(-50%);
+  }
+
+  &.desc::after {
+    content: "(desc)";
+  }
+
+  &.asc::after {
+    content: "(asc)";
+  }
+}

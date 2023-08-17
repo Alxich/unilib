@@ -65,6 +65,12 @@ const typeDefs = gql`
       categoryId: String
       tagsId: [TagInput]
     ): Boolean
+    updatePost(
+      id: String
+      title: String
+      content: String
+      tagsId: [TagInput]
+    ): Post
 
     addLikeToPost(id: ID!): Post
     addDislikeToPost(id: ID!): Post

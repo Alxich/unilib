@@ -93,36 +93,36 @@ form {
         }
       }
     }
+  }
 
-    .floating-menu {
-      display: flex;
-      align-items: center;
-      width: fit-content;
+  .floating-menu {
+    display: flex;
+    align-items: center;
+    width: fit-content;
 
-      & > .fafont-icon {
-        margin-right: 8px;
-        color: $writter-color;
-      }
+    & > .fafont-icon {
+      margin-right: 8px;
+      color: $writter-color;
+    }
 
-      .container {
-        background-color: $writter-interact-bg;
-        border-radius: $reg_radius;
-        padding: 6px;
+    .container {
+      background-color: $writter-interact-bg;
+      border-radius: $reg_radius;
+      padding: 6px;
 
-        button {
-          border: none;
-          background: none;
-          font-size: 0.85rem;
-          font-weight: 500;
-          color: $color;
-          padding: 0 0.2rem;
-          opacity: 0.6;
+      button {
+        border: none;
+        background: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: $color;
+        padding: 0 0.2rem;
+        opacity: 0.6;
 
-          &:hover,
-          &.is-active {
-            color: $active_elem;
-            opacity: 1;
-          }
+        &:hover,
+        &.is-active {
+          color: $active_elem;
+          opacity: 1;
         }
       }
     }

@@ -13,6 +13,8 @@ const typeDefs = gql`
     subscriberCount: Int
     subscriberIDs: [String]
     createdAt: Date
+    updatedAt: Date
+    posts: [Post]
   }
 
   type Query {
@@ -28,7 +30,14 @@ const typeDefs = gql`
       desc: String
       banner: String
       icon: String
-    ): Boolean
+    ): Category
+    updateCategory(
+      id: String
+      title: String
+      desc: String
+      banner: String
+      icon: String
+    ): Category
     subscribeToCategory(categoryId: String, userId: String): Category
     unsubscribeToCategory(categoryId: String, userId: String): Category
   }

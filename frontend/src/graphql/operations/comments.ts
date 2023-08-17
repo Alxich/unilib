@@ -34,8 +34,8 @@ export default {
     `,
 
     queryComments: gql`
-      query QueryComments {
-        queryComments {
+      query QueryComments($skip: Int, $take: Int) {
+        queryComments(skip: $skip, take: $take) {
           ${CommentFields}
           post {
             id

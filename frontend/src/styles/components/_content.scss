@@ -5,6 +5,11 @@
     align-items: flex-start;
   }
 
+  &.is-admin {
+    max-width: $main-wrap-width-val;
+    padding: 0 20px;
+  }
+
   @import "./elements/content/flow-range";
   @import "./elements/content/newestflow";
   @import "./elements/content/user-elem";

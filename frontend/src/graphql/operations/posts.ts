@@ -93,6 +93,18 @@ export default {
         )
       }
     `,
+    updatePost: gql`
+      mutation updatePost(
+        $id: String
+        $title: String
+        $content: String
+        $tagsId: [TagInput]
+      ) {
+        updatePost(id: $id, title: $title, content: $content, tagsId: $tagsId) {
+          ${PostFields}
+        }
+      }
+    `,
 
     addLikeToPost: gql`
       mutation addLikeToPost($id: ID!) {

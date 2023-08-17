@@ -51,10 +51,11 @@ const resolvers = {
     // Query to fetch an array of comments
     queryComments: async function (
       _: any,
-      __: any,
+      args: { skip: number; take: number },
       context: GraphQLContext
     ): Promise<Array<CommentPopulated>> {
       const { prisma } = context;
+      const { take, skip } = args;
 
       try {
         // Fetch comments from the database
@@ -66,7 +67,8 @@ const resolvers = {
           orderBy: {
             createdAt: "desc", // Order comments by createdAt in descending order
           },
-          take: 5, // Limit the number of fetched comments to 5
+          ...(skip && { skip }), // If skip is provided, apply skipping
+          ...(take && { take }), // If take is provided, apply taking (limit)
         });
 
         if (!comments) {
@@ -447,7 +449,7 @@ const resolvers = {
         // Subscribe to the COMMENT_SENT channel
         (_: any, __: any, context: GraphQLContext) => {
           const { pubsub } = context;
-          
+
           return pubsub.asyncIterator("COMMENT_SENT");
         },
         // Define a filter function that checks if the postId matches

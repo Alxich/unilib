@@ -19,7 +19,14 @@ export default {
         queryCategories {
           id
           icon
+          banner
+          desc
           title
+          createdAt
+          updatedAt
+          posts {
+            id
+          }
         }
       }
     `,
@@ -50,7 +57,48 @@ export default {
         $banner: String
         $icon: String
       ) {
-        createCategory(title: $title, desc: $desc, banner: $banner, icon: $icon)
+        createCategory(
+          title: $title
+          desc: $desc
+          banner: $banner
+          icon: $icon
+        ) {
+          id
+          icon
+          title
+          createdAt
+          updatedAt
+          posts {
+            id
+          }
+        }
+      }
+    `,
+
+    updateCategory: gql`
+      mutation updateCategory(
+        $id: String
+        $title: String
+        $desc: String
+        $banner: String
+        $icon: String
+      ) {
+        updateCategory(
+          id: $id
+          title: $title
+          desc: $desc
+          banner: $banner
+          icon: $icon
+        ) {
+          id
+          icon
+          title
+          createdAt
+          updatedAt
+          posts {
+            id
+          }
+        }
       }
     `,
 

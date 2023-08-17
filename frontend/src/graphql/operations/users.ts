@@ -37,6 +37,35 @@ export default {
         }
       }
     `,
+    queryUsers: gql`
+      query queryUsers {
+        queryUsers {
+          id
+          username
+          image
+          banner
+          aboutMe
+          subscribedCategoryIDs
+          email
+          createdAt
+          followedBy {
+            follower {
+              id
+              username
+              image
+            }
+            following {
+              id
+              username
+              image
+            }
+          }
+          posts {
+            id
+          }
+        }
+      }
+    `,
   },
   Mutations: {
     createUsername: gql`

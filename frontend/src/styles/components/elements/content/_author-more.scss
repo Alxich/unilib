@@ -28,7 +28,7 @@
         justify-content: flex-start;
         flex-direction: row;
         align-items: center;
-        border-bottom: $list_item_border;
+        border-bottom: $list_item_border  $light_border;
         height: $list_item_height;
         width: calc(50% - $list_items_gap_btw);
         padding-bottom: 5px;

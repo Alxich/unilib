@@ -1,0 +1,36 @@
+/*
+*   
+*   This is main file for all white color themed scheme on the site
+*   Thats mean that all colors keeping here
+*   You can change here all values to make a change of view
+*   
+*/
+
+$background: #fffffb !default;
+$writter-bg: #fffffb !default;
+$writter-color: #525252 !default;
+$writter-placeholder-title: rgba(82, 82, 82, 0.75);
+$writter-placeholder: #333333 !default;
+$writter-interact-bg: rgba(247, 247, 247, 0.75);
+$overhigh_bg: #d9d9d9 !default;
+$notif_bg: #e2e1e1 !default;
+$notif_hov: #d5d5d5 !default;
+$elem_over_bg: rgba(201, 204, 207, 0.38) !default;
+$outbox_bg: #d9d9d9 !default;
+$outbox_hover: #bebebe !default;
+$placeholder: rgba(82, 82, 82, 0.75) !default;
+$error: #ff8686 !default;
+$border_action: #9D9D9D !default;
+$tag_writter_input: rgba(87, 92, 111, 0.15) !default;
+$tag_writter_input_over: #9D9D9D !default;
+$active_elem: #7a5fff !default;
+$light_border: rgba(157, 157, 157, 0.7) !default;
+$color: #525252 !default;
+
+// There is some variables for admin panel
+$black_bg: #313131;
+$base_spacing_unit: 24px;
+$half_spacing_unit: $base_spacing_unit / 2;
+
+$color_alpha: #1772FF;
+$color_form_highlight: #EEEEEE;

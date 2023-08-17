@@ -13,7 +13,9 @@ import {
 interface TagEditProps {
   session: Session | null;
   tags: TagArguments[] | undefined;
-  setTags: Dispatch<SetStateAction<TagArguments[] | undefined>>;
+  setTags: (
+    tags: TagArguments[]
+  ) => void | Dispatch<SetStateAction<TagArguments[] | undefined>>;
 }
 
 export const TagEdit: FC<TagEditProps> = ({
@@ -133,8 +135,14 @@ export const TagEdit: FC<TagEditProps> = ({
 
         // If the tag is created and tags array exists
         if (tagCreated && tags) {
+          // Sorting the data to provide
+          const tagSorted = {
+            id: tagCreated.id,
+            title: tagCreated.title,
+          };
+
           // Add the newly created tag to the tags array
-          setTags([...tags, tagCreated]);
+          setTags([...tags, tagSorted]);
 
           // Reset the newTag input field
           setNewTag("");
@@ -147,8 +155,32 @@ export const TagEdit: FC<TagEditProps> = ({
 
   const handleSelectTag = (selectedTag: TagArguments) => {
     if (tags) {
-      if (!tags.includes(selectedTag)) {
+      // We check whether the selected tag is already in the list using the some() method
+      const tagAlreadySelected = tags.some((tag) => tag.id === selectedTag.id);
+
+      if (!tagAlreadySelected) {
         setTags([...tags, selectedTag]);
+      }
+    }
+  };
+
+  // When user select tags to delete from list we remove them from used tags array
+
+  const handleRemoveTag = (selectedTag: TagArguments) => {
+    if (tags) {
+      // We check whether the selected tag is already in the list using the some() method
+      const tagIndexToRemove = tags.findIndex(
+        (tag, i) => tag.id === selectedTag.id
+      );
+
+      // Filter it to check out  if there is no same index
+      if (tagIndexToRemove !== -1) {
+        const updatedTags = tags.filter(
+          (tag, index) => index !== tagIndexToRemove
+        );
+
+        // Update our array with all used tags
+        setTags(updatedTags);
       }
     }
   };
@@ -165,20 +197,26 @@ export const TagEdit: FC<TagEditProps> = ({
         <div className="tags">
           {tags?.map((tag, index) => (
             <span key={index} className="tag">
-              #{tag.title},{" "}
+              <span className="remove" onClick={() => handleRemoveTag(tag)} />#
+              {tag.title},{" "}
             </span>
           ))}
         </div>
       )}
       <div className="add-tag">
-        {" "}
         <input
           className="tagwritter"
           type="text"
           value={newTag}
           onChange={handleTagChange}
         />
-        <button className="button filled" onClick={handleAddTag}>
+        <button
+          className="button filled"
+          onClick={(e) => {
+            e.preventDefault();
+            handleAddTag();
+          }}
+        >
           Додати тег
         </button>
       </div>
@@ -192,7 +230,10 @@ export const TagEdit: FC<TagEditProps> = ({
               <button
                 className="button filled"
                 key={index}
-                onClick={() => handleSelectTag(item)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSelectTag({ id: item.id, title: item.title });
+                }}
               >
                 {item.title}
               </button>

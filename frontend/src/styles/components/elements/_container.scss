@@ -76,6 +76,10 @@
     align-items: stretch;
   }
 
+  &.flex-top {
+    align-items: flex-start;
+  }
+
   &.flex-center {
     justify-content: center;
   }

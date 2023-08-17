@@ -1,0 +1,36 @@
+/*
+*   
+*   This is main file for all black color themed scheme on the site
+*   Thats mean that all colors keeping here
+*   You can change here all values to make a change of view
+*   
+*/
+
+$background: #313131 !default;
+$writter-bg: #f7f7f7 !default;
+$writter-color: #525252 !default;
+$writter-placeholder-title: rgba(82, 82, 82, 0.778);
+$writter-placeholder: #d9d9d9 !default;
+$writter-interact-bg: rgba(49, 49, 49, 0.75);
+$overhigh_bg: #3a3a3a !default;
+$notif_bg: #2e2e2e !default;
+$notif_hov: #343434 !default;
+$elem_over_bg: rgba(87, 92, 111, 0.3) !default;
+$outbox_bg: #525252 !default;
+$outbox_hover: #454545 !default;
+$placeholder: #717171 !default;
+$error: #ff8686 !default;
+$border_action: rgba(201, 204, 207, 0.75) !default;
+$tag_writter_input: rgba(201, 204, 207, 0.15) !default;
+$tag_writter_input_over: rgba(201, 204, 207, 0.85) !default;
+$active_elem: #b1a5ff !default;
+$light_border: rgba(201, 204, 208, 0.05) !default;
+$color: #d9d9d9 !default;
+
+// There is some variables for admin panel
+$black_bg: #313131;
+$base_spacing_unit: 24px;
+$half_spacing_unit: $base_spacing_unit / 2;
+
+$color_alpha: #1772FF;
+$color_form_highlight: #EEEEEE;

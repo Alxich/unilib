@@ -7,6 +7,7 @@ const typeDefs = gql`
     id: String
     title: String
     createdAt: Date
+    updatedAt: Date
     posts: [Post]
   }
 
@@ -17,6 +18,7 @@ const typeDefs = gql`
 
   type Mutation {
     createTag(id: String, title: String): Tag
+    updateTag(id: String, title: String): Tag
   }
 `;
 

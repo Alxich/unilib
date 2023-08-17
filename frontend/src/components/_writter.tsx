@@ -1,4 +1,11 @@
-import { FC, useState, useEffect, useCallback } from "react";
+import {
+  FC,
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+  useContext,
+} from "react";
 import classNames from "classnames";
 import { ObjectId } from "bson";
 import toast from "react-hot-toast";
@@ -24,18 +31,24 @@ import StarterKit from "@tiptap/starter-kit";
 import EditorBlock from "./elements/_editor";
 
 import { Button } from "./elements";
+
 import { useEscapeClose } from "../util/functions/useEscapeClose";
+import { returnMeDate } from "../util/functions/returnMeDate";
 
 export interface IWritterPostProps {
   session: Session;
   writterActive: boolean;
   setWritterActive: any;
+  writterAdminActive: boolean;
+  setWritterAdminActive: Dispatch<SetStateAction<boolean>>;
 }
 
 const WritterPost: FC<IWritterPostProps> = ({
   session,
   writterActive,
   setWritterActive,
+  writterAdminActive,
+  setWritterAdminActive,
 }: IWritterPostProps) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [filterText, setFilterText] = useState({
@@ -62,37 +75,12 @@ const WritterPost: FC<IWritterPostProps> = ({
 
   // Format date in a specific way
 
-  const returnMeDate = () => {
-    const date = new Date();
-
-    const monthNames = [
-      "Січень",
-      "Лютий",
-      "Березень",
-      "Квітень",
-      "Травень",
-      "Червень",
-      "Липень",
-      "Серпень",
-      "Вересень",
-      "Жовтень",
-      "Листопад",
-      "Грудень",
-    ];
-
-    const month = date.getMonth();
-    const year = date.getFullYear();
-
-    const time = date.toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
-    setDateText(`${monthNames[month]} ${year} рік ${time}`);
+  const returnMeSpecificData = () => {
+    setDateText(returnMeDate("ua"));
   };
 
   useEffect(() => {
-    const timerId = setInterval(returnMeDate, 1000);
+    const timerId = setInterval(returnMeSpecificData, 1000);
 
     return function cleanup() {
       clearInterval(timerId);
@@ -112,6 +100,11 @@ const WritterPost: FC<IWritterPostProps> = ({
   useEscapeClose({
     activeElem: writterActive,
     setActiveElem: setWritterActive,
+  });
+
+  useEscapeClose({
+    activeElem: writterAdminActive,
+    setActiveElem: setWritterAdminActive,
   });
 
   // Starting working with backend and using hoo createPost
@@ -162,6 +155,7 @@ const WritterPost: FC<IWritterPostProps> = ({
           `<p>Вибиріть слово щоб його редагувати.</p>`
         );
         setWritterActive(false);
+        setWritterAdminActive(false);
         toast.success("Post was created!");
       }
     } catch (error: any) {
@@ -183,7 +177,10 @@ const WritterPost: FC<IWritterPostProps> = ({
         <div className="head">
           <div
             className="fafont-icon big interactive cross"
-            onClick={() => setWritterActive(false)}
+            onClick={() => {
+              setWritterActive(false);
+              setWritterAdminActive(false);
+            }}
           >
             <FontAwesomeIcon
               icon={faXmark}

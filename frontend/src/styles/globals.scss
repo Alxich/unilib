@@ -1,6 +1,104 @@
 @import "./libs/normalize";
-@import "./components/elements/index";
-@import "./components/index";
+
+html {
+  &.white-themed {
+    @import "./libs/colors/white";
+
+    // There is @mixin for other staff of website
+
+    @mixin placeholder($color, $size: "") {
+      &[data-placeholder] {
+        position: relative;
+        display: flex;
+        color: $color !important;
+
+        &::before {
+          position: relative;
+          display: block;
+          content: attr(data-placeholder);
+        }
+
+        // br {
+        //   display: none;
+        // }
+
+        @if $size != "" {
+          font-size: $size;
+        }
+      }
+    }
+
+    // Logo
+
+    @mixin logo($font_size: 2rem) {
+      font-family: "Tourney";
+      font-weight: 400;
+      font-size: $font_size;
+      line-height: 1.2;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: $color;
+      margin: 0;
+    }
+
+    @import "./components/elements/index";
+    @import "./components/index";
+
+     .masthead .interagtions .button.filled {
+      background: $color;
+
+      color: $background;
+
+      .fafont-icon {
+        color: $background;
+      }
+    }
+  }
+
+  &.black-themed {
+    @import "./libs/colors/black";
+
+    // There is @mixin for other staff of website
+
+    @mixin placeholder($color, $size: "") {
+      &[data-placeholder] {
+        position: relative;
+        display: flex;
+        color: $color !important;
+
+        &::before {
+          position: relative;
+          display: block;
+          content: attr(data-placeholder);
+        }
+
+        // br {
+        //   display: none;
+        // }
+
+        @if $size != "" {
+          font-size: $size;
+        }
+      }
+    }
+
+    // Logo
+
+    @mixin logo($font_size: 2rem) {
+      font-family: "Tourney";
+      font-weight: 400;
+      font-size: $font_size;
+      line-height: 1.2;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: $color;
+      margin: 0;
+    }
+
+    @import "./components/elements/index";
+    @import "./components/index";
+  }
+}
 
 body {
   &.writter-active {
@@ -10,7 +108,7 @@ body {
 
   .main {
     padding-top: $header_height + $content_top_pad;
-    
+
     &.loading {
       height: 100vh;
       overflow: hidden;

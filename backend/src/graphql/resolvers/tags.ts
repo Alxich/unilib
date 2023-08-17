@@ -3,6 +3,7 @@ import {
   GraphQLContext,
   CreateTagArguments,
   TagPopulated,
+  UpdateTagArguments,
 } from "../../util/types";
 import { GraphQLError } from "graphql";
 
@@ -113,6 +114,43 @@ const resolvers = {
         return newTag;
       } catch (error) {
         console.error("createTag error", error);
+        throw new GraphQLError("Error creating tag");
+      }
+    },
+
+    /**
+     * Update a new tag.
+     */
+    updateTag: async function (
+      _: any,
+      args: UpdateTagArguments,
+      context: GraphQLContext
+    ): Promise<TagPopulated> {
+      const { session, prisma } = context;
+
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      const { id, title } = args;
+
+      try {
+        // Update a new tag entity in the database
+        const newTag = await prisma.tag.update({
+          where: {
+            id,
+          },
+          data: {
+            title,
+          },
+          include: {
+            ...tagPopulated,
+          },
+        });
+
+        return newTag;
+      } catch (error) {
+        console.error("updateTag error", error);
         throw new GraphQLError("Error creating tag");
       }
     },

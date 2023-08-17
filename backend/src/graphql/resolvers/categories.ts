@@ -4,6 +4,7 @@ import {
   CreateCategoryArguments,
   CategoryPopulated,
   SubscribeCategoryArguments,
+  UpdateCategoryArguments,
 } from "../../util/types";
 import { GraphQLError } from "graphql";
 
@@ -108,7 +109,7 @@ const resolvers = {
       _: any,
       args: CreateCategoryArguments,
       context: GraphQLContext
-    ): Promise<boolean> {
+    ): Promise<CategoryPopulated> {
       const { session, prisma } = context;
 
       // Check if the user is authenticated
@@ -135,9 +136,54 @@ const resolvers = {
           throw new Error("Category was not created");
         }
 
-        return true; // Return true if the category creation is successful
+        return newCategory; // Return true if the category creation is successful
       } catch (error) {
         console.error("createCategory error", error);
+        throw new GraphQLError("Error creating category");
+      }
+    },
+
+    // Update a current category
+    updateCategory: async function (
+      _: any,
+      args: UpdateCategoryArguments,
+      context: GraphQLContext
+    ): Promise<CategoryPopulated> {
+      const { session, prisma } = context;
+
+      // Check if the user is authenticated
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      const { id, title, desc, banner, icon } = args;
+
+      if (!id) {
+        throw new GraphQLError("Not specifed which category to update");
+      }
+
+      try {
+        // Update a new category entity using Prisma's update method
+        const newCategory = await prisma.category.update({
+          where: {
+            id,
+          },
+          data: {
+            ...(title && { title }),
+            ...(desc && { desc }),
+            ...(banner && { banner }),
+            ...(icon && { icon }),
+          },
+          include: categoryPopulated, // Include related data as defined in include options
+        });
+
+        if (!newCategory) {
+          throw new Error("Category was not updated");
+        }
+
+        return newCategory; // Return Object if the category creation is successful
+      } catch (error) {
+        console.error("updateCategory error", error);
         throw new GraphQLError("Error creating category");
       }
     },

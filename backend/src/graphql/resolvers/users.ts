@@ -55,6 +55,35 @@ const resolvers = {
     },
 
     /**
+     * Query all users throw the site.
+     * This function retrieves users information including populated data,
+     * not based on any provided data.
+     */
+    queryUsers: async function queryUsers(
+      _: any,
+      __: any,
+      context: GraphQLContext
+    ): Promise<Array<User>> {
+      const { prisma, session } = context;
+
+      // Check if the user is authorized
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      try {
+        // Search for users for next operations
+        const users = await prisma.user.findMany({});
+
+        return users;
+      } catch (error: any) {
+        // Handle errors and throw a GraphQLError
+        console.error("Error", error);
+        throw new GraphQLError(error?.message);
+      }
+    },
+
+    /**
      * Search for a user by their ID.
      * This function retrieves user information including populated data,
      * based on the provided user ID.
@@ -306,6 +335,11 @@ const resolvers = {
 
 // Define the userPopulated Prisma validator to include specific fields and relationships when querying users
 export const userPopulated = Prisma.validator<Prisma.UserInclude>()({
+  posts: {
+    select: {
+      id: true,
+    },
+  },
   // Include information about users who are following the current user
   followedBy: {
     select: {

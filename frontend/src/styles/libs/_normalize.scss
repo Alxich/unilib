@@ -112,9 +112,28 @@ html {
   @if $legacy_support_for_ie {
     font-size: 100%; // 1
   }
-  background: $background;
+
+  &.white-themed {
+    @import "./colors/white";
+    background: $background;
+    color: $color;
+
+    a {
+      color: $color;
+    }
+  }
+
+  &.black-themed {
+    @import "./colors/black";
+    background: $background;
+    color: $color;
+
+    a {
+      color: $color;
+    }
+  }
+
   font-size: $default_font_size;
-  color: $color;
   -webkit-text-size-adjust: 100%; // 2
   -ms-text-size-adjust: 100%; // 2
   scroll-behavior: smooth;
@@ -178,10 +197,6 @@ a {
   // 4
 
   text-decoration: none;
-
-  // 5
-
-  color: $color;
 }
 
 // =============================================================================

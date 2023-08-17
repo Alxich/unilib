@@ -36,6 +36,52 @@
     border-bottom: 1px solid $tag_writter_input_over;
     padding-bottom: 10px;
     margin-bottom: 15px;
+
+    .tag {
+      position: relative;
+      cursor: default;
+
+      &:hover {
+        .remove {
+          visibility: visible;
+        }
+      }
+
+      .remove {
+        background-color: $black_bg;
+        position: absolute;
+        border-radius: 100px;
+        right: -6px;
+        top: -14px;
+        width: 16px;
+        height: 16px;
+        opacity: 0.3;
+        visibility: hidden;
+        transition: $transition_normal;
+        cursor: pointer;
+
+        &:hover {
+          opacity: 1;
+        }
+
+        &:before,
+        &:after {
+          position: absolute;
+          content: " ";
+          height: 8px;
+          width: 2px;
+          background-color: $background;
+        }
+
+        &:before {
+          transform: rotate(45deg);
+        }
+
+        &:after {
+          transform: rotate(-45deg);
+        }
+      }
+    }
   }
 
   .available-tags {
@@ -47,7 +93,7 @@
 
     button {
       background: rgba(82, 82, 82, 0.129);
-      color: $outbox_bg;
+      color: $color;
     }
   }
 

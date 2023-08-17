@@ -8,6 +8,11 @@ export default {
         queryTags {
           id
           title
+          createdAt
+          updatedAt
+          posts {
+            id
+          }
         }
       }
     `,
@@ -27,6 +32,24 @@ export default {
         createTag(title: $title) {
           id
           title
+          createdAt
+          updatedAt
+          posts {
+            id
+          }
+        }
+      }
+    `,
+    updateTag: gql`
+      mutation updateTag($id: String, $title: String) {
+        updateTag(id: $id, title: $title) {
+          id
+          title
+          createdAt
+          updatedAt
+          posts {
+            id
+          }
         }
       }
     `,

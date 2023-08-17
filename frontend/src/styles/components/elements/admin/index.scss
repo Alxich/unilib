@@ -1,0 +1,23 @@
+.admin-information-head {
+  justify-content: flex-end;
+
+  p {
+    &:not(:last-child) {
+      margin-right: 8px;
+    }
+  }
+}
+
+#admin-panel-wrapper {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  .title {
+    margin-bottom: 25px;
+  }
+
+  @import "./form";
+}

@@ -1,1 +1,2 @@
-export { default as tagEdit } from "./_tagEdit";
+export { default as TagEdit } from "./_tagEdit";
+export { default as PostEdit } from "./_postEdit";
