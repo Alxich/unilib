@@ -18,6 +18,7 @@ import {
   WritterPost,
   MessagesBar,
   Post,
+  Loading,
 } from "../components";
 
 import { useRouter } from "next/router";
@@ -66,6 +67,7 @@ export const CreatePostContext = createContext<
 
 const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   const [loadingStatus, setLoadingStatus] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [bannerActive, setBannerActive] = useState(false);
   const [writterAdminActive, setWritterAdminActive] = useState<boolean>(false);
   const [writterActive, setWritterActive] = useState(false);
@@ -74,7 +76,7 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   const [period, setPeriod] = useState<ContentViews>("popular");
   const [userSubscribed, setUserSubscribed] = useState<string[] | undefined>();
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   // Initialize Next.js router and check if the current route is related to messages
 
@@ -105,8 +107,15 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   // Set bannerActive based on user session
 
   useEffect(() => {
-    setBannerActive(session?.user ? false : true);
+    status !== "loading" && setBannerActive(session?.user ? false : true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
+
+  // Show loading component while fetching user
+
+  useEffect(() => {
+    setIsLoaded(status !== "loading");
+  }, [status]);
 
   // Content view change options
 
@@ -236,6 +245,7 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Loading isLoaded={isLoaded} showProject={false} />
       {session && (
         <>
           {isAdminRoute ? (
@@ -252,6 +262,7 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
           <main
             className={classNames("main", {
               "writter-active": writterActive,
+              loading: !isLoaded,
             })}
           >
             <div className="container main-content flex-row flex-space flex-top">

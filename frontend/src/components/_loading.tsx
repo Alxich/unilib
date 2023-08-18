@@ -2,10 +2,11 @@ import { FC } from "react";
 
 interface LoadingProps {
   isLoaded: boolean;
+  showProject: boolean;
 }
 
-const Loading: FC<LoadingProps> = ({ isLoaded }: LoadingProps) => {
-  return (
+const Loading: FC<LoadingProps> = ({ isLoaded, showProject }: LoadingProps) => {
+  return showProject ? (
     <div id="loading" className={isLoaded === true ? "loaded" : "is-loading"}>
       <div className="title glitch">
         <h1 className="glitch" data-name="DarkNight Project">
@@ -21,15 +22,17 @@ const Loading: FC<LoadingProps> = ({ isLoaded }: LoadingProps) => {
           <span className="main">For the Darkness of Dark</span>
         </p>
       </div>
-
-      <div className="author glitch">
-        <p data-name="Created by Alxich">
-          <span className="effect" aria-hidden="true">
-            Created by Alxich
-          </span>
-          <span className="main">Created by Alxich</span>
-        </p>
-      </div>
+    </div>
+  ) : (
+    <div
+      id="loading"
+      className={
+        isLoaded === true
+          ? "loader-container loaded"
+          : "loader-container is-loading"
+      }
+    >
+      <div className="loader"></div>
     </div>
   );
 };

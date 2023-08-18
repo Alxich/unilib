@@ -44,7 +44,7 @@ html {
     @import "./components/elements/index";
     @import "./components/index";
 
-     .masthead .interagtions .button.filled {
+    .masthead .interagtions .button.filled {
       background: $color;
 
       color: $background;
@@ -101,14 +101,14 @@ html {
 }
 
 body {
+  padding-top: $header_height + $content_top_pad;
+  
   &.writter-active {
     height: 100vh;
     overflow: hidden;
   }
 
   .main {
-    padding-top: $header_height + $content_top_pad;
-
     &.loading {
       height: 100vh;
       overflow: hidden;

@@ -52,11 +52,6 @@ const Notification: FC<NotificationProps> = ({
                 <h6>Усі повідомлення</h6>
               </div>
               <div className="actions container flex-center flex-row width-auto">
-                {/* {type != "complain" && (
-                  <Link href={"/messages/all"} className="item">
-                    <p>Відкрити усі</p>
-                  </Link>
-                )} */}
                 <div className="item">
                   {type != "complain" ? (
                     <p onClick={() => clear && clear()}>Очистити</p>
@@ -80,116 +75,141 @@ const Notification: FC<NotificationProps> = ({
           )}
         </div>
         <div className="main container flex-left">
-          {items?.map((item, i) => {
-            const {
-              id,
-              link,
-              title,
-              content,
-              icon,
-              type,
-              read,
-            }: {
-              id?: string;
-              title?: string;
-              content?: string;
-              link?: string;
-              icon?: any;
-              type?: string;
-              read?: boolean;
-            } = item;
+          {items.length > 0 ? (
+            items.map((item, i) => {
+              const {
+                id,
+                link,
+                title,
+                content,
+                icon,
+                type,
+                read,
+              }: {
+                id?: string;
+                title?: string;
+                content?: string;
+                link?: string;
+                icon?: any;
+                type?: string;
+                read?: boolean;
+              } = item;
 
-            return link ? (
-              <Link
-                href={link}
-                className="item container flex-left flex-row"
-                key={`${item}__${i}`}
-                onClick={() => {
-                  type === "signOut" && signOut();
-                }}
-              >
-                {type != "complain" && type != "user" && (
-                  <div className="user-ico"></div>
-                )}
-                <div
-                  className={classNames("content container", {
-                    "flex-row": type === "user",
-                    "width-auto": type !== "user",
-                  })}
+              return link ? (
+                <Link
+                  href={link}
+                  className="item container flex-left flex-row"
+                  key={`${item}__${i}`}
+                  onClick={() => {
+                    type === "signOut" && signOut();
+                  }}
                 >
-                  {icon && (
-                    <div className="fafont-icon interactive">
-                      <FontAwesomeIcon
-                        icon={icon}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          color: "inherit",
-                        }}
-                      />
-                    </div>
-                  )}
-                  {type !== "user" && (
-                    <div className="title">
-                      <p>{type}</p>
-                    </div>
-                  )}
+                  <div
+                    className={classNames("content container", {
+                      "flex-row": type === "user" || link,
+                      "full-width": type !== "user" || link,
+                    })}
+                  >
+                    {icon && (
+                      <div className="fafont-icon interactive">
+                        <FontAwesomeIcon
+                          icon={icon}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            color: "inherit",
+                          }}
+                        />
+                      </div>
+                    )}
 
-                  <div className="text">
-                    <p>{type === "user" ? title : content}</p>
+                    {type !== "user" ||
+                      (link && (
+                        <div className="title">
+                          <p>{type}</p>
+                        </div>
+                      ))}
+
+                    <div className="text">
+                      <p>{link ? title : content}</p>
+                    </div>
+                  </div>
+                </Link>
+              ) : (
+                <div
+                  className={classNames("item container flex-left flex-row", {
+                    unread: !read,
+                  })}
+                  key={`${item}__${i}`}
+                  onClick={() => {
+                    type === "signOut" && signOut();
+                    type !== "signOut" && id && markAsRead && markAsRead(id);
+                  }}
+                >
+                  {type != "complain" &&
+                    type != "user" &&
+                    type !== "signOut" && (
+                      <div
+                        className={classNames("user-ico", {
+                          success: type == "success",
+                          error: type == "error",
+                        })}
+                      />
+                    )}
+                  <div
+                    className={classNames("content container", {
+                      "flex-row": type === "user" || type === "signOut",
+                      "full-width": type !== "user",
+                    })}
+                  >
+                    {icon && (
+                      <div className="fafont-icon interactive">
+                        <FontAwesomeIcon
+                          icon={icon}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            color: "inherit",
+                          }}
+                        />
+                      </div>
+                    )}
+                    {type !== "user" && type !== "signOut" && (
+                      <div className="title">
+                        <p>
+                          {type !== "signOut"
+                            ? `Notafication about ${type}`
+                            : title}
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="text">
+                      <p>
+                        {type === "user" || type === "signOut"
+                          ? title
+                          : content}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </Link>
-            ) : (
-              <div
-                className={classNames("item container flex-left flex-row", {
-                  unread: !read,
-                })}
-                key={`${item}__${i}`}
-                onClick={() => {
-                  type === "signOut" && signOut();
-                  type !== "signOut" && id && markAsRead && markAsRead(id);
-                }}
-              >
-                {type != "complain" && type != "user" && (
-                  <div
-                    className={classNames("user-ico", {
-                      success: type == "success",
-                      error: type == "error",
-                    })}
-                  />
-                )}
-                <div
-                  className={classNames("content container", {
-                    "flex-row": type === "user",
-                    "full-width": type !== "user",
-                  })}
-                >
-                  {icon && (
-                    <div className="fafont-icon interactive">
-                      <FontAwesomeIcon
-                        icon={icon}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          color: "inherit",
-                        }}
-                      />
-                    </div>
-                  )}
-                  {type !== "user" && (
-                    <div className="title">
-                      <p>Notafication about {type}</p>
-                    </div>
-                  )}
+              );
+            })
+          ) : (
+            <div className={"item container flex-left flex-row"}>
+              <div className={"user-ico"} />
 
-                  <div className="text">
-                    <p>{type === "user" ? title : content}</p>
-                  </div>
+              <div className={"content container full-width"}>
+                <div className="title">
+                  <p>Ви прочитали всі повідомлення</p>
+                </div>
+
+                <div className="text">
+                  <p>У вас більше немає повідомлень вітаю !</p>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          )}
         </div>
       </div>
     </div>
