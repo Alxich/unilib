@@ -51,10 +51,22 @@
   }
 
   &.interactive {
+    &.active {
+      svg {
+        color: $active_elem !important;
+      }
+
+      svg {
+        &:hover {
+          color: $color !important;
+        }
+      }
+    }
+
     &.undermain {
       color: inherit;
     }
-    
+
     position: relative;
     cursor: pointer;
 

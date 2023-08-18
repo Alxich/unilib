@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import { formatTimeToPost } from "../../util/functions";
 import classNames from "classnames";
 

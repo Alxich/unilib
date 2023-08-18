@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import toast from "react-hot-toast";
+import toast from "react-toastify";
 
 import { Messages } from "../../components";
 

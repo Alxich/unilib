@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { useContext, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 
 import { Flowrange, Newestflow, Post } from "../components";
 import { Postloading } from "../components/skeletons";

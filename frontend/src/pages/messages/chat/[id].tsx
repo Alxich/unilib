@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 
 import { useSession } from "next-auth/react";
 import { gql, useMutation, useQuery } from "@apollo/client";

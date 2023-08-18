@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 import Button from "../../_button";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 
 import { Session } from "next-auth";
 import { useMutation } from "@apollo/client";

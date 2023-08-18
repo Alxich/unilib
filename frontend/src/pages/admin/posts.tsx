@@ -1,6 +1,6 @@
 import { FC, useEffect, useState, useContext } from "react";
 import type { NextPage } from "next";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 
 import { useQuery } from "@apollo/client";
 import { useSession } from "next-auth/react";

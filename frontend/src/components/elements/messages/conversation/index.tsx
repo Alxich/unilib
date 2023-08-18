@@ -1,7 +1,7 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import classNames from "classnames";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";

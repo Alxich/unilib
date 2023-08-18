@@ -1,6 +1,6 @@
 import { FC, MouseEvent, useCallback, useState } from "react";
 import classNames from "classnames";
-import toast from "react-hot-toast";
+import toast from "react-toastify";
 import { ObjectId } from "bson";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

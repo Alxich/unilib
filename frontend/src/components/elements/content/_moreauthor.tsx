@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { Session } from "next-auth";
 
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 
 import { useQuery } from "@apollo/client";
 import CategoriesOperations from "../../../graphql/operations/categories";

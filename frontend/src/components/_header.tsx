@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useState, useEffect } from "react";
 import classNames from "classnames";
 
 import Link from "next/link";
@@ -19,6 +19,8 @@ import { Button, Notification } from "./elements";
 import UserIcon from "../../public/images/user-icon.png";
 import { useEscapeClose } from "../util/functions/useEscapeClose";
 import { useScrollToTop } from "../util/functions/useScrollToTop";
+
+import { useNotificationCenter } from "react-toastify/addons/use-notification-center";
 
 interface HeaderProps {
   session: Session | null;
@@ -56,20 +58,12 @@ const Header: FC<HeaderProps> = ({
     setActiveElem: setActiveUser,
   });
 
-  const notifyItems = [
-    {
-      title: "Шлях новачка у  мікробіології: Купив мік ...",
-      text: "Ви отримали новий коментар у вашому пості ...",
-    },
-    {
-      title: "Шлях новачка у  мікробіології: Купив мік ...",
-      text: "Вам відповіли у вашому коментарі...",
-    },
-    {
-      title: "Вам відправили запрос у друзі",
-      text: "Кирилло Туров хоче вас бачити серед своїх друзів",
-    },
-  ];
+  const { notifications, clear, markAsRead, unreadCount } =
+    useNotificationCenter();
+
+  useEffect(() => {
+    console.log(notifications);
+  }, [notifications]);
 
   const userItems = [
     {
@@ -156,7 +150,11 @@ const Header: FC<HeaderProps> = ({
             }
           )}
         >
-          <div className="fafont-icon big interactive">
+          <div
+            className={classNames("fafont-icon big interactive", {
+              active: unreadCount > 0,
+            })}
+          >
             <FontAwesomeIcon
               onClick={() => {
                 setActiveUser(false);
@@ -168,7 +166,9 @@ const Header: FC<HeaderProps> = ({
             <Notification
               activeElem={activeNotify}
               type={"notification"}
-              items={notifyItems}
+              items={notifications}
+              clear={clear}
+              markAsRead={markAsRead}
             />
           </div>
           {session?.user && (

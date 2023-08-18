@@ -10,7 +10,7 @@ import { PostData, SubscribeCategoryArguments } from "../../../util/types";
 
 import Button from "../_button";
 
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import { Session } from "next-auth";
 
 import { useMutation } from "@apollo/client";

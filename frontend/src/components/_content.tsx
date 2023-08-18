@@ -9,7 +9,7 @@ import {
 import type { NextPageContext } from "next";
 import Head from "next/head";
 import classNames from "classnames";
-import { Toaster, toast } from "react-hot-toast";
+import { ToastContainer, toast } from "react-toastify";
 import {
   Header,
   Banner,
@@ -339,7 +339,14 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
 
       <footer className={"colophon"}></footer>
       <div>
-        <Toaster position="bottom-right" />
+        <ToastContainer
+          position="bottom-right"
+          autoClose={false}
+          theme={"dark"}
+          style={{
+            display: "none",
+          }}
+        />
       </div>
     </>
   );

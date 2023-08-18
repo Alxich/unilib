@@ -1,5 +1,5 @@
 import { Dispatch, FC, Key, SetStateAction, useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import { ObjectId } from "bson";
 import { Session } from "next-auth";
 import { useMutation, useQuery } from "@apollo/client";

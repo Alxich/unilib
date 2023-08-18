@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import { AuthorInfo, Post } from "../../components";

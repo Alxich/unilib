@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import type { NextPage } from "next";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import { ObjectId } from "bson";
 import classNames from "classnames";
 
