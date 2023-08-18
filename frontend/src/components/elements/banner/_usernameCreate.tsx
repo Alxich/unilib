@@ -25,8 +25,6 @@ const UsernameCreate: FC<IUsernameCreateProps> = ({
 
   const handleChange = () => {
     setWantBeAdmin(!wantBeAdmin);
-
-    console.log(wantBeAdmin);
   };
 
   const { data: adminData, loading: adminDataLoading } =

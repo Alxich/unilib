@@ -378,8 +378,6 @@ const resolvers = {
           },
         });
 
-        console.log(updatedTagPost);
-
         return updatedTagPost;
       } catch (error) {
         console.error("createPost error", error);

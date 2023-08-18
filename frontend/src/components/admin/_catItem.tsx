@@ -31,8 +31,6 @@ const CategoryItem: FC<CategoryItemProps> = ({
   const [categoryData, setCategoryData] = useState<CategoryArguments>(item);
   const [formVisible, setFormVisible] = useState<boolean>(false);
 
-  console.log(item);
-
   // Close the form via esc button
 
   useEscapeClose({
@@ -107,7 +105,6 @@ const CategoryItem: FC<CategoryItemProps> = ({
     }
   };
 
-  console.log(item);
   return (
     <div className="table-row">
       <div className="information">

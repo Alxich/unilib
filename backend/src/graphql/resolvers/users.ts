@@ -192,8 +192,6 @@ const resolvers = {
 
       // Use the verifyAndCreateUsername function to handle username creation
       if (wantBeAdmin !== undefined && !existingAdmin) {
-        console.log(wantBeAdmin);
-
         return await verifyAndCreateUsername(
           { userId: id, username, wantBeAdmin },
           prisma

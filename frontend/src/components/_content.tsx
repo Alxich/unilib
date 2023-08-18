@@ -88,7 +88,6 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
 
   useEffect(() => {
     if (isAdminRoute && status !== "loading") {
-      console.log(session?.user);
       session?.user.isAdmin !== true && router.push("/");
     }
   }, [status]);

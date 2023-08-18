@@ -111,8 +111,6 @@ const AdminPageCategories: FC<NextPage> = () => {
           throw new Error("Error creating tag");
         }
 
-        console.log(data);
-
         // Display success message
         if (!errors) {
           toast.success("Category was created!");

@@ -61,10 +61,6 @@ const Header: FC<HeaderProps> = ({
   const { notifications, clear, markAsRead, unreadCount } =
     useNotificationCenter();
 
-  useEffect(() => {
-    console.log(notifications);
-  }, [notifications]);
-
   const userItems = [
     {
       title: "Мій аккаунт",

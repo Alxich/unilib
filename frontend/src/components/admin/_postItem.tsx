@@ -31,8 +31,6 @@ const PostItem: FC<PostItemProps> = ({ item, session }: PostItemProps) => {
   const [tags, setTags] = useState<TagArguments[] | undefined>(item.tags);
   const [content, setContent] = useState<string>(JSON.parse(item.content));
 
-  console.log(item.tags);
-
   const handleSetContent = (content: string) => {
     setContent(content);
 
@@ -43,7 +41,6 @@ const PostItem: FC<PostItemProps> = ({ item, session }: PostItemProps) => {
   };
 
   const handleSetTags = (tagsUpdated: TagArguments[]) => {
-    console.log(tagsUpdated);
     setTags(tagsUpdated);
 
     setPostFormData({
@@ -80,8 +77,6 @@ const PostItem: FC<PostItemProps> = ({ item, session }: PostItemProps) => {
       if (!username) {
         throw new Error("Not authorized user");
       }
-
-      console.log(post);
 
       // Use the updatePost mutation to create the new post
       const { data, errors } = await updatePost({
