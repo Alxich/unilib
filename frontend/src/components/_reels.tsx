@@ -19,6 +19,9 @@ const Reels: FC<ReelsProps> = ({}: ReelsProps) => {
   const { data: reelsArray, loading } = useQuery<CommentsData>(
     CommentOperations.Queries.queryComments,
     {
+      variables: {
+        take: 5,
+      },
       onCompleted: (commentArray) => {
         if (commentArray.queryComments) {
           // Update the component's state or trigger a refetch to update the data

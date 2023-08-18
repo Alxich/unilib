@@ -262,6 +262,116 @@ const resolvers = {
     },
 
     /**
+     * Update user information from admin panel.
+     * This function allows an authenticated admin to update users information.
+     */
+    updateUserByAdmin: async function updateUser(
+      _: any,
+      args: {
+        id: string;
+        username?: string;
+        desc?: string;
+        image?: string;
+        banner?: string;
+        password?: string;
+      },
+      context: GraphQLContext
+    ): Promise<CreateItemResoponse> {
+      const { session, prisma } = context;
+      const { id, username, desc, image, banner } = args;
+
+      // Check if the user is authorized
+      if (!session?.user) {
+        return {
+          error: "Not authorized",
+        };
+      }
+
+      // Find the user's existing information
+      const user = await prisma.user.findUnique({
+        where: {
+          id: id,
+        },
+        include: userPopulated,
+      });
+
+      if (!user) {
+        return {
+          error: "User not found",
+        };
+      }
+
+      // Initialize the result object for the update operation
+      let updateUserResult: CreateItemResoponse = {
+        success: false,
+        error: undefined,
+      };
+
+      // Function to update other user values (aboutMe, image, banner)
+      const updateOtherUserValues = async (newValues: {
+        aboutMe?: string;
+        image?: string;
+        banner?: string;
+      }): Promise<CreateItemResoponse> => {
+        const { aboutMe, banner, image } = newValues;
+
+        if (newValues) {
+          try {
+            const data = await prisma.user.updateMany({
+              where: {
+                id: id,
+              },
+              data: {
+                ...{
+                  ...(user.aboutMe !== aboutMe && aboutMe && { aboutMe }),
+                  ...(user.image !== image && image && { image }),
+                  ...(user.banner !== banner && banner && { banner }),
+                },
+              },
+            });
+
+            return { success: true };
+          } catch (error: any) {
+            console.error("updateDesc error", error);
+            return {
+              error: error?.message as string,
+            };
+          }
+        } else {
+          return { error: "No new data provided" };
+        }
+      };
+
+      // Check if the provided username is different from the current session username
+      if (username) {
+        updateUserResult = await verifyAndCreateUsername(
+          { userId: id, username },
+          prisma
+        );
+      }
+
+      // Update other user values if they are provided
+      if (user) {
+        updateUserResult = await updateOtherUserValues({
+          aboutMe: desc,
+          banner: banner,
+          image: image,
+        });
+      }
+
+      // Handle and return the result of the update operation
+      if (updateUserResult.success !== true) {
+        console.error(
+          "An error occurred while updating the user",
+          updateUserResult.error
+        );
+        return updateUserResult;
+      } else {
+        return updateUserResult;
+      }
+    },
+
+    /**
  * Follow a user.
  * This function allows an authenticated user to follow another user.
 

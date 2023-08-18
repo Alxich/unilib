@@ -39,6 +39,10 @@
     width: 100%;
     padding: ($half_spacing_unit * 1.5) 0;
 
+    & > p {
+      padding: 10px;
+    }
+
     .information {
       display: flex;
       width: 100%;
@@ -93,6 +97,16 @@
         }
       }
     }
+  }
+}
+
+.table-data {
+  &:first-child {
+    padding-left: 10px;
+  }
+
+  &:last-child {
+    padding-right: 10px;
   }
 }
 
@@ -211,7 +225,13 @@
 
       input {
         max-width: 100% !important;
-        margin-bottom: 40px !important;
+        &:not(:last-child) {
+          margin-bottom: 40px !important;
+        }
+
+        &:first-child {
+          margin-bottom: 40px !important;
+        }
       }
     }
 
@@ -263,7 +283,7 @@
       .available-tags {
         button {
           width: auto;
-          margin: 0;
+          margin: 0 0 6px 0;
 
           &:not(:last-child) {
             margin-right: 6px;

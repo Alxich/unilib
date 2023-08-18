@@ -48,6 +48,7 @@ export default {
           subscribedCategoryIDs
           email
           createdAt
+          updatedAt
           followedBy {
             follower {
               id
@@ -85,6 +86,28 @@ export default {
         $password: String
       ) {
         updateUser(
+          username: $username
+          desc: $desc
+          image: $image
+          banner: $banner
+          password: $password
+        ) {
+          success
+          error
+        }
+      }
+    `,
+    updateUserByAdmin: gql`
+      mutation updateUserByAdmin(
+        $id: String
+        $username: String
+        $desc: String
+        $image: String
+        $banner: String
+        $password: String
+      ) {
+        updateUserByAdmin(
+          id: $id
           username: $username
           desc: $desc
           image: $image

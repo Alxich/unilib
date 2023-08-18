@@ -1,20 +1,32 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import type { NextPage } from "next";
 import { toast } from "react-hot-toast";
 
 import { useQuery } from "@apollo/client";
+import { useSession } from "next-auth/react";
 import UserOperations from "../../graphql/operations/users";
 import { UserPopulated } from "../../../../backend/src/util/types";
 import { queryUsersData } from "../../util/types";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-import { Button } from "../../components/elements";
-import { formatTimeToPost } from "../../util/functions";
+import { UserItem } from "../../components/admin";
 
 const AdminPageUsers: FC<NextPage> = () => {
-  const [hasMore, setHasMore] = useState(true);
+  const { data: session } = useSession();
 
   const [users, setUsers] = useState<UserPopulated[] | undefined>();
+
+  const LoadingCompanents = (
+    <>
+      <div className="table-row">
+        <div className="table-data">Loading</div>
+        <div className="table-data">Loading</div>
+        <div className="table-data">Loading</div>
+        <div className="table-data">Loading</div>
+        <div className="table-data">Loading</div>
+      </div>
+    </>
+  );
 
   const { data, loading, fetchMore } = useQuery<queryUsersData, UserPopulated>(
     UserOperations.Queries.queryUsers,
@@ -27,34 +39,6 @@ const AdminPageUsers: FC<NextPage> = () => {
       },
     }
   );
-
-  const getMoreUser = async () => {
-    // Check if there are already existing users
-    if (users) {
-      // Call the fetchMore function to get more users
-      const newUsers = await fetchMore({
-        variables: {
-          skip: users.length, // Skip the number of existing users
-          take: 1, // Fetch one more post
-        },
-      });
-
-      // If no new users were fetched, set hasMore to false
-      if (newUsers.data.queryUsers.length === 0) {
-        setHasMore(false);
-        return null;
-      }
-
-      // Append the new users to the existing users array
-      setUsers((prevUsers) => {
-        return prevUsers ? [...prevUsers, ...newUsers.data.queryUsers] : [];
-      });
-    }
-
-    return [];
-  };
-
-  console.log(users);
 
   return (
     <div id="admin-panel-wrapper">
@@ -107,19 +91,9 @@ const AdminPageUsers: FC<NextPage> = () => {
             {users && (
               <InfiniteScroll
                 dataLength={users.length}
-                next={getMoreUser}
-                hasMore={hasMore}
-                loader={
-                  <>
-                    <div className="table-row">
-                      <div className="table-data">Loading</div>
-                      <div className="table-data">Loading</div>
-                      <div className="table-data">Loading</div>
-                      <div className="table-data">Loading</div>
-                      <div className="table-data">Loading</div>
-                    </div>
-                  </>
-                }
+                next={() => {}}
+                hasMore={false}
+                loader={LoadingCompanents}
                 key={users.map((item) => item.id).join("-")} // Unique key for users array
                 endMessage={
                   <div className="table-row">
@@ -130,24 +104,19 @@ const AdminPageUsers: FC<NextPage> = () => {
                   </div>
                 }
               >
-                {users.map((item: UserPopulated, i: number) => {
-                  return (
-                    <div className="table-row" key={`${item}__${i}`}>
-                      <div className="table-data">{item.username}</div>
-                      <div className="table-data">{item.id}</div>
-                      <div className="table-data">
-                        {formatTimeToPost(item.createdAt)}
-                      </div>
-                      <div className="table-data">
-                        {formatTimeToPost(item.updatedAt)}
-                      </div>
-                      <div className="table-data">
-                        {item.subscribedCategoryIDs.length}
-                      </div>
-                      <div className="table-data edit">Edit</div>
-                    </div>
-                  );
-                })}
+                {loading
+                  ? LoadingCompanents
+                  : !session
+                  ? toast.error("Not authorized user")
+                  : users.map((item: UserPopulated, i: number) => {
+                      return (
+                        <UserItem
+                          item={item}
+                          session={session}
+                          key={`${item}__${i}`}
+                        />
+                      );
+                    })}
               </InfiniteScroll>
             )}
           </div>

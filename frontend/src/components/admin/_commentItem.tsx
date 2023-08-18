@@ -76,13 +76,13 @@ const CommentItem: FC<CommentAdminItemProps> = ({
         throw new Error("Not authorized user");
       }
 
-      if (!item.post.id) {
-        throw new Error("Not provided with post id");
+      if (!item.id) {
+        throw new Error("Not provided with id");
       }
 
       const { data, errors } = await editComment({
         variables: {
-          id: item.post.id,
+          id: item.id,
           text: JSON.stringify(content), // Convert content to JSON and send it for editing
         },
       });

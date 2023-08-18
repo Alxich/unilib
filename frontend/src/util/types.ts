@@ -120,8 +120,22 @@ export interface UpdateUserArguments {
   password?: string;
 }
 
+export interface UpdateUserAdminArguments {
+  id: string;
+  username?: string;
+  desc?: string;
+  image?: string;
+  banner?: string;
+  password?: string;
+}
+
 export interface UserSubscriptionData {
   userUpdated: UserPopulated;
+}
+
+export interface UserAdminItemProps {
+  session: Session;
+  item: UserPopulated;
 }
 
 /**

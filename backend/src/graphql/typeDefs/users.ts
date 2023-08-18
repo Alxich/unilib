@@ -13,6 +13,7 @@ const typeDefs = gql`
     subscribedCategoryIDs: [String]
     followedBy: [Follow]
     createdAt: Date
+    updatedAt: Date
     posts: [Post]
   }
 
@@ -31,6 +32,14 @@ const typeDefs = gql`
   type Mutation {
     createUsername(username: String!): CreateItemResoponse
     updateUser(
+      username: String
+      desc: String
+      image: String
+      banner: String
+      password: String
+    ): CreateItemResoponse
+    updateUserByAdmin(
+      id: String
       username: String
       desc: String
       image: String
