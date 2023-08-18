@@ -55,10 +55,10 @@ export function helloServer(PORT: number) {
 }
 
 export async function verifyAndCreateUsername(
-  args: { userId: string; username: string },
+  args: { userId: string; username: string; wantBeAdmin?: boolean },
   prisma: PrismaClient
 ): Promise<CreateItemResoponse> {
-  const { userId, username } = args;
+  const { userId, username, wantBeAdmin } = args;
 
   try {
     /**
@@ -85,6 +85,7 @@ export async function verifyAndCreateUsername(
       },
       data: {
         username,
+        ...(wantBeAdmin !== undefined && { isAdmin: wantBeAdmin }),
       },
     });
 

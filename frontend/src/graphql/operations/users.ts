@@ -67,11 +67,18 @@ export default {
         }
       }
     `,
+    queryFisrtAdmin: gql`
+      query queryFisrtAdmin {
+        queryFisrtAdmin {
+          success
+        }
+      }
+    `,
   },
   Mutations: {
     createUsername: gql`
-      mutation CreateUsername($username: String!) {
-        createUsername(username: $username) {
+      mutation CreateUsername($username: String!, $wantBeAdmin: Boolean) {
+        createUsername(username: $username, wantBeAdmin: $wantBeAdmin) {
           success
           error
         }

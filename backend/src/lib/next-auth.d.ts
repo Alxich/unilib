@@ -10,5 +10,9 @@ declare module "next-auth" {
   interface User {
     id: string;
     username: string;
+    aboutMe: string;
+    banner: string;
+    isAdmin: boolean;
+    subscribedCategoryIDs: [string];
   }
 }

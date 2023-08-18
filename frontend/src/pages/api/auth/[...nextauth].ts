@@ -15,7 +15,7 @@ export default NextAuth({
   ],
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
+    async signIn({ user, account, profile, email, isAdmin, credentials }) {
       return true;
     },
     async session({ session, token, user }) {

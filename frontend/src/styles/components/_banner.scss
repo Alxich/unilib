@@ -73,6 +73,26 @@
       input {
         background-color: $overhigh_bg;
       }
+
+      .do-you-want-be-admin {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+        padding-top: $banner_log_items_gap;
+
+        p {
+          margin-right: 8px;
+        }
+
+        input {
+          height: 22px;
+          width: 22px;
+          margin: 0;
+          cursor: pointer;
+        }
+      }
     }
 
     .report-form {

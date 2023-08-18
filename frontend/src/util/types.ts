@@ -14,6 +14,12 @@ import { User } from "@prisma/client";
 /**
  * Client configuration
  */
+
+export interface FindItemResoponse {
+  success?: boolean;
+  error?: string;
+}
+
 export interface DeleteItemResoponse {
   success?: boolean;
   error?: string;
@@ -44,6 +50,7 @@ export type ContentViews =
  */
 export interface CreateUsernameVariables {
   username: string;
+  wantBeAdmin?: boolean;
 }
 
 export interface CreateUsernameData {
@@ -63,6 +70,10 @@ export interface SearchUserVariables {
 
 export interface SearchUserData {
   searchUser: SearchedUserById;
+}
+
+export interface AdminFindData {
+  queryFisrtAdmin: FindItemResoponse;
 }
 
 export interface queryUsersData {

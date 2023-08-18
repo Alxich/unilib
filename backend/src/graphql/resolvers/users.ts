@@ -56,6 +56,43 @@ const resolvers = {
 
     /**
      * Query all users throw the site.
+     * This function retrieves users information about their admin status,
+     * not based on any provided data.
+     */
+    queryFisrtAdmin: async function queryFisrtAdmin(
+      _: any,
+      __: any,
+      context: GraphQLContext
+    ): Promise<CreateItemResoponse> {
+      const { prisma, session } = context;
+
+      // Check if the user is authorized
+      if (!session?.user) {
+        return {
+          error: "Not authorized",
+        };
+      }
+
+      // Search in base if there is existing admin
+      const existingAdmin = await context.prisma.user.findFirst({
+        where: {
+          isAdmin: true,
+        },
+      });
+
+      if (existingAdmin) {
+        return {
+          success: true,
+        };
+      } else {
+        return {
+          success: false,
+        };
+      }
+    },
+
+    /**
+     * Query all users throw the site.
      * This function retrieves users information including populated data,
      * not based on any provided data.
      */
@@ -130,7 +167,7 @@ const resolvers = {
      */
     createUsername: async function createUsername(
       _: any,
-      args: { username: string },
+      args: { username: string; wantBeAdmin?: boolean },
       context: GraphQLContext
     ): Promise<CreateItemResoponse> {
       const { session, prisma } = context;
@@ -144,10 +181,26 @@ const resolvers = {
 
       // Extract user ID and desired username from the arguments
       const { id } = session.user;
-      const { username } = args;
+      const { username, wantBeAdmin } = args;
+
+      // Search in base if there is existing admin
+      const existingAdmin = await context.prisma.user.findFirst({
+        where: {
+          isAdmin: true,
+        },
+      });
 
       // Use the verifyAndCreateUsername function to handle username creation
-      return await verifyAndCreateUsername({ userId: id, username }, prisma);
+      if (wantBeAdmin !== undefined && !existingAdmin) {
+        console.log(wantBeAdmin);
+
+        return await verifyAndCreateUsername(
+          { userId: id, username, wantBeAdmin },
+          prisma
+        );
+      } else {
+        return await verifyAndCreateUsername({ userId: id, username }, prisma);
+      }
     },
 
     /**

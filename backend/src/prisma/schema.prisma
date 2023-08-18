@@ -64,6 +64,7 @@ model User {
   subscribedCategories  Category[]                @relation("categorySubscribers", fields: [subscribedCategoryIDs], references: [id])
   following             Follows[]                 @relation("follower")
   followedBy            Follows[]                 @relation("following")
+  isAdmin               Boolean                   @default(false)
 }
 
 model Follows {

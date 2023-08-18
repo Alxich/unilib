@@ -84,6 +84,15 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   const isMessagesRoute = router.pathname.startsWith("/messages");
   const isAdminRoute = router.pathname.startsWith("/admin");
 
+  // Check if user is admin if not we cant show him admin page
+
+  useEffect(() => {
+    if (isAdminRoute && status !== "loading") {
+      console.log(session?.user);
+      session?.user.isAdmin !== true && router.push("/");
+    }
+  }, [status]);
+
   // Apply CSS class based on writterActive state
 
   useEffect(() => {

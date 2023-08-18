@@ -27,10 +27,11 @@ const typeDefs = gql`
     searchUsers(username: String!): [User]
     searchUser(id: String!): User
     queryUsers: [User]
+    queryFisrtAdmin: CreateItemResoponse
   }
 
   type Mutation {
-    createUsername(username: String!): CreateItemResoponse
+    createUsername(username: String!, wantBeAdmin: Boolean): CreateItemResoponse
     updateUser(
       username: String
       desc: String

@@ -1,9 +1,12 @@
 import { FC, FormEvent, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
+  AdminFindData,
   CreateUsernameData,
   CreateUsernameVariables,
+  FindItemResoponse,
 } from "../../../util/types";
 import userOperations from "../../../graphql/operations/users";
 
@@ -16,7 +19,30 @@ interface IUsernameCreateProps {
 const UsernameCreate: FC<IUsernameCreateProps> = ({
   setBannerActive,
 }: IUsernameCreateProps) => {
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState<string>("");
+  const [wantBeAdmin, setWantBeAdmin] = useState<boolean>(false);
+  const [queryFisrtAdmin, setQueryFisrtAdmin] = useState<FindItemResoponse>();
+
+  const handleChange = () => {
+    setWantBeAdmin(!wantBeAdmin);
+
+    console.log(wantBeAdmin);
+  };
+
+  const { data: adminData, loading: adminDataLoading } =
+    useQuery<AdminFindData>(userOperations.Queries.queryFisrtAdmin, {
+      onError: ({ message }: any) => {
+        toast.error(message);
+      },
+    });
+
+  useEffect(() => {
+    if (adminData && adminDataLoading !== true) {
+      const { queryFisrtAdmin: queryData } = adminData;
+
+      setQueryFisrtAdmin(queryData);
+    }
+  }, [adminData, adminDataLoading]);
 
   // Set up a mutation for creating a username
   const [createUsername, { data, loading, error }] = useMutation<
@@ -31,9 +57,16 @@ const UsernameCreate: FC<IUsernameCreateProps> = ({
     // If username is not provided, exit the function
     if (!username) return;
 
+    if (!adminData) return;
+
     try {
       // Submit the provided username to the backend server
-      await createUsername({ variables: { username } });
+      await createUsername({
+        variables: {
+          username,
+          ...(!queryFisrtAdmin?.success && { wantBeAdmin: !wantBeAdmin }),
+        },
+      });
     } catch (error) {
       console.error("Submitting username caused an error", error);
     }
@@ -63,17 +96,30 @@ const UsernameCreate: FC<IUsernameCreateProps> = ({
           type="name"
           placeholder="Ваш нікнейм або імя та призвісько"
           value={username}
+          disabled={adminDataLoading}
           onChange={(e) => setUsername(e.target.value)}
         ></input>
         <Button
           filled
           form
           fullWidth
-          loading={loading}
-          disabled={username.length <= 0}
+          loading={loading || adminDataLoading}
+          disabled={username.length <= 0 || adminDataLoading}
         >
           Увійти
         </Button>
+        {queryFisrtAdmin?.success !== true && (
+          <div className="do-you-want-be-admin">
+            <p>Do you want be admin ?</p>
+            <input
+              name="acceptAdmin"
+              type="checkbox"
+              id="acceptTerms"
+              checked={!wantBeAdmin}
+              onChange={handleChange}
+            />
+          </div>
+        )}
       </form>
     </>
   );
