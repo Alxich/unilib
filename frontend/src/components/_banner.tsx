@@ -28,17 +28,27 @@ const Banner: FC<BannerProps> = ({
   session,
   bagReportActive,
 }: BannerProps) => {
+  // Initialize state variable to manage the registration clicked status
   const [regClicked, setRegClicked] = useState(false);
+
+  // Initialize state variable to manage user data for creating a username
   const [userData, setUserData] = useState<CreateUsernameVariables | undefined>(
     undefined
   );
 
+  // Use the useEffect hook to perform side effects after render
   useEffect(() => {
+    // Check if a user session exists
     if (session !== null && session !== undefined) {
+      // If a user session exists, set the user data
       setUserData(session.user);
     }
 
-    userData !== undefined && !userData.username && setBannerActive(true);
+    // Check if user data exists and username is not defined
+    if (userData !== undefined && !userData.username) {
+      // If conditions are met, set the banner active
+      setBannerActive(true);
+    }
   }, [session, setBannerActive, userData]);
 
   /**

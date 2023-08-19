@@ -14,14 +14,21 @@ import { CreatePostContext } from "../../components/_content";
 import { PostItem } from "../../components/admin";
 
 const AdminPagePosts: FC<NextPage> = () => {
+  // Getting user session information
   const { data: session } = useSession();
+
+  // Using the useContext hook to access data from a context
   const [adminWritterActive, setAdminWritterActive] =
     useContext(CreatePostContext);
 
+  // State indicating whether there are more posts to load
   const [hasMore, setHasMore] = useState(true);
+
+  // State for storing the list of posts
   const [posts, setPosts] = useState<PostPopulated[] | undefined>();
 
-  const LoadingCompanents = (
+  // Component for displaying "Loading" when data is being fetched
+  const LoadingComponents = (
     <>
       <div className="table-row">
         <div className="table-data">Loading</div>
@@ -33,6 +40,7 @@ const AdminPagePosts: FC<NextPage> = () => {
     </>
   );
 
+  // Using the useQuery hook to fetch post data
   const { data, loading, fetchMore } = useQuery<PostsData, PostsVariables>(
     PostOperations.Queries.queryPosts,
     {
@@ -40,9 +48,11 @@ const AdminPagePosts: FC<NextPage> = () => {
         skip: 0,
         take: 3,
       },
+      // Completed callback when data loading is finished
       onCompleted(data) {
         setPosts(data.queryPosts);
       },
+      // Error handler
       onError: ({ message }) => {
         toast.error(message);
       },
@@ -135,7 +145,7 @@ const AdminPagePosts: FC<NextPage> = () => {
           </div>
           <div className="table-content">
             {loading
-              ? LoadingCompanents
+              ? LoadingComponents
               : !session
               ? toast.error("Not authorized user")
               : posts && (
@@ -143,7 +153,7 @@ const AdminPagePosts: FC<NextPage> = () => {
                     dataLength={posts.length}
                     next={getMorePost}
                     hasMore={hasMore}
-                    loader={LoadingCompanents}
+                    loader={LoadingComponents}
                     key={posts.map((item) => item.id).join("-")} // Unique key for posts array
                     endMessage={
                       <div className="table-row">

@@ -19,6 +19,7 @@ import { Button } from "../elements";
 import { PostEdit, TagEdit } from "../elements/editor";
 
 const PostItem: FC<PostItemProps> = ({ item, session }: PostItemProps) => {
+  // Initialize state variables for form data and UI state
   const [postFormData, setPostFormData] = useState<UpdatePostArguments>({
     id: item.id,
     content: item.content,
@@ -28,21 +29,26 @@ const PostItem: FC<PostItemProps> = ({ item, session }: PostItemProps) => {
   const [postData, setPostData] = useState<PostPopulated>(item);
   const [formVisible, setFormVisible] = useState<boolean>(false);
 
+  // Initialize state variables for tags and content
   const [tags, setTags] = useState<TagArguments[] | undefined>(item.tags);
   const [content, setContent] = useState<string>(JSON.parse(item.content));
 
+  // Function to update content state and postFormData when content changes
   const handleSetContent = (content: string) => {
     setContent(content);
 
+    // Update postFormData with new content
     setPostFormData({
       ...postFormData,
       content: JSON.stringify(content),
     });
   };
 
+  // Function to update tags state and postFormData when tags change
   const handleSetTags = (tagsUpdated: TagArguments[]) => {
     setTags(tagsUpdated);
 
+    // Update postFormData with new tags
     setPostFormData({
       ...postFormData,
       tagsId: tagsUpdated,

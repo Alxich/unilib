@@ -12,11 +12,14 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { UserItem } from "../../components/admin";
 
 const AdminPageUsers: FC<NextPage> = () => {
+  // Getting user session information
   const { data: session } = useSession();
 
+  // State for storing the list of users
   const [users, setUsers] = useState<UserPopulated[] | undefined>();
 
-  const LoadingCompanents = (
+  // Component for displaying "Loading" when data is being fetched
+  const LoadingComponents = (
     <>
       <div className="table-row">
         <div className="table-data">Loading</div>
@@ -28,12 +31,15 @@ const AdminPageUsers: FC<NextPage> = () => {
     </>
   );
 
+  // Using the useQuery hook to fetch user data
   const { data, loading, fetchMore } = useQuery<queryUsersData, UserPopulated>(
     UserOperations.Queries.queryUsers,
     {
+      // Completed callback when data loading is finished
       onCompleted(data) {
         setUsers(data.queryUsers);
       },
+      // Error handler
       onError: ({ message }) => {
         toast.error(message);
       },
@@ -93,7 +99,7 @@ const AdminPageUsers: FC<NextPage> = () => {
                 dataLength={users.length}
                 next={() => {}}
                 hasMore={false}
-                loader={LoadingCompanents}
+                loader={LoadingComponents}
                 key={users.map((item) => item.id).join("-")} // Unique key for users array
                 endMessage={
                   <div className="table-row">
@@ -105,7 +111,7 @@ const AdminPageUsers: FC<NextPage> = () => {
                 }
               >
                 {loading
-                  ? LoadingCompanents
+                  ? LoadingComponents
                   : !session
                   ? toast.error("Not authorized user")
                   : users.map((item: UserPopulated, i: number) => {

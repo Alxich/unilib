@@ -24,24 +24,30 @@ import { useEscapeClose } from "../../util/functions/useEscapeClose";
 import classNames from "classnames";
 
 const AdminPageCategories: FC<NextPage> = () => {
+  // Getting user session information
   const { data: session } = useSession();
+
+  // State for storing category form data
   const [categoryFormData, setCategoryFormData] = useState<
     onCreateCategoryArgs | undefined
   >();
+
+  // State for storing the list of categories
   const [categories, setCategories] = useState<
     CategoryPopulated[] | undefined
   >();
 
+  // State for controlling the visibility of the form
   const [formVisible, setFormVisible] = useState<boolean>(false);
 
-  // Close the form via esc button
-
+  // Close the form using the escape button
   useEscapeClose({
     activeElem: formVisible,
     setActiveElem: setFormVisible,
   });
 
-  const LoadingCompanents = (
+  // Component for displaying "Loading" when data is being fetched
+  const LoadingComponents = (
     <>
       <div className="table-row">
         <div className="table-data">Loading</div>
@@ -53,13 +59,16 @@ const AdminPageCategories: FC<NextPage> = () => {
     </>
   );
 
+  // Using the useQuery hook to fetch category data
   const { data, loading, fetchMore } = useQuery<
     CategoriesData,
     CategoriesVariables
   >(CategoryOperations.Queries.queryCategories, {
+    // Completed callback when data loading is finished
     onCompleted(data) {
       setCategories(data.queryCategories);
     },
+    // Error handler
     onError: ({ message }) => {
       toast.error(message);
     },
@@ -256,7 +265,7 @@ const AdminPageCategories: FC<NextPage> = () => {
           </div>
           <div className="table-content">
             {loading
-              ? LoadingCompanents
+              ? LoadingComponents
               : !session
               ? toast.error("No user authorized")
               : categories && (
@@ -264,7 +273,7 @@ const AdminPageCategories: FC<NextPage> = () => {
                     dataLength={categories.length}
                     next={() => {}}
                     hasMore={false}
-                    loader={LoadingCompanents}
+                    loader={LoadingComponents}
                     key={categories.map((item) => item.id).join("-")} // Unique key for categories array
                   >
                     {categories.map((item: CategoryArguments, i: number) => {

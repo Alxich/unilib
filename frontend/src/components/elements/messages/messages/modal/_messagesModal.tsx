@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import classNames from "classnames";
-import toast from "react-toastify";
+import { toast } from "react-toastify";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";

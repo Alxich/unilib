@@ -7,13 +7,18 @@ import { returnMeDate } from "../../util/functions/returnMeDate";
 interface AdminHeaderProps {}
 
 const AdminHeader: FC<AdminHeaderProps> = ({}: AdminHeaderProps) => {
+  // Set the data language format
   const [dateText, setDateText] = useState<string>(returnMeDate("en"));
+
+  // Allow to scroll to the top of page by calling the func 'scrollToTop'
   const { scrollToTop } = useScrollToTop();
 
+  // Handle function to show the text
   const returnMeSpecificData = () => {
     setDateText(returnMeDate("en"));
   };
 
+  // interval function by 1s to update the data (create a real time timer)
   useEffect(() => {
     const timerId = setInterval(returnMeSpecificData, 1000);
 

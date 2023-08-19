@@ -22,17 +22,22 @@ const CommentItem: FC<CommentAdminItemProps> = ({
   item,
   session,
 }: CommentAdminItemProps) => {
+  // State for storing comment data with initial values taken from the 'item' object
   const [commentData, setCommentData] = useState<CommentPopulated>(item);
+
+  // State for controlling the visibility of the form
   const [formVisible, setFormVisible] = useState<boolean>(false);
+
+  // State for storing the content of the comment, initialized with the parsed 'text' from the 'item'
   const [content, setContent] = useState<string>(JSON.parse(item.text));
 
-  // Close the form via esc button
-
+  // Close the form using the escape button
   useEscapeClose({
     activeElem: formVisible,
     setActiveElem: setFormVisible,
   });
 
+  // Function for updating the 'content' state
   const handleSetContent = (content: string) => {
     setContent(content);
   };
@@ -80,6 +85,7 @@ const CommentItem: FC<CommentAdminItemProps> = ({
         throw new Error("Not provided with id");
       }
 
+      // Edit the comment's content using the 'editComment' mutation
       const { data, errors } = await editComment({
         variables: {
           id: item.id,
@@ -87,10 +93,12 @@ const CommentItem: FC<CommentAdminItemProps> = ({
         },
       });
 
+      // Check if the 'editComment' mutation was successful and handle errors
       if (!data?.editComment || errors) {
         throw new Error("Error onEditComment when trying to edit");
       }
 
+      // If no errors occurred, display a success message
       if (!errors) {
         toast.success("Comment was edited!");
       }

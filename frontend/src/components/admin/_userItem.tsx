@@ -20,11 +20,13 @@ const UserItem: FC<UserAdminItemProps> = ({
   item,
   session,
 }: UserAdminItemProps) => {
+  // Initialize state variable for user data
   const [userData, setUserData] = useState<UserPopulated>(item);
+
+  // Initialize state variable to manage the visibility of the form
   const [formVisible, setFormVisible] = useState<boolean>(false);
 
-  // Close the form via esc button
-
+  // Close the form when the escape button is pressed
   useEscapeClose({
     activeElem: formVisible,
     setActiveElem: setFormVisible,

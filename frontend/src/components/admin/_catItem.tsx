@@ -25,26 +25,30 @@ const CategoryItem: FC<CategoryItemProps> = ({
   item,
   session,
 }: CategoryItemProps) => {
+  // State for storing category form data with initial values
   const [categoryFormData, setCategoryFormData] = useState<CatFormInput>({
     id: item.id,
   });
+
+  // State for storing category data with initial values
   const [categoryData, setCategoryData] = useState<CategoryArguments>(item);
+
+  // State for controlling the visibility of the form
   const [formVisible, setFormVisible] = useState<boolean>(false);
 
-  // Close the form via esc button
-
+  // Close the form using the escape button
   useEscapeClose({
     activeElem: formVisible,
     setActiveElem: setFormVisible,
   });
 
   // Define a mutation to update a existing category
-
   const [updateCategory] = useMutation<
     { updateCategory: CategoryArguments },
     UpdateCategoryArguments
   >(CategoryOperations.Mutations.updateCategory);
 
+  // Handle the submit button to update a category on server
   const onUpdateCategory = async ({
     id,
     title,

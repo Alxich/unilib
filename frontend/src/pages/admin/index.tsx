@@ -1,7 +1,6 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import type { NextPage } from "next";
 
-import { Button } from "../../components/elements";
 import Link from "next/link";
 
 const AdminPage: FC<NextPage> = () => {

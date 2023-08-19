@@ -12,12 +12,17 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { CommentItem } from "../../components/admin";
 
 const AdminPageComments: FC<NextPage> = () => {
+  // Getting user session information
   const { data: session } = useSession();
+
+  // State indicating whether there are more comments to load
   const [hasMore, setHasMore] = useState(true);
 
+  // State for storing the list of comments
   const [comments, setComments] = useState<CommentPopulated[] | undefined>();
 
-  const LoadingCompanents = (
+  // Component for displaying "Loading" when data is being fetched
+  const LoadingComponents = (
     <>
       <div className="table-row">
         <div className="table-data">Loading</div>
@@ -29,6 +34,7 @@ const AdminPageComments: FC<NextPage> = () => {
     </>
   );
 
+  // Using the useQuery hook to fetch comment data
   const { data, loading, fetchMore } = useQuery<
     CommentsData,
     { take: Number; skip?: Number }
@@ -36,9 +42,11 @@ const AdminPageComments: FC<NextPage> = () => {
     variables: {
       take: 5,
     },
+    // Completed callback when data loading is finished
     onCompleted(data) {
       setComments(data.queryComments);
     },
+    // Error handler
     onError: ({ message }) => {
       toast.error(message);
     },
@@ -130,7 +138,7 @@ const AdminPageComments: FC<NextPage> = () => {
                 dataLength={comments.length}
                 next={getMoreComment}
                 hasMore={hasMore}
-                loader={LoadingCompanents}
+                loader={LoadingComponents}
                 key={comments.map((item) => item.id).join("-")} // Unique key for comments array
                 endMessage={
                   <div className="table-row">
@@ -142,7 +150,7 @@ const AdminPageComments: FC<NextPage> = () => {
                 }
               >
                 {loading
-                  ? LoadingCompanents
+                  ? LoadingComponents
                   : !session
                   ? toast.error("Not authorized")
                   : comments.map((item: CommentPopulated, i: number) => {

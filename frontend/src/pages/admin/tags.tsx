@@ -22,17 +22,20 @@ import { TagItem } from "../../components/admin";
 import { Button } from "../../components/elements";
 
 const AdminPageTags: FC<NextPage> = () => {
+  // Getting user session information
   const { data: session } = useSession();
+
+  // State for managing the visibility of a form
   const [formVisible, setFormVisible] = useState<boolean>(false);
 
-  // Close the form via esc button
-
+  // Custom hook to close the form using the "Escape" key
   useEscapeClose({
     activeElem: formVisible,
     setActiveElem: setFormVisible,
   });
 
-  const LoadingCompanents = (
+  // Component for displaying "Loading" when data is being fetched
+  const LoadingComponents = (
     <>
       <div className="table-row">
         <div className="table-data">Loading</div>
@@ -44,15 +47,21 @@ const AdminPageTags: FC<NextPage> = () => {
     </>
   );
 
+  // State for storing the list of tags
   const [tags, setTags] = useState<TagArguments[] | undefined>();
+
+  // State for storing a new tag value
   const [newTag, setNewTag] = useState<string | undefined>();
 
+  // Using the useQuery hook to fetch tag data
   const { data, loading, fetchMore } = useQuery<TagsData, TagsVariables>(
     TagOperations.Queries.queryTags,
     {
+      // Completed callback when data loading is finished
       onCompleted(data) {
         setTags(data.queryTags);
       },
+      // Error handler
       onError: ({ message }) => {
         toast.error(message);
       },
@@ -203,7 +212,7 @@ const AdminPageTags: FC<NextPage> = () => {
           </div>
           <div className="table-content">
             {loading
-              ? LoadingCompanents
+              ? LoadingComponents
               : !session
               ? toast.error("No session")
               : tags && (
@@ -211,7 +220,7 @@ const AdminPageTags: FC<NextPage> = () => {
                     dataLength={tags.length}
                     next={() => {}}
                     hasMore={false}
-                    loader={LoadingCompanents}
+                    loader={LoadingComponents}
                     key={tags.map((item) => item.id).join("-")} // Unique key for tags array
                   >
                     {tags.map((item: TagArguments, i: number) => {

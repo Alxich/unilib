@@ -90,6 +90,7 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
     if (isAdminRoute && status !== "loading") {
       session?.user.isAdmin !== true && router.push("/");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   // Apply CSS class based on writterActive state

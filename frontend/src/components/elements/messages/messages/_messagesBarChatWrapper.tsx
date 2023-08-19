@@ -2,7 +2,7 @@ import { useEffect, FC, useState } from "react";
 import Link from "next/link";
 
 import { useRouter } from "next/router";
-import toast from "react-toastify";
+import { toast } from "react-toastify";
 
 import { Session } from "next-auth";
 

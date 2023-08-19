@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef, useState } from "react";
-import toast from "react-toastify";
+import { toast } from "react-toastify";
 import classNames from "classnames";
 
 import OhfailPage from "../_ohfailpage";

@@ -16,15 +16,19 @@ import { useEscapeClose } from "../../util/functions/useEscapeClose";
 import { Button } from "../elements";
 
 const TagItem: FC<TagItemProps> = ({ item, session }: TagItemProps) => {
+  // Initialize state variables for form data and UI state
   const [tagFormData, setTagFormData] = useState<string | undefined>();
+
+  // Initialize state variables for tag data and UI state
   const [tagData, setTagData] = useState<TagArguments>(item);
+
+  // Initialize state variable to manage the visibility of the form
   const [formVisible, setFormVisible] = useState<boolean>(false);
 
-  // Close the form via esc button
-
+  // Close the form when the escape button is pressed
   useEscapeClose({
-    activeElem: formVisible,
-    setActiveElem: setFormVisible,
+    activeElem: formVisible, // Indicates if the form is active
+    setActiveElem: setFormVisible, // Function to set the form visibility
   });
 
   // Define a mutation to update a existing tag

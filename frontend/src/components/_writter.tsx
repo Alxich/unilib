@@ -8,7 +8,7 @@ import {
 } from "react";
 import classNames from "classnames";
 import { ObjectId } from "bson";
-import toast from "react-toastify";
+import { toast } from "react-toastify";
 
 import { Session } from "next-auth";
 
