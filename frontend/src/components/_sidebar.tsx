@@ -7,6 +7,7 @@ import { CategoryPopulated } from "../../../backend/src/util/types";
 import { ContentViewChanger, ContentViews } from "../util/types";
 import Link from "next/link";
 import { SidebarItemLoading } from "./skeletons";
+import { useEscapeClose } from "../util/functions/useEscapeClose";
 
 interface SidebarProps {
   categories?: Array<ContentViewChanger>;
@@ -16,6 +17,8 @@ interface SidebarProps {
   setBannerActive: Dispatch<SetStateAction<boolean>>;
   setBagReportActive: Dispatch<SetStateAction<boolean>>;
   loadingStatus: boolean;
+  showSidebar: boolean;
+  setShowSidebar: Dispatch<SetStateAction<boolean>>;
 }
 
 const Sidebar: FC<SidebarProps> = ({
@@ -26,11 +29,18 @@ const Sidebar: FC<SidebarProps> = ({
   setBannerActive,
   setBagReportActive,
   loadingStatus,
+  showSidebar,
+  setShowSidebar,
 }: SidebarProps) => {
   const fandomsLengthBefore = 5;
   const [themeOption, setThemeOption] = useState(false); // False - black / True - white theme
   const [openAllFandom, setOpenAllFandom] = useState(false);
   const [openAllThemes, setOpenAllThemes] = useState(false);
+
+  useEscapeClose({
+    activeElem: showSidebar,
+    setActiveElem: setShowSidebar,
+  });
 
   useEffect(() => {
     // '0' to assign the first (and only `HTML` tag)
@@ -46,7 +56,12 @@ const Sidebar: FC<SidebarProps> = ({
   }, [themeOption]);
 
   return (
-    <div id="sidebar" className="container full-height flex-left to-left">
+    <div
+      id="sidebar"
+      className={classNames("container full-height flex-left to-left", {
+        active: showSidebar,
+      })}
+    >
       <div className="nav-user nav">
         {loadingStatus ? (
           <>

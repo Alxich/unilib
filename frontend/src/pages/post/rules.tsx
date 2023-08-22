@@ -88,11 +88,7 @@ const PostRulesProject: FC<NextPage> = () => {
         </div>
         <div className="interactions">
           <div className="lt-side"></div>
-          <div className="rt-side">
-            <div className="complain item interactive">
-              <p>Поскаржитися</p>
-            </div>
-          </div>
+          <div className="rt-side"></div>
         </div>
       </div>
     </div>

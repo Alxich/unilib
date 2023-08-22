@@ -17,4 +17,10 @@
   @import "./elements/content/author-info";
   @import "./elements/content/author-more";
   @import "./elements/content/comments";
+
+  @media only screen and (max-width: 800px) {
+    &.is-admin {
+      padding: 0;
+    }
+  }
 }

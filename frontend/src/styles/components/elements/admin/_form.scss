@@ -1,9 +1,14 @@
 .table {
   border: 1px solid $color_form_highlight;
   width: 100%;
+  overflow-x: auto;
 
   p {
     margin: 0;
+  }
+
+  & > div {
+    min-width: 985px;
   }
 }
 
@@ -69,6 +74,12 @@
         padding: 20px 0;
       }
 
+      .table-data:last-child {
+        .button {
+          margin-bottom: 15px;
+        }
+      }
+
       .edit-post-content,
       textarea,
       input {
@@ -80,7 +91,7 @@
 
     .big-form {
       &.active {
-        max-height: 420px;
+        max-height: 450px;
       }
     }
 
@@ -114,6 +125,10 @@
 .header__item {
   flex: 1 1 20%;
   text-align: center;
+
+  &:not(.has-content) img {
+    display: none;
+  }
 
   &.action {
     p {
@@ -211,7 +226,7 @@
     flex-wrap: wrap;
 
     &.has-content {
-      align-items: stretch
+      align-items: stretch;
     }
 
     *:not(.edit-post-content *, #tag-editor *, .column__item *) {
@@ -310,6 +325,10 @@
   color: $color_form_highlight;
   padding-left: $base_spacing_unit;
   padding-right: $base_spacing_unit;
+
+  &.button {
+    color: $color;
+  }
 
   &::after {
     position: absolute;

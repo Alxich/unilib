@@ -52,8 +52,8 @@ const WritterPost: FC<IWritterPostProps> = ({
 }: IWritterPostProps) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [filterText, setFilterText] = useState({
-    title: "Мій блог",
-    id: "123",
+    title: "",
+    id: "",
   });
   const [dateText, setDateText] = useState("");
   const [titleText, setTitleText] = useState("");
@@ -169,6 +169,18 @@ const WritterPost: FC<IWritterPostProps> = ({
   const { data: categories, loading: categoriesLoading } =
     useQuery<CategoriesData>(CategoriesOperations.Queries.queryCategories);
 
+  useEffect(() => {
+    if (!categoriesLoading && categories) {
+      const item = categories?.queryCategories[0];
+
+      item &&
+        setFilterText({
+          title: item.title,
+          id: item.id,
+        });
+    }
+  }, [categoriesLoading]);
+
   return categoriesLoading ? (
     <></>
   ) : (
@@ -198,48 +210,66 @@ const WritterPost: FC<IWritterPostProps> = ({
             </div>
             <div className="rt-side">
               <div
-                className="category"
-                onClick={() => setOpenFilter(openFilter ? false : true)}
+                className={classNames("category", {
+                  empty:
+                    categories?.queryCategories &&
+                    categories?.queryCategories.length <= 0,
+                })}
+                onClick={() =>
+                  categories?.queryCategories &&
+                  categories?.queryCategories.length > 0 &&
+                  setOpenFilter(openFilter ? false : true)
+                }
               >
-                <p>{filterText.title}</p>
-                <div className="changer open-more">
-                  <div className="fafont-icon interactive">
-                    <FontAwesomeIcon
-                      icon={faChevronDown}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        color: "inherit",
-                      }}
-                    />
-                  </div>
-                  <div
-                    className={classNames(
-                      "wrapper container flex-right width-auto",
-                      {
-                        active: openFilter,
-                      }
-                    )}
-                  >
-                    <div className="triangle"></div>
-                    <div className="list container flex-left width-auto">
-                      {categories?.queryCategories.map((item, i) => (
-                        <p
-                          key={`${item}___${i}`}
-                          onClick={() => {
-                            setFilterText({
-                              title: item.title,
-                              id: item.id,
-                            });
-                            setOpenFilter(false);
+                <p>
+                  {categories?.queryCategories &&
+                  categories?.queryCategories.length
+                    ? filterText.title
+                    : "Немає категорій - створіть нові"}
+                </p>
+                {categories?.queryCategories &&
+                  categories?.queryCategories.length > 0 && (
+                    <div className="changer open-more">
+                      <div className="fafont-icon interactive">
+                        <FontAwesomeIcon
+                          icon={faChevronDown}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            color: "inherit",
                           }}
-                        >
-                          GameDev
-                        </p>
-                      ))}
+                        />
+                      </div>
+                      <div
+                        className={classNames(
+                          "wrapper container flex-right width-auto",
+                          {
+                            active: openFilter,
+                          }
+                        )}
+                      >
+                        <div className="triangle"></div>
+                        <div className="list container flex-left width-auto">
+                          {categories?.queryCategories.map((item, i) => {
+                            return (
+                              <p
+                                key={`${item}___${i}`}
+                                onClick={() => {
+                                  setFilterText({
+                                    title: item.title,
+                                    id: item.id,
+                                  });
+                                  setOpenFilter(false);
+                                }}
+                              >
+                                {item.title}
+                              </p>
+                            );
+                          })}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  )}
               </div>
               <Button filled onClick={() => onCreatePost()}>
                 Опублікувати

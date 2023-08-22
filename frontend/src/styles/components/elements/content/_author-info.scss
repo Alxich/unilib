@@ -125,6 +125,10 @@
       p {
         font-weight: 400;
       }
+
+      .button {
+        min-width: 32px;
+      }
     }
 
     .disription {
@@ -251,7 +255,6 @@
           height: $p_font_size;
           max-width: 120px;
           margin-bottom: 0;
-   
 
           &:first-child {
             max-width: $p_font_size;
@@ -259,7 +262,7 @@
           }
         }
       }
-      
+
       .actions {
         .list-of-actions {
           span {
@@ -273,7 +276,101 @@
       .changer {
         height: $p_font_size;
         max-width: 40px;
-        
+      }
+    }
+  }
+
+  @media only screen and (min-width: 551px) {
+    & {
+      .info {
+        .name {
+          .subscribe {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 550px) {
+    & {
+      &.edit {
+        .name {
+          flex-direction: column;
+          align-items: flex-start
+        }
+      }
+
+      .edit {
+        & > .title {
+          margin-top: 0;
+        }
+      }
+
+      .banner {
+        height: 145px;
+      }
+
+      .info {
+        .name {
+          .button {
+            font-size: 0;
+            margin-left: 8px;
+
+            &.subscribe {
+              &.follows {
+                .fafont-icon {
+                  transform: rotate(-35deg);
+                }
+              }
+            }
+
+            &:nth-child(2) {
+              margin-left: auto;
+            }
+
+            .fafont-icon {
+              margin: 0;
+            }
+          }
+        }
+
+        .disription p {
+          font-size: $p_font_size_small;
+        }
+
+        .actions {
+          .list-of-actions {
+            .item {
+              padding: 0 8px 8px 8px;
+
+              &:not(:last-child) {
+                margin-right: 8px;
+              }
+
+              &.subscribe {
+                display: none;
+              }
+
+              p {
+                font-size: $p_font_size_small;
+              }
+            }
+          }
+
+          .filter {
+            .fafont-icon {
+              height: 14px;
+              width: 14px;
+            }
+
+            .wrapper .list {
+              p {
+                font-size: $p_font_size_small;
+              }
+            }
+          }
+        }
       }
     }
   }

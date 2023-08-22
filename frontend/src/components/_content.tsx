@@ -39,9 +39,13 @@ import {
 } from "../util/types";
 import { PostPopulated } from "../../../backend/src/util/types";
 
+import { useNotificationCenter } from "react-toastify/addons/use-notification-center";
+
 import { Postloading } from "./skeletons";
 
 import { AdminHeader } from "./admin";
+
+import { Mobilebar } from "./mobile";
 
 interface ContentProps {
   children: any;
@@ -52,10 +56,7 @@ type ContentContextValue = [
   Dispatch<SetStateAction<ContentViews>>
 ];
 
-export const ContentContext = createContext<ContentContextValue>([
-  "popular",
-  () => {},
-]);
+export const ContentContext = createContext<ContentContextValue>(["today", () => {}]);
 
 export const UserContext = createContext<
   [string[] | undefined, Dispatch<SetStateAction<string[] | undefined>>]
@@ -73,10 +74,19 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
   const [writterActive, setWritterActive] = useState(false);
   const [userSigned, setUserSigned] = useState(false);
   const [bagReportActive, setBagReportActive] = useState(false);
-  const [period, setPeriod] = useState<ContentViews>("popular");
+  const [period, setPeriod] = useState<ContentViews>("year");
   const [userSubscribed, setUserSubscribed] = useState<string[] | undefined>();
+  const [activeNotify, setActiveNotfiy] = useState(false);
+  const [activeUser, setActiveUser] = useState(false);
+
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const { data: session, status } = useSession();
+
+  // Getting all notifications from toastify
+
+  const { notifications, clear, markAsRead, unreadCount } =
+    useNotificationCenter();
 
   // Initialize Next.js router and check if the current route is related to messages
 
@@ -266,6 +276,14 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
               writterActive={writterActive}
               setWritterActive={setWritterActive}
               setSearchText={setSearchText}
+              activeNotify={activeNotify}
+              setActiveNotfiy={setActiveNotfiy}
+              activeUser={activeUser}
+              setActiveUser={setActiveUser}
+              notifications={notifications}
+              clear={clear}
+              markAsRead={markAsRead}
+              unreadCount={unreadCount}
             />
           )}
           <main
@@ -284,6 +302,8 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
                   setBannerActive={setBannerActive}
                   setBagReportActive={setBagReportActive}
                   loadingStatus={loadingStatus}
+                  showSidebar={showSidebar}
+                  setShowSidebar={setShowSidebar}
                 />
               )}
               <div
@@ -339,6 +359,17 @@ const Content: FC<ContentProps> = ({ children }: ContentProps) => {
               )}
             </div>
           </main>
+          {!isAdminRoute && (
+            <Mobilebar
+              showSidebar={showSidebar}
+              setShowSidebar={setShowSidebar}
+              writterActive={writterActive}
+              setWritterActive={setWritterActive}
+              activeNotify={activeNotify}
+              setActiveNotfiy={setActiveNotfiy}
+              unreadCount={unreadCount}
+            />
+          )}
         </>
       )}
       <Banner

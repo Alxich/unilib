@@ -20,4 +20,14 @@
   .container {
     @import "./message-item";
   }
+
+  @media only screen and (min-width: 600px) and (max-width: 1000px) {
+    & {
+      .header {
+        h5 {
+          font-size: $h5_font_size - 0.125;
+        }
+      }
+    }
+  }
 }

@@ -2,8 +2,7 @@
   display: block;
   width: 100%;
   padding-bottom: 10%;
-
-  margin-top: auto;
+  margin-top: 3.5vw;
 
   div {
     width: 100%;
@@ -20,8 +19,10 @@
       }
 
       button {
+        white-space: nowrap;
         width: 20%;
         margin-left: 15px;
+        margin-bottom: 0;
       }
     }
   }
@@ -68,9 +69,13 @@
         &:after {
           position: absolute;
           content: " ";
+          background-color: $background;
           height: 8px;
           width: 2px;
-          background-color: $background;
+          left: 45%;
+          right: 50%;
+          top: 25%;
+          bottom: 50%;
         }
 
         &:before {
@@ -104,6 +109,30 @@
 
     &:not(:last-child) {
       margin-right: 6px;
+    }
+  }
+
+  @media only screen and (max-width: 600px) {
+    & {
+      div {
+        &.add-tag {
+          button {
+            width: 25%;
+          }
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 360px) {
+    & {
+      div {
+        &.add-tag {
+          button {
+            width: 30%;
+          }
+        }
+      }
     }
   }
 }

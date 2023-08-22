@@ -28,7 +28,17 @@
     margin-bottom: $post_inn_pad;
   }
 
-  &:not(.loading-component) .item { .main-content {.user-author { .author {.user-icon { background: $color;}}}}}
+  &:not(.loading-component) .item {
+    .main-content {
+      .user-author {
+        .author {
+          .user-icon {
+            background: $color;
+          }
+        }
+      }
+    }
+  }
 
   .item {
     background: $elem_over_bg;
@@ -46,14 +56,14 @@
       }
     }
 
-    & > div:not(:last-child) {
+    & > div:not(:last-child, .main-content) {
       margin-bottom: $post_inn_pad;
     }
 
     .main-content {
       position: relative;
 
-      & > div:not(:last-child),
+      & > div:not(:last-child, .main-content),
       & > a:not(:last-child),
       & > form:not(:last-child) {
         margin-bottom: $comm_item_pad;
@@ -250,11 +260,11 @@
       .item {
         margin-bottom: 0;
 
-        // .main-content {
-        //   margin-bottom: 0;
-        // }
+        &:first-child {
+          margin-top: $comm_item_pad;
+        }
 
-        &:not(:last-child) {
+        &:not(:last-child, .main-content) {
           padding-bottom: $notif_item_mrg;
           margin-bottom: 20px;
         }
@@ -311,6 +321,41 @@
       .content {
         height: $p_font_size * 3.5;
         margin-bottom: $comm_item_pad;
+      }
+    }
+  }
+
+  @media only screen and (max-width: 800px) {
+    & {
+      .item {
+        .main-content {
+          padding: 0;
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 600px) {
+    & {
+      .item {
+        .main-content {
+          .interactions {
+            flex-direction: column-reverse;
+
+            .lt-side, .rt-side {
+              justify-content: space-between;
+              width: 100%;
+
+              .complain {
+                display: none;
+              }
+            }
+
+            .rt-side {
+              margin-bottom: 10px;
+            }
+          }
+        }
       }
     }
   }

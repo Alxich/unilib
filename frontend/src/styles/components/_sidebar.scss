@@ -2,6 +2,7 @@
   position: sticky;
   top: $header_height + $content_top_pad;
   max-width: $sdbar_width;
+  min-width: $sdbar_width;
   height: calc(100vh - $header_height);
   padding: $sdbar_inner_gap;
   overflow-y: auto;
@@ -132,6 +133,28 @@
       .changer .wrapper .list p,
       .changer .wrapper .list a {
         margin-left: 0;
+      }
+    }
+  }
+
+  @media only screen and (max-width: 1023px) {
+    & {
+      margin-right: 0;
+    }
+  }
+
+  @media only screen and (max-width: 800px) {
+    & {
+      position: fixed;
+      background-color: $overhigh_bg;
+      top: $header_height;
+      z-index: 1;
+      left: 0;
+      transition: $transition_normal;
+      padding-bottom: 80px;
+
+      &:not(.active) {
+        left: -300px;
       }
     }
   }

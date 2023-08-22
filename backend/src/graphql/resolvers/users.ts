@@ -423,10 +423,9 @@ const resolvers = {
     },
 
     /**
- * Follow a user.
- * This function allows an authenticated user to follow another user.
-
- */
+     * Follow a user.
+     * This function allows an authenticated user to follow another user.
+     */
     followUser: async function name(
       _: any,
       args: { followerId: string; followingId: string },
@@ -438,6 +437,10 @@ const resolvers = {
       // Check if the user is authorized
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
+      }
+
+      if (!followerId || !followingId) {
+        throw new GraphQLError("Not provided with enough data");
       }
 
       // Create the follow relationship
@@ -470,12 +473,16 @@ const resolvers = {
         };
       }
 
+      if (!followerId || !followingId) {
+        throw new GraphQLError("Not provided with enough data");
+      }
+
       // Delete the follow relationship
       const follow = await prisma.follows.delete({
         where: {
           followerId_followingId: {
-            followerId: followerId,
-            followingId: followingId,
+            followerId,
+            followingId,
           },
         },
       });

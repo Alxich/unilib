@@ -58,11 +58,12 @@ const Home: NextPage = () => {
       const newData = await fetchMore({
         variables: {
           period:
-            period !== "popular" && period === "follow" ? "follow" : period,
+            period !== "popular" && period !== "follow" ? period : "follow",
           popular: period === "popular",
-          ...(userSubscribed && {
-            subscribedCategories: userSubscribed,
-          }),
+          ...(period === "follow" &&
+            userSubscribed && {
+              subscribedCategories: userSubscribed,
+            }),
           skip: 0,
           take: 3,
         },
@@ -87,11 +88,16 @@ const Home: NextPage = () => {
       const newPosts = await fetchMore({
         variables: {
           period:
-            period !== "popular" && period === "follow" ? "follow" : period,
-          popular: period === "popular",
-          ...(userSubscribed && {
-            subscribedCategories: userSubscribed,
-          }),
+            period !== "popular"
+              ? period === "follow"
+                ? "follow"
+                : period
+              : "today",
+          popular: period === "popular", // Set the 'popular' variable based on the selected period
+          ...(period === "follow" &&
+            userSubscribed && {
+              subscribedCategories: userSubscribed,
+            }),
           skip: posts.length, // Skip the number of existing posts
           take: 1, // Fetch one more post
         },

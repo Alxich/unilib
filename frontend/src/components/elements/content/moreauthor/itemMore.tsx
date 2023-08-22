@@ -100,7 +100,6 @@ const ItemMore: FC<ItemProps> = ({
   /**
    * Function to handle subscription/unsubscriptio
    */
-
   const onSubscribe = async (type: boolean, elementId: string) => {
     if (itemType !== true) {
       /**

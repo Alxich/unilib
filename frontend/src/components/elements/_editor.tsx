@@ -47,7 +47,7 @@ const EditorBlock: FC<EditorProps> = ({
       setOpenImagePop(false); // Close the image popup after adding the image
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editor]);
+  }, [editor, imagePopText]);
 
   if (!editor) {
     return null;
@@ -199,13 +199,15 @@ const EditorBlock: FC<EditorProps> = ({
           <input
             placeholder="Веддіть URL-посилання"
             value={imagePopText}
-            onChange={(e) => setImagePopText(e.target.value)}
+            onChange={(e) => {
+              setImagePopText(e.target.value);
+            }}
           />
           <Button
             outline
             filled
             disabled={imagePopText.length > 0 ? false : true}
-            onClick={addImage}
+            onClick={() => addImage()}
           >
             Підвердити
           </Button>

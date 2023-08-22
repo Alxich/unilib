@@ -1,0 +1,28 @@
+$mobilebar_height: 50px;
+
+#mobile-bar {
+  position: fixed;
+  background-color: $overhigh_bg;
+  height: $mobilebar_height;
+  width: 100%;
+  bottom: 0;
+  z-index: 999;
+  padding: $content_pad;
+  border-top: 2px solid $active_elem;
+
+  .header-btn {
+    position: relative;
+    background-color: $elem_over_bg;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: $reg_radius;
+    height: $mobilebar_height - 15px;
+    width: $mobilebar_height - 15px;
+    padding: 8px;
+  }
+
+  @media only screen and (min-width: 801px) {
+    display: none;
+  }
+}

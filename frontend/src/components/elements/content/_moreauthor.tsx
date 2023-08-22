@@ -17,6 +17,8 @@ import {
 
 import { ItemMore } from "./moreauthor";
 
+import { AuthorInfoMoreLoading } from "../../skeletons";
+
 interface MoreAuthorProps {
   id: string;
   session: Session;
@@ -95,7 +97,10 @@ const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
   }, [currentUserLoading, currentUser, id, session]);
 
   return loading ? (
-    <div>Loading</div>
+    <div id="author-more" className="container">
+      <AuthorInfoMoreLoading />
+      <AuthorInfoMoreLoading />
+    </div>
   ) : (
     <div id="author-more" className="container">
       {itemInfo.map((item, i) => {
@@ -104,7 +109,9 @@ const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
               <div className="info-item post-wrapper" key={`${item}__${i}`}>
                 <div className="title">
                   <h3>{item != 2 ? "Стежує" : "Стежувачі"}</h3>
-                  <p className="count">72</p>
+                  <p className="count">
+                    {categories.queryCategoriesByUser.length}
+                  </p>
                 </div>
                 <div className="list container flex-row flex-stretch flex-wrap flex-space full-width">
                   {categories.queryCategoriesByUser.map(
@@ -130,7 +137,7 @@ const MoreAuthor: FC<MoreAuthorProps> = ({ id, session }: MoreAuthorProps) => {
               <div className="info-item post-wrapper" key={`${item}__${i}`}>
                 <div className="title">
                   <h3>{item != 2 ? "Стежує" : "Стежувачі"}</h3>
-                  <p className="count">72</p>
+                  <p className="count">{users.length}</p>
                 </div>
                 <div className="list container flex-row flex-stretch flex-wrap flex-space full-width">
                   {users.map((item: Followers, i: number) => (

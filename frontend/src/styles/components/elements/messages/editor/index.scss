@@ -33,13 +33,20 @@
   }
 
   .user-list {
+    flex-wrap: wrap;
+
     .item {
       width: auto;
       margin-right: 12px;
       margin-left: 0;
 
+      .user-icon {
+        display: none;
+      }
+
       .container p {
         margin-right: 12px;
+        word-break: break-all;
       }
     }
   }
@@ -49,9 +56,9 @@
     padding-top: 12px;
 
     .item {
-        width: auto;
-        margin-right: 12px;
-        margin-left: 0;
+      width: auto;
+      margin-right: 12px;
+      margin-left: 0;
     }
 
     .title {
@@ -71,14 +78,31 @@
     align-items: flex-start;
 
     .title {
-        width: 100%;
-        margin-bottom: 12px;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .item {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+  }
+
+  @media only screen and (max-width: 1020px) {
+    & {
+      form {
+        button {
+          padding-right: 20px;
+          padding-left: 20px;
+        }
       }
 
-      .item {
-        width: 100%;
-        margin-bottom: 12px;
+      .user-list {
+        .item {
+          width: 100%;
+          margin-right: 0;
+        }
       }
-  
+    }
   }
 }

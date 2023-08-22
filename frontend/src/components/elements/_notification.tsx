@@ -95,7 +95,7 @@ const Notification: FC<NotificationProps> = ({
                 read?: boolean;
               } = item;
 
-              return link ? (
+              return title && link ? (
                 <Link
                   href={link}
                   className="item container flex-left flex-row"
@@ -136,63 +136,61 @@ const Notification: FC<NotificationProps> = ({
                   </div>
                 </Link>
               ) : (
-                <div
-                  className={classNames("item container flex-left flex-row", {
-                    unread: !read,
-                  })}
-                  key={`${item}__${i}`}
-                  onClick={() => {
-                    type === "signOut" && signOut();
-                    type !== "signOut" && id && markAsRead && markAsRead(id);
-                  }}
-                >
-                  {type != "complain" &&
-                    type != "user" &&
-                    type !== "signOut" && (
-                      <div
-                        className={classNames("user-ico", {
-                          success: type == "success",
-                          error: type == "error",
-                        })}
-                      />
-                    )}
+                content && (
                   <div
-                    className={classNames("content container", {
-                      "flex-row": type === "user" || type === "signOut",
-                      "full-width": type !== "user",
+                    className={classNames("item container flex-left flex-row", {
+                      unread: !read,
                     })}
+                    key={`${item}__${i}`}
+                    onClick={() => {
+                      type === "signOut" && signOut();
+                      type !== "signOut" && id && markAsRead && markAsRead(id);
+                    }}
                   >
-                    {icon && (
-                      <div className="fafont-icon interactive">
-                        <FontAwesomeIcon
-                          icon={icon}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            color: "inherit",
-                          }}
+                    {type != "complain" &&
+                      type != "user" &&
+                      type !== "signOut" && (
+                        <div
+                          className={classNames("user-ico", {
+                            success: type == "success",
+                            error: type == "error",
+                          })}
                         />
-                      </div>
-                    )}
-                    {type !== "user" && type !== "signOut" && (
-                      <div className="title">
-                        <p>
-                          {type !== "signOut"
-                            ? `Notafication about ${type}`
-                            : title}
-                        </p>
-                      </div>
-                    )}
+                      )}
+                    <div
+                      className={classNames("content container", {
+                        "flex-row": type === "user" || type === "signOut",
+                        "full-width": type !== "user",
+                      })}
+                    >
+                      {icon && (
+                        <div className="fafont-icon interactive">
+                          <FontAwesomeIcon
+                            icon={icon}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              color: "inherit",
+                            }}
+                          />
+                        </div>
+                      )}
+                      {type !== "user" && type !== "signOut" && (
+                        <div className="title">
+                          <p>
+                            {type !== "signOut"
+                              ? `Notafication about ${type}`
+                              : title}
+                          </p>
+                        </div>
+                      )}
 
-                    <div className="text">
-                      <p>
-                        {type === "user" || type === "signOut"
-                          ? title
-                          : content}
-                      </p>
+                      <div className="text">
+                        <p>{content}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )
               );
             })
           ) : (

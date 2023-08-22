@@ -28,6 +28,7 @@
 
     .author-thread {
       .icon {
+        background-color: $color;
         border-radius: 50%;
         height: $reels_user_logo;
         width: $reels_user_logo;
@@ -106,6 +107,12 @@
       .text-block {
         height: $p_font_size * 3;
       }
+    }
+  }
+
+  @media only screen and (max-width: 1023px) {
+    & {
+      display: none;
     }
   }
 }

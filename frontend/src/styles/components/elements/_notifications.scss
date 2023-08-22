@@ -43,7 +43,7 @@
       .main {
         .item {
           &:hover .content .fafont-icon {
-            color: $active_elem
+            color: $active_elem;
           }
 
           .content {
@@ -92,6 +92,8 @@
         margin: 0;
 
         .item {
+          cursor: pointer;
+
           p {
             font-size: $p_font_size_small;
             line-height: 1.2;
@@ -146,7 +148,7 @@
           &.error {
             background: $error;
           }
-          
+
           &.success {
             background: $active_elem;
           }

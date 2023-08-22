@@ -70,4 +70,119 @@
       }
     }
   }
+
+  @media only screen and (max-width: 950px) {
+    & {
+      .interagtions {
+        &.writter-active {
+          .search {
+            max-width: calc(100% - 12vw);
+          }
+
+          .button {
+            margin: 0 -12vw 0 0;
+          }
+        }
+
+        .button {
+          margin: 0 0 0 40px;
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 950px) {
+    & {
+      .user-action {
+        .user-icon {
+          margin-left: 2vw;
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 800px) {
+    & {
+      .interagtions {
+        .search {
+          max-width: calc(100% - 12vw);
+        }
+
+        .button {
+          display: none;
+        }
+      }
+
+      .user-action {
+        & > .interactive:nth-child(1) {
+          cursor: auto;
+          width: 0;
+
+          svg {
+            display: none;
+          }
+
+          .notification {
+            position: fixed;
+            justify-content: flex-start;
+            top: $header_height;
+            right: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+
+            .wrapper-content {
+              height: 100%;
+
+              .main {
+                height: 100%;
+                overflow: auto;
+              }
+            }
+
+            .triangle {
+              display: none;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 600px) {
+    & {
+      .logo {
+        span {
+          display: none;
+        }
+      }
+
+      .interagtions {
+        padding-left: 2vw;
+
+        .search {
+          max-width: 100%;
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 420px) {
+    & {
+      .user-action {
+        .user-icon {
+          height: 36px;
+          width: 36px;
+          min-width: 36px;
+        }
+      }
+
+      .interagtions {
+        .search > input {
+          height: 36px;
+          padding: 0 10px;
+        }
+      }
+    }
+  }
 }

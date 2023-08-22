@@ -49,7 +49,7 @@ const CommentItem: FC<CommentItemProps> = ({
   const [commentData, setCommentData] =
     useState<CommentPopulated>(commentsData);
 
-  const { id, author, likes, text, createdAt, isDeleted, replies } =
+  const { id, author, likes, dislikes, text, createdAt, isDeleted, replies } =
     commentData;
 
   const [comments, setComments] = useState<
@@ -345,19 +345,6 @@ const CommentItem: FC<CommentItemProps> = ({
                     }}
                   />
                 </div>
-              </div>
-            )}
-            {session && author?.id !== session.user.id && (
-              <div
-                className="complain"
-                onClick={() => setActiveElem(activeElem ? false : true)}
-              >
-                <p>Поскаржитися</p>
-                <Notification
-                  items={complainItems}
-                  type={"complain"}
-                  activeElem={activeElem}
-                />
               </div>
             )}
             {isUser !== true && comments != undefined && comments && (

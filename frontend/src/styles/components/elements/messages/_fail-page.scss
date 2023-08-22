@@ -1,23 +1,32 @@
 #fail-page {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-    height: 70vh;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  height: 70vh;
 
-    .image {
-        height: 200;
-        width: 240px;
+  .image {
+    height: 200px;
+    width: 240px;
+  }
+
+  .text-block {
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+
+    p {
+      font-size: $p_font_size_small;
+      color: $border_action;
     }
+  }
 
-    .text-block  {
-        max-width: 320px;
-        width: 100%;
-        text-align: center;
-
-        p {
-            font-size: $p_font_size_small;
-            color: $border_action;
-        }
+  @media only screen and (max-width: 800px) {
+    & {
+      .image {
+        height: 180px;
+        width: 160px;
+      }
     }
+  }
 }

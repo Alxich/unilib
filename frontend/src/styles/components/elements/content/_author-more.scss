@@ -28,19 +28,23 @@
         justify-content: flex-start;
         flex-direction: row;
         align-items: center;
-        border-bottom: $list_item_border  $light_border;
+        border-bottom: $list_item_border $light_border;
         height: $list_item_height;
         width: calc(50% - $list_items_gap_btw);
         padding-bottom: 5px;
         margin-bottom: $post_item_gap;
 
         .icon {
-          background: $color;
           border-radius: 50%;
           height: $user_icon_small;
           width: $user_icon_small;
+          min-width: $user_icon_small;
           margin-right: $list_add_info_gap;
           overflow: hidden;
+
+          img {
+            object-fit: cover;
+          }
         }
 
         .name {
@@ -71,6 +75,59 @@
 
         &:hover {
           color: $active_elem;
+        }
+      }
+    }
+
+    &:not(.loading-component) {
+      .item {
+        .icon {
+          background: $color;
+        }
+      }
+    }
+
+    &.loading-component {
+      .title {
+        justify-content: flex-start;
+        width: 100%;
+
+        span {
+          height: $h4_font_size;
+          max-width: $h4_font_size;
+
+          &:not(.count) {
+            max-width: 220px;
+          }
+        }
+      }
+
+      .actions {
+        span {
+          height: $p_font_size;
+          max-width: 120px;
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 550px) {
+    & {
+      .info-item {
+        .list {
+          padding-right: 0;
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 450px) {
+    & {
+      .info-item {
+        .list {
+          .item {
+            width: 100%;
+          }
         }
       }
     }

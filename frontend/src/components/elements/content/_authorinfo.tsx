@@ -4,7 +4,7 @@ import classNames from "classnames";
 import Image from "next/image";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAlignCenter } from "@fortawesome/free-solid-svg-icons";
+import { faAlignCenter, faThumbTack } from "@fortawesome/free-solid-svg-icons";
 
 import { Session } from "next-auth";
 import { useMutation, useQuery } from "@apollo/client";
@@ -32,6 +32,7 @@ import { AuthorinfoEdit, AuthorinfoWrite } from "./authorinfo";
 
 import background from "../../../../public/images/background.png";
 import { AuthorInfoLoading } from "../../skeletons";
+import Button from "../_button";
 
 interface AuthorInfoProps {
   type: "group" | "tag" | "author";
@@ -415,6 +416,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
       id="author-info"
       className={classNames("container", {
         tag: type === "tag",
+        edit: auhtorEdit,
       })}
     >
       {type !== "tag" && blockContent && (
@@ -452,14 +454,52 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
               ? blockContent.username
               : "Нова категорія"}
           </h2>
-
+          {!currentUser && type !== "author" && (
+            <Button
+              className={
+                userSubscribed === true ? "subscribe follows" : "subscribe"
+              }
+              filled
+              small
+              writeAuthor
+              iconIncluded
+              iconName={faThumbTack}
+              onClick={() => {
+                userSubscribed === true
+                  ? onSubscribeCategory(false)
+                  : onSubscribeCategory(true);
+              }}
+            >
+              {userSubscribed === true ? "Відписатися" : "Відстежувати"}
+            </Button>
+          )}
+          {currentUser?.searchUser.id !== session?.user.id &&
+            type === "author" &&
+            session && (
+              <Button
+                className={
+                  userSubscribed === true ? "subscribe follows" : "subscribe"
+                }
+                filled
+                small
+                writeAuthor
+                iconIncluded
+                iconName={faThumbTack}
+                onClick={() => {
+                  userSubscribed === true
+                    ? onFollowUser(false)
+                    : onFollowUser(true);
+                }}
+              >
+                {userSubscribed != true ? "Відстежувати" : "Відписатися"}
+              </Button>
+            )}
           {type === "author" &&
             blockContent &&
             session?.user &&
             blockContent.id !== session.user.id && (
               <AuthorinfoWrite blockContent={blockContent} session={session} />
             )}
-
           {auhtorEdit && blockContent?.createdAt && (
             <p>Разом з нами від {formatTimeToPost(blockContent.createdAt)}</p>
           )}
@@ -553,7 +593,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
               </div>
               {!currentUser && type !== "author" && (
                 <div
-                  className="item"
+                  className="item subscribe"
                   onClick={() => {
                     userSubscribed === true
                       ? onSubscribeCategory(false)
@@ -569,7 +609,7 @@ const AuthorInfo: FC<AuthorInfoProps> = ({
                 type === "author" &&
                 session && (
                   <div
-                    className="item"
+                    className="item subscribe"
                     onClick={() => {
                       userSubscribed != true
                         ? onFollowUser(true)

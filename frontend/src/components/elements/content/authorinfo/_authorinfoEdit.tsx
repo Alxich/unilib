@@ -199,23 +199,6 @@ const AuthorinfoEdit: FC<AuthorinfoEditProps> = ({
             onChange={(e) => setBanner(e.target.value)}
           />
         </div>
-        <div className="item">
-          <div className="title">
-            <p>Змінити пороль користувача</p>
-          </div>
-          <div>
-            <input
-              placeholder={"Please write your current password"}
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-            />
-            <input
-              placeholder={"Write your new password"}
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-          </div>
-        </div>
         <div className="item update">
           <div className="title">
             <p>Оновити ваші нові дані користувача</p>

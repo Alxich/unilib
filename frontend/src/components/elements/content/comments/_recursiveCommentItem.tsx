@@ -388,17 +388,6 @@ const RecursiveCommentItem: FC<RecursiveCommentItemProps> = ({
                 />
               </div>
             </div>
-            <div
-              className="complain"
-              onClick={() => setActiveElem(activeElem ? false : true)}
-            >
-              <p>Поскаржитися</p>
-              <Notification
-                items={complainItems}
-                type={"complain"}
-                activeElem={activeElem}
-              />
-            </div>
             {comments != undefined && comments && (
               <div
                 className="answer-count"

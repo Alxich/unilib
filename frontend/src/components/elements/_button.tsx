@@ -35,17 +35,19 @@ const Button: FC<buttonProps> = ({
   disabled,
   children,
 }: buttonProps) => {
+
+  const startClassNames = className ? className + " button" : "button";
+
   return (
     <button
       onClick={onClick}
-      className={classNames("button", {
+      className={classNames(startClassNames, {
         "awesome-icon": iconIncluded,
         filled: filled,
         outline: outline,
         small: small,
         big: big,
         "write-author": writeAuthor,
-        className,
         form: form,
         loading: loading,
         disabled: disabled,
@@ -53,7 +55,10 @@ const Button: FC<buttonProps> = ({
       })}
     >
       {loading ? (
-        <div className="loading-circle"></div>
+        <>
+          <div className="loading-circle"></div>
+          {children}
+        </>
       ) : iconIncluded ? (
         <>
           <div className="fafont-icon">

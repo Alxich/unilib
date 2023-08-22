@@ -13,21 +13,31 @@ import {
   faIdBadge,
   faGears,
   faRightFromBracket,
+  faScrewdriver,
+  faEnvelopeOpen,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { Button, Notification } from "./elements";
 import UserIcon from "../../public/images/user-icon.png";
 import { useEscapeClose } from "../util/functions/useEscapeClose";
 import { useScrollToTop } from "../util/functions/useScrollToTop";
-
-import { useNotificationCenter } from "react-toastify/addons/use-notification-center";
-
 interface HeaderProps {
   session: Session | null;
   setBannerActive: any;
   writterActive: boolean;
   setWritterActive: any;
   setSearchText: Dispatch<SetStateAction<string | undefined>>;
+  activeNotify: boolean;
+  setActiveNotfiy: Dispatch<SetStateAction<boolean>>;
+  activeUser: boolean;
+  setActiveUser: Dispatch<SetStateAction<boolean>>;
+  notifications: any[];
+  clear: () => void;
+  markAsRead: {
+    (id: string | string[]): void;
+    (id: string | string[], read?: boolean | undefined): void;
+  };
+  unreadCount: number;
 }
 
 const Header: FC<HeaderProps> = ({
@@ -36,10 +46,15 @@ const Header: FC<HeaderProps> = ({
   writterActive,
   setWritterActive,
   setSearchText,
+  activeNotify,
+  setActiveNotfiy,
+  activeUser,
+  setActiveUser,
+  notifications,
+  clear,
+  markAsRead,
+  unreadCount,
 }: HeaderProps) => {
-  const [activeNotify, setActiveNotfiy] = useState(false);
-  const [activeUser, setActiveUser] = useState(false);
-
   // Using useScrollToTop to allow scroll on click
 
   const { scrollToTop } = useScrollToTop();
@@ -58,9 +73,6 @@ const Header: FC<HeaderProps> = ({
     setActiveElem: setActiveUser,
   });
 
-  const { notifications, clear, markAsRead, unreadCount } =
-    useNotificationCenter();
-
   const userItems = [
     {
       title: "Мій аккаунт",
@@ -68,12 +80,26 @@ const Header: FC<HeaderProps> = ({
       icon: faIdBadge,
     },
     {
+      title: "Мої повідомлення",
+      link: `/messages/all`,
+      icon: faEnvelopeOpen,
+    },
+    {
       title: "Настройки аккаунту",
       link: `/author/${session?.user.id}/edit`,
       icon: faGears,
     },
+
     {
-      title: "Вийти з аккаунту",
+      ...(session?.user.isAdmin && {
+        title: "Адміністрація сайту",
+        link: `/admin`,
+        icon: faScrewdriver,
+      }),
+    },
+
+    {
+      content: "Вийти з аккаунту",
       type: "signOut",
       icon: faRightFromBracket,
     },

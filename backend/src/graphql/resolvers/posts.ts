@@ -39,6 +39,24 @@ const resolvers = {
           return [];
         }
 
+        console.log({
+          orderBy: popular !== true ? { createdAt: "asc" } : { views: "desc" },
+          ...(popular !== true &&
+            period && {
+              where: {
+                createdAt: { gte: startDate, lt: endDate },
+                ...(subscribedCategories &&
+                  subscribedCategories?.length > 0 && {
+                    category: {
+                      id: {
+                        in: subscribedCategories,
+                      },
+                    },
+                  }),
+              },
+            }),
+        });
+
         // Construct the query based on the provided arguments
         const posts = await prisma.post.findMany({
           include: postPopulated,

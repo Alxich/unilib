@@ -150,7 +150,7 @@
     }
 
     .user-login-other {
-      display: flex;
+      display: none; // flex
       justify-content: center;
       flex-direction: row;
       align-items: center;
@@ -171,6 +171,20 @@
 
         p {
           color: $active_elem;
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 600px) {
+    & {
+      .wrapper {
+        min-height: auto;
+        margin: 0 20px;
+        padding: 20px;
+
+        .user-login-other {
+          flex-direction: column;
         }
       }
     }

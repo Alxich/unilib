@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import { faThumbsDown, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 
 import { formatTimeToPost } from "../../../util/functions";
 import { PostData, SubscribeCategoryArguments } from "../../../util/types";
@@ -305,7 +305,9 @@ const PostPage: FC<PostPageProps> = ({ data, session, postCommentsCount }) => {
               <p>{likes != null ? likes : 0}</p>
             </div>
           </div>
-          {/* <div className="dislikes">
+        </div>
+        <div className="rt-side">
+          <div className="dislikes">
             <div
               className="fafont-icon dislike"
               onClick={() => onPostInteraction(false)}
@@ -318,11 +320,6 @@ const PostPage: FC<PostPageProps> = ({ data, session, postCommentsCount }) => {
             <div className="counter">
               <p>{dislikes != null ? dislikes : 0}</p>
             </div>
-          </div> */}
-        </div>
-        <div className="rt-side">
-          <div className="complain item interactive">
-            <p>Поскаржитися</p>
           </div>
         </div>
       </div>

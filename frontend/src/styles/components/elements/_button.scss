@@ -63,7 +63,7 @@
   }
 
   .loading-circle {
-    position: absolute;
+    position: relative;
     background-image: url('data:image/svg+xml,\
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 40 40">\
 <style> circle { animation: 4s a infinite linear, 3s o infinite linear; }\
@@ -77,9 +77,13 @@
     display: block;
     height: 25px;
     width: 25px;
-    top: 50%;
-    left: 50%;
     opacity: 0.45;
-    transform: translate(-50%, -50%);
+  }
+
+  @media only screen and (max-width: 425px) {
+    & {
+      min-height: 32px;
+      font-size: $p_font_size_small;
+    }
   }
 }
