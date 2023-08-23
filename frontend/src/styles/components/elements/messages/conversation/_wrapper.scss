@@ -53,7 +53,7 @@
     }
 
     p {
-      font-size: $p_font_size_small;
+      @include font_size_type($loader: false, $type: "p_small");
       font-weight: 400;
 
       &:first-child {
@@ -80,13 +80,12 @@
       width: 100%;
 
       .text {
-          height: $p_font_size *1.75;
-        
+        @include font_size_type($loader: true, $type: "p", $multitaper: 1.75);
       }
 
       .time {
         max-width: 35px;
-        height: $p_font_size_small;
+        @include font_size_type($loader: true, $type: "p_small");
         margin-left: auto;
         margin-top: 8px;
       }

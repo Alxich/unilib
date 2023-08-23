@@ -55,7 +55,8 @@
       margin-bottom: $banner_logo_mrg;
 
       p {
-        @include logo($font_size: $h1_font_size);
+        @include logo();
+        @include font_size_type($loader: false, $type: "h1");
       }
     }
 
@@ -157,7 +158,7 @@
       margin-top: $banner_log_items_gap;
 
       & > div > * {
-        font-size: $h5_font_size;
+        @include font_size_type($loader: false, $type: "h5");
         font-weight: 500;
         margin: 0;
       }

@@ -77,7 +77,7 @@
         cursor: pointer;
 
         .name {
-          font-size: $p_font_size_small;
+          @include font_size_type($loader: false, $type: "p_small");
           font-weight: 300;
         }
       }
@@ -148,7 +148,7 @@
     }
 
     p {
-      font-size: $p_font_size_small;
+      @include font_size_type($loader: false, $type: "p_small");
       margin: 0;
     }
 
@@ -261,7 +261,7 @@
     }
 
     .title {
-      height: $h2_font_size;
+      @include font_size_type($loader: true, $type: "h2");
       max-width: 320px;
     }
 

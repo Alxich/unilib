@@ -19,7 +19,7 @@
       margin-left: $post_add_info_gap;
 
       p {
-        font-size: $p_font_size;
+        @include font_size_type($loader: false, $type: "p");
       }
     }
   }
@@ -119,7 +119,7 @@
 
             .time {
               p {
-                font-size: $p_font_size_small;
+                @include font_size_type($loader: false, $type: "p_small");
                 font-weight: 300;
               }
             }
@@ -279,7 +279,7 @@
   &.loading-component {
     .title {
       span {
-        height: $h3_font_size * 1.5;
+        @include font_size_type($loader: true, $type: "h3", $multitaper: 1.5);
         max-width: 250px;
       }
     }
@@ -304,14 +304,14 @@
               margin-bottom: 4px;
 
               span {
-                height: $p_font_size;
+                @include font_size_type($loader: true, $type: "p");
               }
             }
 
             .time {
               max-width: 60px;
               span {
-                height: $p_font_size_small;
+                @include font_size_type($loader: true, $type: "p_small");
               }
             }
           }
@@ -319,7 +319,7 @@
       }
 
       .content {
-        height: $p_font_size * 3.5;
+        @include font_size_type($loader: true, $type: "p", $multitaper: 3.5);
         margin-bottom: $comm_item_pad;
       }
     }
@@ -342,7 +342,8 @@
           .interactions {
             flex-direction: column-reverse;
 
-            .lt-side, .rt-side {
+            .lt-side,
+            .rt-side {
               justify-content: space-between;
               width: 100%;
 

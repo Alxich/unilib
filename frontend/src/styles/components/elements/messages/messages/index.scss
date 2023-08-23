@@ -25,7 +25,7 @@
     & {
       .header {
         h5 {
-          font-size: $h5_font_size - 0.125;
+          @include font_size_type($loader: false, $type: "h5", $minus: 0.125);
         }
       }
     }

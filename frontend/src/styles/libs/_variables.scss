@@ -12,6 +12,37 @@
 
 // Set default values for each title tag and <p/>
 
+@mixin font_size_type($loader: false, $type: "h1", $multitaper: 1, $minus: 0) {
+  @if $loader == true {
+    $font_sizes: (
+      "h1": 2.667rem,
+      "h2": 1.467rem,
+      "h3": 1.333rem,
+      "h4": 1.275rem,
+      "h5": 1.225rem,
+      "h6": 0.8rem,
+      "p": 1rem,
+      "p_small": 0.8rem,
+    );
+
+    height: map-get($font_sizes, $type) * $multitaper - $minus;
+  }
+  @if $loader == false {
+    $font_sizes: (
+      "h1": 2.667rem,
+      "h2": 1.467rem,
+      "h3": 1.333rem,
+      "h4": 1.275rem,
+      "h5": 1.225rem,
+      "h6": 0.8rem,
+      "p": 1rem,
+      "p_small": 0.8rem,
+    );
+
+    font-size: map-get($font_sizes, $type);
+  }
+}
+
 $h1_font_size: 2.667rem !default;
 $h2_font_size: 1.467rem !default;
 $h3_font_size: 1.333rem !default;

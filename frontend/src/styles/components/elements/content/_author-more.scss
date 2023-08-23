@@ -93,7 +93,7 @@
         width: 100%;
 
         span {
-          height: $h4_font_size;
+          @include font_size_type($loader: true, $type: "h4");
           max-width: $h4_font_size;
 
           &:not(.count) {
@@ -104,7 +104,7 @@
 
       .actions {
         span {
-          height: $p_font_size;
+          @include font_size_type($loader: true, $type: "p");
           max-width: 120px;
         }
       }

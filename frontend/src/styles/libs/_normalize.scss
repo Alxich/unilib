@@ -208,12 +208,12 @@ a {
 
 @if $normalize_headings == true {
   h1 {
-    font-size: $h1_font_size;
+    @include font_size_type($loader: false, $type: "h1");
     margin: $h1_margin;
   }
 
   h2 {
-    font-size: $h2_font_size;
+    @include font_size_type($loader: false, $type: "h2");
     margin: $h2_margin;
   }
 
@@ -228,7 +228,7 @@ a {
   }
 
   h5 {
-    font-size: $h5_font_size;
+    @include font_size_type($loader: false, $type: "h5");
     margin: $h5_margin;
   }
 
@@ -238,7 +238,7 @@ a {
   }
 
   p {
-    font-size: $p_font_size;
+    @include font_size_type($loader: false, $type: "p");
   }
 }
 

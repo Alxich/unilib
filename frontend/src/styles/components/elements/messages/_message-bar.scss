@@ -26,7 +26,7 @@
 
       p,
       a {
-        font-size: $p_font_size_small;
+        @include font_size_type($loader: false, $type: "p_small");
         transition: all $transition_normal;
         padding: 0;
         margin: 0;
@@ -123,7 +123,7 @@
             }
 
             .time > p {
-              font-size: $p_font_size_small;
+              @include font_size_type($loader: false, $type: "p_small");
               font-weight: 300;
               white-space: nowrap;
             }
@@ -131,7 +131,7 @@
 
           .information {
             p {
-              font-size: $p_font_size_small;
+              @include font_size_type($loader: false, $type: "p_small");
               font-weight: 300;
 
               &:not(.counter) {
@@ -152,7 +152,7 @@
               border-radius: 100px;
               width: 16px;
               height: 16px;
-              font-size: $p_font_size;
+              @include font_size_type($loader: false, $type: "p");
               font-weight: 500;
             }
           }
@@ -194,7 +194,7 @@
         }
 
         .count {
-          font-size: $p_font_size_small;
+          @include font_size_type($loader: false, $type: "p_small");
           font-weight: 300;
         }
       }
@@ -206,7 +206,7 @@
               max-width: 120px;
 
               span {
-                height: $p_font_size;
+                @include font_size_type($loader: true, $type: "p");
               }
             }
             .time {
@@ -214,7 +214,7 @@
               width: 100%;
 
               span {
-                height: $p_font_size_small;
+                @include font_size_type($loader: true, $type: "p_small");
               }
             }
           }
@@ -222,7 +222,11 @@
 
         .information {
           span.text {
-            height: $p_font_size * 1.65;
+            @include font_size_type(
+              $loader: true,
+              $type: "p",
+              $multitaper: 1.65
+            );
           }
         }
       }

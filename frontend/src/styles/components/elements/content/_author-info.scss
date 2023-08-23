@@ -220,7 +220,7 @@
           bottom: auto;
 
           .list p {
-            font-size: $p_font_size;
+            @include font_size_type($loader: false, $type: "p");
 
             &:not(:last-child) {
               margin-bottom: 8px;
@@ -238,12 +238,12 @@
       }
 
       .name {
-        height: $h2_font_size;
+        @include font_size_type($loader: true, $type: "h2");
         max-width: 220px;
       }
 
       .disription {
-        height: $p_font_size * 3;
+        @include font_size_type($loader: true, $type: "p", $multitaper: 3);
         max-width: 345px;
       }
 
@@ -252,7 +252,7 @@
         width: 100%;
 
         span {
-          height: $p_font_size;
+          @include font_size_type($loader: true, $type: "p");
           max-width: 120px;
           margin-bottom: 0;
 
@@ -266,7 +266,7 @@
       .actions {
         .list-of-actions {
           span {
-            height: $p_font_size;
+            @include font_size_type($loader: true, $type: "p");
             width: 80px;
             margin-bottom: 0;
           }
@@ -274,7 +274,7 @@
       }
 
       .changer {
-        height: $p_font_size;
+        @include font_size_type($loader: true, $type: "p");
         max-width: 40px;
       }
     }
@@ -297,7 +297,7 @@
       &.edit {
         .name {
           flex-direction: column;
-          align-items: flex-start
+          align-items: flex-start;
         }
       }
 
@@ -336,7 +336,7 @@
         }
 
         .disription p {
-          font-size: $p_font_size_small;
+          @include font_size_type($loader: false, $type: "p_small");
         }
 
         .actions {
@@ -353,7 +353,7 @@
               }
 
               p {
-                font-size: $p_font_size_small;
+                @include font_size_type($loader: false, $type: "p_small");
               }
             }
           }
@@ -366,7 +366,7 @@
 
             .wrapper .list {
               p {
-                font-size: $p_font_size_small;
+                @include font_size_type($loader: false, $type: "p_small");
               }
             }
           }

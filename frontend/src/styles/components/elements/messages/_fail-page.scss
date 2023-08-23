@@ -16,7 +16,7 @@
     text-align: center;
 
     p {
-      font-size: $p_font_size_small;
+      @include font_size_type($loader: false, $type: "p_small");
       color: $border_action;
     }
   }

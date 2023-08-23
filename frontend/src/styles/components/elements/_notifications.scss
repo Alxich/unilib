@@ -33,7 +33,7 @@
           }
 
           .text-block > p {
-            font-size: $p_font_size_small;
+            @include font_size_type($loader: false, $type: "p_small");
             font-weight: 400;
             margin: 0;
           }
@@ -95,7 +95,7 @@
           cursor: pointer;
 
           p {
-            font-size: $p_font_size_small;
+            @include font_size_type($loader: false, $type: "p_small");
             line-height: 1.2;
             transition: all $transition_normal;
             margin: 0;
@@ -117,7 +117,7 @@
       padding-top: $notif_item_mrg;
 
       .no-message {
-        font-size: $p_font_size_small;
+        @include font_size_type($loader: false, $type: "p_small");
         margin: 0;
       }
 
@@ -167,7 +167,7 @@
           }
 
           .text > p {
-            font-size: $p_font_size_small;
+            @include font_size_type($loader: false, $type: "p_small");
             font-weight: 300;
           }
         }

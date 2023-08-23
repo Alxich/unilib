@@ -30,7 +30,7 @@
   &.messages {
     .wrapper {
       bottom: -26px;
-  right: -7px;
+      right: -7px;
     }
   }
 
@@ -66,7 +66,7 @@
       margin-bottom: -12px;
 
       p {
-        font-size: $p_font_size_small;
+        @include font_size_type($loader: false, $type: "p_small");
         text-align: left;
         cursor: pointer;
         user-select: none;
@@ -83,7 +83,7 @@
         }
 
         &.active {
-          color: $active_elem
+          color: $active_elem;
         }
       }
     }

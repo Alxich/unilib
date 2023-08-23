@@ -186,15 +186,14 @@
 &.black-themed {
   #tag-editor {
     .tags {
-      
-    .tag {
-      .remove {
-        &:before,
-        &:after {
-          background-color: $color;
+      .tag {
+        .remove {
+          &:before,
+          &:after {
+            background-color: $color;
+          }
         }
       }
-    }
     }
     .available-tags {
       button {

@@ -18,7 +18,7 @@
         width: 100%;
 
         span {
-          height: $p_font_size;
+          @include font_size_type($loader: true, $type: "p");
           max-width: 150px;
         }
 
@@ -27,14 +27,14 @@
           width: 100%;
 
           span {
-            height: $p_font_size_small;
+            @include font_size_type($loader: true, $type: "p_small");
           }
         }
       }
 
       .information {
         .text {
-          height: $p_font_size * 2.45;
+          @include font_size_type($loader: true, $type: "p", $multitaper: 2.45);
         }
       }
     }
@@ -91,7 +91,7 @@
       }
 
       .time > p {
-        font-size: $p_font_size_small;
+        @include font_size_type($loader: false, $type: "p_small");
         font-weight: 300;
         white-space: nowrap;
       }
@@ -99,7 +99,7 @@
 
     .information {
       p {
-        font-size: $p_font_size_small;
+        @include font_size_type($loader: false, $type: "p_small");
         font-weight: 300;
 
         &:not(.counter) {
@@ -124,7 +124,7 @@
         border-radius: 100px;
         width: 16px;
         height: 16px;
-        font-size: $p_font_size;
+        @include font_size_type($loader: false, $type: "p");
         font-weight: 500;
       }
     }

@@ -59,7 +59,7 @@
 
         &.loading-component {
           .title {
-            height: $p_font_size;
+            @include font_size_type($loader: true, $type: "p");
           }
         }
 
