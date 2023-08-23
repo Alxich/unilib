@@ -3,7 +3,7 @@
     A Simple and Efficient Blog Project Crafted by a Student
 </p>
 
-![Imgur](https://i.imgur.com/4c2bItC.gif)
+[img]https://i.imgur.com/4c2bItC.gif[/img]
 
 ## Table of Contents
 - [Introduction](#introduction)
