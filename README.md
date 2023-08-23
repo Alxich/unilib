@@ -43,7 +43,7 @@ Unilib is a dynamic project built with NextJS, Apollo, MongoDB, and GraphQL. It 
 
 ## Project Status
 
-While Unilib is operational and functional, it's important to note that it's an ongoing project. As such, you might encounter some areas that need refining or unimplemented ideas. The project is currently at the "yearly_release" stage.
+While Unilib is operational and functional, it's important to note that it's an ongoing project. As such, you might encounter some areas that need refining or unimplemented ideas. The project is currently at the "early_release" stage.
 
 Feel free to explore the codebase. I've added comments throughout the code for your understanding. While ChatGPT assisted with some comments, they still provide valuable insights.
 
