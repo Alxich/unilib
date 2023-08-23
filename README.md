@@ -2,9 +2,8 @@
 <p align="center">
     A Simple and Efficient Blog Project Crafted by a Student
 </p>
-<p align="center">
+
 ![Imgur](https://imgur.com/4c2bItC)
-</p>
 
 ## Table of Contents
 - [Introduction](#introduction)
