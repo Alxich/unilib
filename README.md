@@ -2,11 +2,9 @@
 <p align="center">
     A Simple and Efficient Blog Project Crafted by a Student
 </p>
-<br>
 <p align="center">
 	<img src="https://i.imgur.com/4c2bItC.gif">
 </p>
-<br>
 
 ## Table of Contents
 - [Introduction](#introduction)
