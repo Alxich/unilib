@@ -3,7 +3,7 @@
     A Simple and Efficient Blog Project Crafted by a Student
 </p>
 <p align="center">
- ![ezgif com-gif-maker](http://i.imgur.com/4c2bItC.gif)
+[Imgur](https://imgur.com/4c2bItC)
 </p>
 
 ## Table of Contents
