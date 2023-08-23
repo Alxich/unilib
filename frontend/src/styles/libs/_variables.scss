@@ -10,36 +10,46 @@
 *   
 */
 
-// Set default values for each title tag and <p/>
-
+// A mixin for configuring font size or height (loading component) for different types of elements based on parameters
+/**
+*/
 @mixin font_size_type($loader: false, $type: "h1", $multitaper: 1, $minus: 0) {
+  $font_sizes: (
+    "h1": 2.667rem,
+    "h2": 1.467rem,
+    "h3": 1.333rem,
+    "h4": 1.275rem,
+    "h5": 1.225rem,
+    "h6": 0.8rem,
+    "p": 1rem,
+    "p_small": 0.8rem,
+  );
+
+  $font_sizes_mobile: (
+    "h1": 1.667rem,
+    "h2": 1.285rem,
+    "h3": 1.2rem,
+    "h4": 1.175rem,
+    "h5": 1.125rem,
+    "h6": 0.8rem,
+    "p": 0.8rem,
+    "p_small": 0.8rem,
+  );
+
   @if $loader == true {
-    $font_sizes: (
-      "h1": 2.667rem,
-      "h2": 1.467rem,
-      "h3": 1.333rem,
-      "h4": 1.275rem,
-      "h5": 1.225rem,
-      "h6": 0.8rem,
-      "p": 1rem,
-      "p_small": 0.8rem,
-    );
-
     height: map-get($font_sizes, $type) * $multitaper - $minus;
-  }
-  @if $loader == false {
-    $font_sizes: (
-      "h1": 2.667rem,
-      "h2": 1.467rem,
-      "h3": 1.333rem,
-      "h4": 1.275rem,
-      "h5": 1.225rem,
-      "h6": 0.8rem,
-      "p": 1rem,
-      "p_small": 0.8rem,
-    );
-
+  } @else {
     font-size: map-get($font_sizes, $type);
+  }
+
+  @media only screen and (max-width: 600px) {
+    & {
+      @if $loader == true {
+        height: map-get($font_sizes_mobile, $type) * $multitaper - $minus;
+      } @else {
+        font-size: map-get($font_sizes_mobile, $type);
+      }
+    }
   }
 }
 
@@ -208,10 +218,12 @@ $banner_log_item_ico: 24px;
 $banner_log_title_gap: 11px;
 $banner_other_log_mrg: 3px;
 
-// Messages
-
 // Messages sidebar
 
 $msg_sdbar_width: 300px;
 $msg_sdbar_item_height: 42px;
 $msg_item_gap: 12px;
+
+// Mobile
+
+$mobilebar_height: 50px;

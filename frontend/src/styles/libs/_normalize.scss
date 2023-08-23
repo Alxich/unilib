@@ -162,8 +162,10 @@ body {
 
 @if $main-wrap-width-bool == true {
   main {
+    position: relative;
     max-width: $main-wrap-width-val;
     margin: 0 auto;
+    z-index: 1;
   }
 }
 
@@ -218,12 +220,12 @@ a {
   }
 
   h3 {
-    font-size: $h3_font_size;
+    @include font_size_type($loader: false, $type: "h3");
     margin: $h3_margin;
   }
 
   h4 {
-    font-size: $h4_font_size;
+    @include font_size_type($loader: false, $type: "h4");
     margin: $h4_margin;
   }
 
@@ -233,7 +235,7 @@ a {
   }
 
   h6 {
-    font-size: $h6_font_size;
+    @include font_size_type($loader: false, $type: "h6");
     margin: $h6_margin;
   }
 

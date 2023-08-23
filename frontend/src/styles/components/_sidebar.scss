@@ -148,9 +148,9 @@
       position: fixed;
       background-color: $overhigh_bg;
       top: $header_height;
-      z-index: 1;
       left: 0;
       transition: $transition_normal;
+      z-index: 99;
       padding-bottom: 80px;
 
       &:not(.active) {

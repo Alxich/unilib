@@ -135,4 +135,10 @@ body {
       }
     }
   }
+
+  @media only screen and (max-width: 800px) {
+    & {
+      padding-bottom: $mobilebar_height + 25px;
+    }
+  }
 }
