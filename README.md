@@ -3,6 +3,8 @@
     A Simple and Efficient Blog Project Crafted by a Student
 </p>
 
+[Imgur](https://imgur.com/HkT5UpQ)
+
 ## Table of Contents
 - [Introduction](#introduction)
 - [Features](#features)
