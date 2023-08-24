@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-<img src="https://i.imgur.com/HkT5UpQ.gif" alt="example-image-of-working-project">
+<img src="https://i.imgur.com/yeg1iP4.gif" alt="example-image-of-working-project">
 </p>
 
 ## Table of Contents
